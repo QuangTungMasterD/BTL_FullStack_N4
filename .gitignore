@@ -1,3 +1,38 @@
+# Node
+node_modules/
+
+# VSCode
+.vscode/
+
+# .NET
+bin/
+obj/
+
+# Vue build
+dist/
+
+# Logs
+*.log
+
+# Env
+.env
+.env.*
+
+# VS
+.vs/
+
+# IntelliJ
+.idea/
+
+# Vite
+.vite/
+
+# Setting local
+*.user
+
+# MacOS
+.DS_Store
+
 # Logs
 logs
 *.log
@@ -22,3 +57,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+

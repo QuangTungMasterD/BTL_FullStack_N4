@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+WORKDIR /app
+
+COPY *.sln .
+COPY CourseScheduleService.Domain/*.csproj ./CourseScheduleService.Domain/
+COPY CourseScheduleService.Application/*.csproj ./CourseScheduleService.Application/
+COPY CourseScheduleService.Infrastructure/*.csproj ./CourseScheduleService.Infrastructure/
+COPY CourseScheduleService.API/*.csproj ./CourseScheduleService.API/
+
+RUN dotnet restore
+
+EXPOSE 8080
+
+CMD ["dotnet", "watch", "--project", "CourseScheduleService.API/CourseScheduleService.API.csproj", "run", "--urls", "http://0.0.0.0:8080"]

@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: course_schedule_db_dev
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Tung@2005"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - course_schedule_db_dev:/var/opt/mssql
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: course_schedule_service_dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sqlserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=course_schedule_db;User Id=sa;Password=Tung@2005;TrustServerCertificate=True;Encrypt=False
+    volumes:
+      # Mount source code vào container để hot reload
+      - ./CourseScheduleService.API:/app/CourseScheduleService.API
+      - ./CourseScheduleService.Domain:/app/CourseScheduleService.Domain
+      - ./CourseScheduleService.Application:/app/CourseScheduleService.Application
+      - ./CourseScheduleService.Infrastructure:/app/CourseScheduleService.Infrastructure
+      # Mount NuGet cache để tránh restore lại mỗi lần
+      - ~/.nuget/packages:/root/.nuget/packages:ro
+    restart: unless-stopped
+
+volumes:
+  course_schedule_db_dev:
+    name: course_schedule_db_dev

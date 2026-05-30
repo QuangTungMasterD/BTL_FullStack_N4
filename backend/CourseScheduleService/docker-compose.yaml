@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: course_schedule_db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Tung@2005"
+    ports:
+      - "1433:1433"
+    volumes:
+      - course_schedule_db:/var/opt/mssql
+    # networks:
+    #   - course_network
+
+  api:
+    image: course-schedule-service:v1
+    container_name: course_schedule_service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sqlserver
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=course_schedule_db;User Id=sa;Password=Tung@2005;TrustServerCertificate=True;Encrypt=False"
+    # networks:
+    #   - course_network
+
+# networks:
+#   course_network:
+#     driver: course_schedule_network
+
+volumes:
+  course_schedule_db:
+    name: course_schedule_db

@@ -15,14 +15,16 @@ services:
     #   - course_network
 
   api:
-    image: course-schedule-service:v1
+    image: course-schedule-service:v2
+    # build: .
     container_name: course_schedule_service
     ports:
       - "8080:8080"
     depends_on:
       - sqlserver
     environment:
-      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=course_schedule_db;User Id=sa;Password=Tung@2005;TrustServerCertificate=True;Encrypt=False"
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=course_schedule_db;User Id=sa;Password=Tung@2005;TrustServerCertificate=True;
+      # ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=master;User Id=sa;Password=Tung@2005;TrustServerCertificate=True;Encrypt=False"
     # networks:
     #   - course_network
 

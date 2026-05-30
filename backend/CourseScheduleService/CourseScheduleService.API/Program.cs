@@ -40,6 +40,12 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddHealthChecks();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+Console.WriteLine("========================================");
+Console.WriteLine($"🔥 Connection String đang dùng: {connectionString}");
+Console.WriteLine("========================================");
+
 var app = builder.Build();
 
 using(var scope = app.Services.CreateScope())

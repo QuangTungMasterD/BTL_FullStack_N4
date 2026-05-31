@@ -8,15 +8,17 @@ using CourseScheduleService.Application.DTOs.CourseDtos;
 using CourseScheduleService.Domain.Entities;
 using CourseScheduleService.Domain.Interfaces.Repositories;
 using CourseScheduleService.interfaces.services;
+// using Microsoft.EntityFrameworkCore;
 
 namespace CourseScheduleService.Application.Services
 {
   public class CourseService : ICourseService
   {
-    private readonly IRepository<Course> _courseRepository;
+    private readonly ICourseRepository _courseRepository;
+    private readonly IRepository<Specialization> _specializationRepository;
     private readonly IMapper _mapper;
 
-    public CourseService(IRepository<Course> courseRepository, IMapper mapper)
+    public CourseService(ICourseRepository courseRepository, IMapper mapper)
     {
         this._courseRepository = courseRepository;
         this._mapper = mapper;
@@ -67,48 +69,47 @@ namespace CourseScheduleService.Application.Services
 
     public async Task<ApiResponse<CourseResDto?>> UpdateCourseAsync(int id, CourseReqDto courseReq)
     {
-      throw new Exception();
-      // var course = await this._courseRepository.GetByIdAsync(id);
-      // if(course == null)
-      // {
-      //   return ApiResponse<CourseResDto?>.ErrorResponse($"Not found course {id}.");
-      // }
+      var course = await this._courseRepository.GetByIdAsync(id);
+      if(course == null)
+      {
+        return ApiResponse<CourseResDto?>.ErrorResponse($"Not found course {id}.");
+      }
 
-      // var exists = await this._courseRepository.GetQueryable()
-      //   .AnyAsync(c => c.CourseName == courseReq.CourseName && c.Id != id);
+      var exists = await this._courseRepository.IsCourseNameExistsAsync(course.CourseName, course.Id);
     
-      // if (exists)
-      // {
-      //     return ApiResponse<CourseResDto?>.ErrorResponse($"Tên khóa học '{courseReq.CourseName}' đã tồn tại");
-      // }
+      if (exists != null)
+      {
+          return ApiResponse<CourseResDto?>.ErrorResponse(
+            $"Course name '{courseReq.CourseName}' exist",
+            new Dictionary<String, String> { {"CourseName", "Tên khóa học đã tồn tại"} }
+          );
+      }
       
-      // // 3. Kiểm tra Specialization tồn tại
-      // var spec = await this._specRepo.GetByIdAsync(courseReq.SpecializationId);
-      // if (spec == null)
-      // {
-      //     return ApiResponse<CourseResDto?>.ErrorResponse($"Chuyên ngành ID {courseReq.SpecializationId} không tồn tại");
-      // }
+      var spec = await this._specializationRepository.GetByIdAsync(courseReq.SpecializationId);
+      if (spec == null)
+      {
+          return ApiResponse<CourseResDto?>.ErrorResponse(
+            $"Chuyên ngành ID {courseReq.SpecializationId} không tồn tại",
+            new Dictionary<String, String> { {"SpecializationId", "Chuyên ngành không tồn tại"} } 
+          );
+      }
       
-      // // 4. Cập nhật thông tin
-      // course.CourseName = courseReq.CourseName;
-      // course.Desct = courseReq.Desct;
-      // course.TuitionFee = courseReq.TuitionFee;
-      // course.Level = (int)courseReq.Level;
-      // course.Lesson = courseReq.Lesson;
-      // course.IsActive = courseReq.IsActive;
-      // course.SpecializationId = courseReq.SpecializationId;
-      // course.UpdatedAt = DateTime.Now;
+      course.CourseName = courseReq.CourseName;
+      course.Desct = courseReq.Desct;
+      course.TuitionFee = courseReq.TuitionFee;
+      course.Level = courseReq.Level;
+      course.Lesson = courseReq.Lesson;
+      course.IsActive = courseReq.IsActive;
+      course.SpecializationId = courseReq.SpecializationId;
+      course.UpdatedAt = DateTime.Now;
       
-      // // 5. Lưu thay đổi
-      // this._courseRepository.UpdateAsync(course);
-      // await this._courseRepository.SaveChangeAsync();
+      this._courseRepository.UpdateAsync(course);
+      await this._courseRepository.SaveChangeAsync();
       
-      // // 6. Map sang DTO để trả về
-      // var courseRes = this._mapper.Map<CourseResDto>(course);
-      // courseRes.SpecializationName = spec.SpecializationName;
+      var courseRes = this._mapper.Map<CourseResDto>(course);
+      courseRes.SpecializationId = spec.Id;
       
-      // // 7. Trả về kết quả thành công
-      // return ApiResponse<CourseResDto?>.SuccessResponse(courseRes, "Cập nhật khóa học thành công");
+      return ApiResponse<CourseResDto?>.SuccessResponse(courseRes, "Cập nhật khóa học thành công");
     }
   }
 }

@@ -10,7 +10,7 @@ namespace CourseScheduleService.Application.Common
         public bool Success { get; set; }
         public String Message { get; set; } = String.Empty;
         public T? Data { get; set; }
-        public List<String>? Errors { get; set; }
+        public object? Errors { get; set; }
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
         // public ApiResponse(bool success, String msg, T? Data, List<String>? es, DateTime time)
@@ -33,7 +33,7 @@ namespace CourseScheduleService.Application.Common
             };
         }
 
-        public static ApiResponse<T> ErrorResponse(string message, List<string>? errors = null)
+        public static ApiResponse<T> ErrorResponse(string message, object? errors = null)
         {
             return new ApiResponse<T>
             {

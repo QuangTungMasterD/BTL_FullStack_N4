@@ -13,6 +13,5 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
         void UpdateAsync(T entity);
         void DeleteAsync(T entity);
         Task SaveChangeAsync();
-        IQueryable<T> GetQueryable(); 
     }
 }

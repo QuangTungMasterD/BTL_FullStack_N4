@@ -11,7 +11,7 @@ namespace CourseScheduleService.Infrastructure.Repositories
   public class Repository<T> : IRepository<T> where T : class
   {
     private readonly CourseScheduleDbContext _context;
-    private readonly DbSet<T> _dbSet;
+    protected readonly DbSet<T> _dbSet;
 
     public Repository(CourseScheduleDbContext context)
     {
@@ -55,11 +55,6 @@ namespace CourseScheduleService.Infrastructure.Repositories
     public void UpdateAsync(T entity)
     {
       _dbSet.Update(entity);
-    }
-
-    public IQueryable<T> GetQueryable()
-    {
-        return _dbSet.AsQueryable();
     }
   }
 }

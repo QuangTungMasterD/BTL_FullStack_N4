@@ -2,14 +2,20 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0
 
 WORKDIR /app
 
+# Copy csproj files để cache restore
 COPY *.sln .
 COPY CourseScheduleService.Domain/*.csproj ./CourseScheduleService.Domain/
 COPY CourseScheduleService.Application/*.csproj ./CourseScheduleService.Application/
 COPY CourseScheduleService.Infrastructure/*.csproj ./CourseScheduleService.Infrastructure/
 COPY CourseScheduleService.API/*.csproj ./CourseScheduleService.API/
 
+# Restore packages
 RUN dotnet restore
+
+# Copy source code (sau restore để cache)
+COPY . .
 
 EXPOSE 8080
 
-CMD ["dotnet", "watch", "--project", "CourseScheduleService.API/CourseScheduleService.API.csproj", "run", "--urls", "http://0.0.0.0:8080"]
+# Chạy với hot reload
+CMD ["dotnet", "watch", "run", "--project", "CourseScheduleService.API/CourseScheduleService.API.csproj", "--urls", "http://0.0.0.0:8080"]

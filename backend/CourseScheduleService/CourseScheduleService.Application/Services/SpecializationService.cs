@@ -44,7 +44,8 @@ namespace CourseScheduleService.Application.Services
       {
         return ApiResponse<SpecializationResDto?>.ErrorResponse($"Not found specialization ${id}.");
       }
-      throw new Exception();
+      SpecializationResDto specializationResDto = this._mapper.Map<SpecializationResDto>(specialization);
+      return ApiResponse<SpecializationResDto?>.SuccessResponse(specializationResDto);
     }
 
     public Task<ApiResponse<SpecializationResDto?>> UpdateSpecializationAsync(int id, SpecializationReqDto specializationReq)

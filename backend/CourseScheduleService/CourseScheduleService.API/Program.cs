@@ -23,6 +23,7 @@ builder.Services.AddDbContext<CourseScheduleDbContext>(
 
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(ICourseRepository), typeof(CourseRepository));
 
 // Register services
 builder.Services.AddScoped<ICourseService, CourseService>();

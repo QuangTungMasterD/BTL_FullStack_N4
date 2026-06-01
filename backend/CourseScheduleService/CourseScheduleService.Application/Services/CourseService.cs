@@ -106,7 +106,8 @@ namespace CourseScheduleService.Application.Services
       {
           return ApiResponse<CourseResDto?>.ErrorResponse(
             $"Course name '{courseReq.CourseName}' exist",
-            new Dictionary<String, String[]> { {"CourseName", new String[] {"Tên khóa học đã tồn tại"}} }
+            new Dictionary<String, String[]> { {"CourseName", new String[] {"Tên khóa học đã tồn tại"}} },
+            409
           );
       }
       

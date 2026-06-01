@@ -35,7 +35,8 @@ namespace CourseScheduleService.Application.Services
           new Dictionary<String, String[]>
           {
             {"SpecializationName", new String[] {"Tên chuyên môn đã tồn tại"}}
-          }
+          },
+          409
         );
       }
 

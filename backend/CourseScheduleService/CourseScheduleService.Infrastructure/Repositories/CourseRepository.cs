@@ -8,7 +8,6 @@ using CourseScheduleService.Domain.Entities;
 using CourseScheduleService.Domain.Interfaces.Repositories;
 using CourseScheduleService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-
 namespace CourseScheduleService.Infrastructure.Repositories
 {
   public class CourseRepository : Repository<Course>, ICourseRepository
@@ -23,6 +22,13 @@ namespace CourseScheduleService.Infrastructure.Repositories
         if (Id.HasValue)
             query = query.Where(c => c.Id != Id.Value);
         return await query.FirstOrDefaultAsync();
+    }
+
+    public async Task<IEnumerable<Course>> GetCoursesBySpecializationAsync(int idSpecialization)
+    {
+      var query = _dbSet.Where(c => c.SpecializationId == idSpecialization);
+
+      return await query.ToArrayAsync();
     }
   }
 }

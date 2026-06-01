@@ -31,17 +31,20 @@ namespace CourseScheduleService.Infrastructure.Repositories
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-      return await _dbSet.ToArrayAsync();
+      return await _dbSet.Where(x => !EF.Property<bool>(x, "IsDeleted")).ToArrayAsync();
     }
 
     public async Task<T?> GetByIdAsync(int id)
     {
-      return await _dbSet.FindAsync(id);;
+      return await _dbSet.FirstOrDefaultAsync(x => 
+            EF.Property<int>(x, "Id") == id && 
+            !EF.Property<bool>(x, "IsDeleted"));
     }
 
     public async Task<IEnumerable<T>> GetPagedAsync(int page, int pageSize)
     {
       return await _dbSet
+        .Where(x => !EF.Property<bool>(x, "IsDeleted"))
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();

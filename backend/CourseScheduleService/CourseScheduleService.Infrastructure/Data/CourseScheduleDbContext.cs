@@ -32,9 +32,6 @@ public partial class CourseScheduleDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         OnModelCreatingPartial(modelBuilder);
-
-        modelBuilder.Entity<Course>()
-            .HasQueryFilter(x => !x.IsDeleted);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

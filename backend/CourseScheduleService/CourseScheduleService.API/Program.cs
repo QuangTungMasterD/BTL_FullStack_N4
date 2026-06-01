@@ -1,4 +1,5 @@
 using CourseScheduleService.API.Filters;
+using CourseScheduleService.Application.Mapping;
 using CourseScheduleService.Application.Services;
 using CourseScheduleService.Domain.Interfaces.Repositories;
 using CourseScheduleService.Infrastructure.Data;
@@ -24,12 +25,21 @@ builder.Services.AddDbContext<CourseScheduleDbContext>(
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped(typeof(ICourseRepository), typeof(CourseRepository));
+builder.Services.AddScoped(typeof(ISpecializationRepository), typeof(SpecializationRepository));
 
 // Register services
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<ISpecializationService, SpecializationService>();
 
 // Register AutoMapper
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(ClassMapping));
+builder.Services.AddAutoMapper(typeof(ClassSessionMapping));
+builder.Services.AddAutoMapper(typeof(CourseMapping));
+builder.Services.AddAutoMapper(typeof(RoomMapping));
+builder.Services.AddAutoMapper(typeof(SpecializationMapping));
+builder.Services.AddAutoMapper(typeof(TeacherAssignmentMapping));
+builder.Services.AddAutoMapper(typeof(TeacherMapping));
+builder.Services.AddAutoMapper(typeof(TeacherSpecializationMapping));
 
 // Register Filter
 builder.Services.AddScoped<ValidationFilter>();

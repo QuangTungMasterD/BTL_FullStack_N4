@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using CourseScheduleService.Application.Common;
@@ -39,13 +40,17 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<CourseResDto>>> CreateCourse([FromBody]CourseReqDto courseReq)
+        public async Task<ActionResult<ApiResponse<CourseResDto?>>> CreateCourse([FromBody]CourseReqDto courseReq)
         {
             var result = await _courseService.CreateCourseAsync(courseReq);
-            return StatusCode(201, result);
+            if(result.Success)
+            {
+                return StatusCode(201, result);
+            }
+            return StatusCode(409, result);
         }
 
-        [HttpPost("{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<bool>>> DeleteCourse([FromRoute] int id)
         {
             var result = await this._courseService.DeteleCourseAsync(id);
@@ -56,6 +61,15 @@ namespace CourseScheduleService.API.Controllers
             return StatusCode(404, result);
         }
 
-
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ApiResponse<CourseResDto>>> UpdateCourse([FromRoute] int id, [FromBody] CourseReqDto courseReqDto)
+        {
+            var result = await _courseService.UpdateCourseAsync(id, courseReqDto);
+            if(result.Success == true)
+            {
+                return StatusCode(200, result);
+            }
+            return StatusCode(404, result);
+        }
     }
 }

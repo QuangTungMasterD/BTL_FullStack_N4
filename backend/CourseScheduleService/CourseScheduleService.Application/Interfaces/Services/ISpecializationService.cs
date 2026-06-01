@@ -12,7 +12,7 @@ namespace CourseScheduleService.interfaces.services
     {
         Task<ApiResponse<SpecializationResDto?>> GetOneByIdAsync(int id);
         Task<ApiResponse<IEnumerable<SpecializationResDto>>> GetAllSpecializationAsync();
-        Task<ApiResponse<SpecializationResDto>> CreateSpecializationAsync(SpecializationReqDto specializationReq);
+        Task<ApiResponse<SpecializationResDto?>> CreateSpecializationAsync(SpecializationReqDto specializationReq);
         Task<ApiResponse<SpecializationResDto?>> UpdateSpecializationAsync(int id, SpecializationReqDto specializationReq);
         Task<ApiResponse<bool>> DeteleSpecializationAsync(int id);
     }

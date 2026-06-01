@@ -30,7 +30,7 @@ namespace CourseScheduleService.Domain.Entities
 
         [Column("specialization_id")]
         [ForeignKey("Specialization")]
-        public int SpecializationId { get; set; }
+        public int? SpecializationId { get; set; }
 
         public virtual Specialization Specialization { get; set; } = null!;
         public virtual ICollection<Class> Classes { get; set; } = new List<Class>();

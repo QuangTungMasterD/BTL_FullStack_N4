@@ -13,7 +13,7 @@ namespace CourseScheduleService.Application.Mapping
         public SpecializationMapping()
         {
             CreateMap<Specialization, SpecializationResDto>();
-            CreateMap<SpecializationReqDto, TeacherAssignment>();
+            CreateMap<SpecializationReqDto, Specialization>();
         }
     }
 }

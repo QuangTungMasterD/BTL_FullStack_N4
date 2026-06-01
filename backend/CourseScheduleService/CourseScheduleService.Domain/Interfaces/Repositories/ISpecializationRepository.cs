@@ -1,0 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using CourseScheduleService.Domain.Entities;
+
+namespace CourseScheduleService.Domain.Interfaces.Repositories
+{
+    public interface ISpecializationRepository : IRepository<Specialization>
+    {
+        Task<Specialization?> IsSpecializationNameExistsAsync(string specializationName, int? Id = null);
+    }
+}

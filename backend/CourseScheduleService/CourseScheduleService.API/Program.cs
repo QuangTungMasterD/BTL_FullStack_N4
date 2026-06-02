@@ -92,8 +92,8 @@ app.MapControllers();
 
 app.MapHealthChecks("/health");
 
-app.UseMiddleware<HeaderClaimsMiddleware>();
+// app.UseMiddleware<HeaderClaimsMiddleware>();
 
-app.UseAuthorization();
+// app.UseAuthorization();
 
 app.Run();

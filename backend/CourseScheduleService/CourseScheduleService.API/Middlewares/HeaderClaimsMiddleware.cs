@@ -28,7 +28,6 @@ namespace CourseScheduleService.API.Middlewares
                     new Claim(ClaimTypes.Name, userId)
                 };
 
-                // Thêm từng role
                 var roles = rolesHeader.Split(',', StringSplitOptions.RemoveEmptyEntries);
                 foreach (var role in roles)
                 {

@@ -30,7 +30,6 @@ namespace CourseScheduleService.Application.DTOs.CourseDtos
         public int Lesson { get; set; }
         public bool IsActive { get; set; } = true;
 
-        [Required(ErrorMessage = "Chuyên ngành không được để trống")]
-        public int SpecializationId { get; set; }
+        public int? SpecializationId { get; set; }
     }
 }

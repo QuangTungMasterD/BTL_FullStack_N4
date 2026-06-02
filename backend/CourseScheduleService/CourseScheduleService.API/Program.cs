@@ -1,4 +1,6 @@
 using CourseScheduleService.API.Filters;
+using CourseScheduleService.API.Middlewares;
+using CourseScheduleService.Application.Interfaces.Services;
 using CourseScheduleService.Application.Mapping;
 using CourseScheduleService.Application.Services;
 using CourseScheduleService.Domain.Interfaces.Repositories;
@@ -26,10 +28,20 @@ builder.Services.AddDbContext<CourseScheduleDbContext>(
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped(typeof(ICourseRepository), typeof(CourseRepository));
 builder.Services.AddScoped(typeof(ISpecializationRepository), typeof(SpecializationRepository));
+builder.Services.AddScoped(typeof(ITeacherRepository), typeof(TeacherRepository));
+builder.Services.AddScoped(typeof(IClassRepository), typeof(ClassRepository));
+builder.Services.AddScoped(typeof(IRoomRepository), typeof(RoomRepository));
+builder.Services.AddScoped(typeof(ITeacherAssignmentRepository), typeof(TeacherAssignmentRepository));
+builder.Services.AddScoped(typeof(IClassSessionRepository), typeof(ClassSessionRepository));
 
 // Register services
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<ISpecializationService, SpecializationService>();
+builder.Services.AddScoped<ITeacherService, TeacherService>();
+builder.Services.AddScoped<IClassService, ClassService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<ITeacherAssignmentService, TeacherAssignmentService>();
+builder.Services.AddScoped<IClassSessionService, ClassSessionService>();
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(ClassMapping));
@@ -79,5 +91,9 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.MapHealthChecks("/health");
+
+app.UseMiddleware<HeaderClaimsMiddleware>();
+
+app.UseAuthorization();
 
 app.Run();

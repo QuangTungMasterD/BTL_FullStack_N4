@@ -18,8 +18,8 @@ namespace CourseScheduleService.Application.Services
 
     public TeacherService(ITeacherRepository teacherRepository, IMapper mapper)
     {
-        _teacherRepository = teacherRepository;
-        _mapper = mapper;
+      _teacherRepository = teacherRepository;
+      _mapper = mapper;
     }
 
     public async Task<ApiResponse<TeacherResDto?>> CreateTeacherAsync(TeacherReqDto teacherReqDto)
@@ -82,11 +82,59 @@ namespace CourseScheduleService.Application.Services
       var teacher = await _teacherRepository.GetByIdAsync(id);
       if (teacher == null)
       {
-          return ApiResponse<TeacherResDto?>.ErrorResponse($"Không tìm thấy giáo viên {id}.");
+        return ApiResponse<TeacherResDto?>.ErrorResponse($"Không tìm thấy giáo viên {id}.");
       }
 
       TeacherResDto teacherRes = _mapper.Map<TeacherResDto>(teacher);
       return ApiResponse<TeacherResDto?>.SuccessResponse(teacherRes, $"Lấy thông tin giáo viên {id} thành công");
+    }
+
+    public async Task<ApiResponse<bool>> HardDeleteTeacherAsync(int id)
+    {
+      var teacher = await _teacherRepository.GetByIdAsync(id);
+      if (teacher == null)
+      {
+        return ApiResponse<bool>.ErrorResponse($"Không tìm thấy giáo viên {id}.", statusCode: 404);
+      }
+
+      if (!teacher.IsDeleted)
+      {
+        return ApiResponse<bool>.ErrorResponse(
+          $"Giáo viên {id} chưa được xóa mềm, không thể xóa vĩnh viễn.",
+          statusCode: 409
+        );
+      }
+
+      _teacherRepository.DeleteAsync(teacher);
+      await _teacherRepository.SaveChangeAsync();
+
+      return ApiResponse<bool>.SuccessResponse(true, $"Xóa vĩnh viễn giáo viên {id} thành công.");
+    }
+
+    public async Task<ApiResponse<TeacherResDto?>> RestoreTeacherAsync(int id)
+    {
+      var teacher = await _teacherRepository.GetByIdAsync(id);
+      if (teacher == null)
+      {
+        return ApiResponse<TeacherResDto?>.ErrorResponse($"Không tìm thấy giáo viên {id}.", statusCode: 404);
+      }
+
+      if (!teacher.IsDeleted)
+      {
+        return ApiResponse<TeacherResDto?>.ErrorResponse(
+          $"Giáo viên {id} chưa bị xóa, không cần khôi phục.",
+          statusCode: 409
+        );
+      }
+
+      teacher.IsDeleted = false;
+      _teacherRepository.UpdateAsync(teacher);
+      await _teacherRepository.SaveChangeAsync();
+
+      return ApiResponse<TeacherResDto?>.SuccessResponse(
+        _mapper.Map<TeacherResDto>(teacher),
+        $"Khôi phục giáo viên {id} thành công."
+      );
     }
 
     public async Task<ApiResponse<TeacherResDto?>> UpdateTeacherAsync(int id, TeacherReqDto teacherReqDto)
@@ -128,9 +176,28 @@ namespace CourseScheduleService.Application.Services
       await _teacherRepository.SaveChangeAsync();
 
       return ApiResponse<TeacherResDto?>.SuccessResponse(
-        _mapper.Map<TeacherResDto>(teacher), 
+        _mapper.Map<TeacherResDto>(teacher),
         "Cập nhật giáo viên thành công"
       );
+    }
+
+    public async Task<ApiResponse<PagedResponse<TeacherResDto>>> GetPagedTeachersAsync(TeacherFilterRequest req)
+    {
+      var (data, totalRecords) = await _teacherRepository.GetPagedTeachersAsync(
+          req.Page, req.PageSize, req.Search,
+          req.IsActive, req.YoBFrom, req.YoBTo,
+          req.SortBy, req.SortDesc
+      );
+
+      var result = new PagedResponse<TeacherResDto>
+      {
+        Data = _mapper.Map<IEnumerable<TeacherResDto>>(data),
+        Page = req.Page,
+        PageSize = req.PageSize,
+        TotalRecords = totalRecords
+      };
+
+      return ApiResponse<PagedResponse<TeacherResDto>>.SuccessResponse(result);
     }
   }
 }

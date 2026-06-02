@@ -15,7 +15,9 @@ namespace CourseScheduleService.interfaces.services
         Task<ApiResponse<CourseResDto?>> CreateCourseAsync(CourseReqDto courseReq);
         Task<ApiResponse<CourseResDto?>> UpdateCourseAsync(int id, CourseReqDto courseReq);
         Task<ApiResponse<bool>> DeteleCourseAsync(int id);
+        Task<ApiResponse<bool>> HardDeleteCourseAsync(int id);
         Task<ApiResponse<CourseResDto?>> RestoreCourseAsync(int id);
         Task<ApiResponse<IEnumerable<CourseResDto>>> GetCoursesBySpecializationAsync(int idSpecialization);
+        Task<ApiResponse<PagedResponse<CourseResDto>>> GetPagedCoursesAsync(CourseFilterRequest req);
     }
 }

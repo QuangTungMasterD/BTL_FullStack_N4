@@ -12,7 +12,10 @@ namespace CourseScheduleService.Application.Interfaces.Services
         Task<ApiResponse<TeacherResDto?>> GetOneByIdAsync(int id);
         Task<ApiResponse<IEnumerable<TeacherResDto>>> GetAllTeacherAsync();
         Task<ApiResponse<TeacherResDto?>> CreateTeacherAsync(TeacherReqDto teacherReqDto);
+        Task<ApiResponse<bool>> HardDeleteTeacherAsync(int id);
+        Task<ApiResponse<TeacherResDto?>> RestoreTeacherAsync(int id);
         Task<ApiResponse<TeacherResDto?>> UpdateTeacherAsync(int id, TeacherReqDto teacherReqDto);
         Task<ApiResponse<bool>> DeteleTeacherAsync(int id);
+        Task<ApiResponse<PagedResponse<TeacherResDto>>> GetPagedTeachersAsync(TeacherFilterRequest req);
     }
 }

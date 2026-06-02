@@ -20,15 +20,15 @@ namespace CourseScheduleService.Application.Services
 
     public SpecializationService(ISpecializationRepository specializationRepository, ICourseRepository courseRepository, IMapper mapper)
     {
-        this._specializationRepository = specializationRepository;
-        this._mapper = mapper;
-        _courseRepository = courseRepository;
+      this._specializationRepository = specializationRepository;
+      this._mapper = mapper;
+      _courseRepository = courseRepository;
     }
 
     public async Task<ApiResponse<SpecializationResDto?>> CreateSpecializationAsync(SpecializationReqDto specializationReq)
     {
       var specialization = await this._specializationRepository.IsSpecializationNameExistsAsync(specializationReq.SpecializationName);
-      if(specialization != null)
+      if (specialization != null)
       {
         return ApiResponse<SpecializationResDto?>.ErrorResponse(
           "Tên chuyên môn đã tồn tại",
@@ -63,16 +63,16 @@ namespace CourseScheduleService.Application.Services
 
       foreach (var course in courses)
       {
-          course.SpecializationId = null;
-          course.UpdatedAt = DateTime.Now;
-          _courseRepository.UpdateAsync(course);
+        course.SpecializationId = null;
+        course.UpdatedAt = DateTime.Now;
+        _courseRepository.UpdateAsync(course);
       }
 
       _specializationRepository.DeleteAsync(specialization);
 
       await _specializationRepository.SaveChangeAsync();
 
-      return ApiResponse<bool>.SuccessResponse(true, 
+      return ApiResponse<bool>.SuccessResponse(true,
         $"Đã xóa chuyên môn ID {id} và cập nhật {courses.Count()} khóa học liên quan.");
     }
 
@@ -86,7 +86,7 @@ namespace CourseScheduleService.Application.Services
     public async Task<ApiResponse<SpecializationResDto?>> GetOneByIdAsync(int id)
     {
       var specialization = await this._specializationRepository.GetByIdAsync(id);
-      if(specialization == null)
+      if (specialization == null)
       {
         return ApiResponse<SpecializationResDto?>.ErrorResponse($"Not found specialization ${id}.");
       }
@@ -97,7 +97,7 @@ namespace CourseScheduleService.Application.Services
     public async Task<ApiResponse<SpecializationResDto?>> UpdateSpecializationAsync(int id, SpecializationReqDto specializationReq)
     {
       var specialization = await this._specializationRepository.GetByIdAsync(id);
-      if(specialization == null)
+      if (specialization == null)
       {
         return ApiResponse<SpecializationResDto?>.ErrorResponse($"Not found specialization ${id}.");
       }
@@ -110,6 +110,24 @@ namespace CourseScheduleService.Application.Services
       await _specializationRepository.SaveChangeAsync();
       SpecializationResDto specializationResDto = this._mapper.Map<SpecializationResDto>(specialization);
       return ApiResponse<SpecializationResDto?>.SuccessResponse(specializationResDto, "Update specialization success");
+    }
+
+    public async Task<ApiResponse<PagedResponse<SpecializationResDto>>> GetPagedSpecializationsAsync(SpecializationFilterRequest req)
+    {
+      var (data, totalRecords) = await _specializationRepository.GetPagedSpecializationsAsync(
+          req.Page, req.PageSize, req.Search,
+          req.IsActive, req.SortBy, req.SortDesc
+      );
+
+      var result = new PagedResponse<SpecializationResDto>
+      {
+        Data = _mapper.Map<IEnumerable<SpecializationResDto>>(data),
+        Page = req.Page,
+        PageSize = req.PageSize,
+        TotalRecords = totalRecords
+      };
+
+      return ApiResponse<PagedResponse<SpecializationResDto>>.SuccessResponse(result);
     }
   }
 }

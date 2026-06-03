@@ -1,0 +1,21 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/courses/",
+      "DownstreamPathTemplate": "/api/courses/",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5001
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5000"
+  }
+}

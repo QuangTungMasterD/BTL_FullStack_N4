@@ -5,9 +5,12 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue';
+
+const props = defineProps({
   padding: { type: Boolean, default: true },
   hover: { type: Boolean, default: false },
 });
-const paddingClass = ({ padding: true }) ? 'p-6' : '';
+
+const paddingClass = computed(() => props.padding ? 'p-6' : '');
 </script>

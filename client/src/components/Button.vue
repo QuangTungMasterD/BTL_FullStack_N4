@@ -11,7 +11,7 @@
       size === 'md' && 'px-5 py-2.5 text-body-md',
       size === 'lg' && 'px-8 py-3 text-title-md',
     ]"
-    :disabled="disabled"
+    :disabled="disabled || loading"
     @click="$emit('click')"
   >
     <span v-if="icon" class="material-symbols-outlined text-[1.25rem]">{{ icon }}</span>
@@ -21,6 +21,7 @@
 
 <script setup>
 defineProps({
+  loading: Boolean,
   variant: { type: String, default: 'primary' }, // primary, secondary, error, outline, ghost
   size: { type: String, default: 'md' }, // sm, md, lg
   disabled: Boolean,

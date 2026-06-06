@@ -23,9 +23,12 @@ const emit = defineEmits(['update:visible']);
 
 const icon = props.type === 'success' ? 'check_circle' : props.type === 'error' ? 'error' : 'info';
 
+let timer = null;
+
 watch(() => props.visible, (val) => {
+  if (timer) clearTimeout(timer);
   if (val) {
-    setTimeout(() => {
+    timer = setTimeout(() => {
       emit('update:visible', false);
     }, props.duration);
   }

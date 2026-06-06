@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import SidebarItem from './SidebarItem.vue'
+import SidebarItem from './SideBarItem.vue'
 
 const menuItems = [
   { label: 'Dashboard', icon: 'dashboard', path: '/' },

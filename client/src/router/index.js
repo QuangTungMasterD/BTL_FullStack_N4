@@ -7,7 +7,11 @@ const routes = [
     path: '/',
     component: () => import('@/layouts/DefaultLayout.vue'),
     children: [
-      { path: '', component: Index },
+      {
+        path: 'courses',
+        name: 'Courses',
+        component: () => import('@/pages/academic/CoursesManager.vue'),
+      },
     ]
   }
 ]

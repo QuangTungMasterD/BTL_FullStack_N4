@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import Badge from '../ui/Badge.vue';
+import Badge from '@/components/ui/Badge.vue';
 import { formatVND, courseLevelText } from '@/composables/useFormat.js';
 
 defineProps({

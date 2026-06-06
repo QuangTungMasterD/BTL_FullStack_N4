@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import Sidebar from './SideBar/Sidebar.vue'
+import Sidebar from './SideBar/SideBar.vue'
 import Header from './Header/Header.vue'
 
 const menuItems = [

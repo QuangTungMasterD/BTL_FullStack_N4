@@ -3,3 +3,13 @@
     <div class="w-8 h-8 border-4 border-surface-container border-t-primary rounded-full animate-spin" />
   </div>
 </template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>

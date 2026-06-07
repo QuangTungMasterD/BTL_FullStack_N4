@@ -3,7 +3,7 @@ import api from './api';
 const courseService = {
   // Lấy danh sách có phân trang + filter
   getCoursesPaged(params = {}) {
-    return api.get('/Courses/paged', { params });
+    return api.get('/courses/paged', { params });
   },
   
   // Lấy tất cả (không phân trang)

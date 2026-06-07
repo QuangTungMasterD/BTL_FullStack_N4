@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.BASE_URL || 'http://localhost:8080/api',
+  // baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -9,16 +10,16 @@ const api = axios.create({
 });
 
 // Request interceptor – gắn token nếu có
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// api.interceptors.request.use(
+//   (config) => {
+//     const token = localStorage.getItem('access_token');
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
 
 // Response interceptor – xử lý cấu trúc ApiResponse chuẩn
 api.interceptors.response.use(

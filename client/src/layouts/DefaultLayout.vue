@@ -6,7 +6,7 @@
       <Header />
 
       <div class="p-margin-desktop flex-1">
-        <slot />
+        <router-view />
       </div>
     </main>
   </div>

@@ -54,6 +54,7 @@ export const useCourseStore = defineStore('course', {
       try {
         const data = await courseService.getCoursesPaged(params);
         this.pagedData = data;
+        console.log('Fetched paged courses:', this.pagedData);
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;

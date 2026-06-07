@@ -36,6 +36,8 @@
         v-for="course in courseStore.pagedData.data"
         :key="course.id"
         :course="course"
+        @edit="openEditModal"
+        @delete="confirmDelete"
       />
     </div>
 
@@ -120,6 +122,14 @@
         </div>
       </form>
     </Modal>
+
+    <ConfirmDialog
+      v-model="showDeleteConfirm"
+      title="Xác nhận xóa"
+      :message="`Bạn có chắc chắn muốn xóa khóa học '${selectedCourse?.courseName}' không?`"
+      confirm-text="Xóa"
+      @confirm="handleDeleteCourse"
+    />
   </div>
 </template>
 
@@ -137,6 +147,7 @@ import Pagination from '@/components/ui/Pagination.vue';
 import ErrorAlert from '@/components/ui/ErrorAlert.vue';
 import CourseCard from '@/components/business/CourseCard.vue';
 import CourseFilters from '@/components/business/CourseFilters.vue';
+import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 
 const courseStore = useCourseStore();
 const { pagedData, loading, validationErrors } = storeToRefs(courseStore);
@@ -145,6 +156,8 @@ const { pagedData, loading, validationErrors } = storeToRefs(courseStore);
 const showModal = ref(false);
 const isEditing = ref(false);
 const editingId = ref(null);
+const showDeleteConfirm = ref(false);
+const selectedCourse = ref(null);
 
 // Form data
 const formData = reactive({
@@ -182,9 +195,29 @@ const loadCourses = async () => {
 };
 
 const handleFilterChange = (params) => {
-  currentParams.value = { page: 12, ...params, page: 1 };
+  currentParams.value = { pageSize: 12, ...params, page: 1 };
   
   loadCourses();
+};
+
+// Delete handlers
+const confirmDelete = (course) => {
+  selectedCourse.value = course;
+  showDeleteConfirm.value = true;
+};
+
+const handleDeleteCourse = async () => {
+  if (selectedCourse.value) {
+    await courseStore.delete(selectedCourse.value.id);
+    showDeleteConfirm.value = false;
+    await loadCourses();
+  }
+};
+
+// Open edit modal
+const openEditModal = (course) => {
+  selectedCourse.value = course;
+  showModal.value = true;
 };
 
 const handlePageChange = (page) => {
@@ -193,7 +226,7 @@ const handlePageChange = (page) => {
 };
 
 const resetAndRefresh = () => {
-  currentParams.value = { page: 1, pageSize: 10 };
+  currentParams.value = { page: 1, pageSize: 12 };
   loadCourses();
 };
 

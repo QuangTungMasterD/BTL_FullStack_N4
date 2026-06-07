@@ -10,8 +10,8 @@
 
 <script setup>
 import { computed } from 'vue';
-import Modal from './ui/Modal.vue';
-import Button from './ui/Button.vue';
+import Modal from './Modal.vue';
+import Button from './Button.vue';
 
 const props = defineProps({
   modelValue: Boolean,

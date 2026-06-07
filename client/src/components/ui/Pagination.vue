@@ -3,9 +3,9 @@
     <p class="text-label-md text-on-surface-variant">
       Hiển thị {{ from }}-{{ to }} trong số {{ total }} bản ghi
     </p>
-    <div class="flex gap-2">
+    <div class="flex gap-2 h-[40px]">
       <button
-        class="p-2 rounded-lg border border-outline-variant hover:bg-surface-container disabled:opacity-30"
+        class="w-[40px] h-full p-2 rounded-lg border border-outline-variant hover:bg-surface-container disabled:opacity-30"
         :disabled="currentPage === 1"
         @click="changePage(currentPage - 1)"
       >
@@ -14,14 +14,14 @@
       <button
         v-for="p in visiblePages"
         :key="p"
-        class="px-3 py-1 rounded-lg font-title-md"
+        class="w-[40px] h-full px-3 py-1 rounded-lg font-title-md"
         :class="p === currentPage ? 'bg-primary text-on-primary' : 'hover:bg-surface-container'"
         @click="changePage(p)"
       >
         {{ p }}
       </button>
       <button
-        class="p-2 rounded-lg border border-outline-variant hover:bg-surface-container disabled:opacity-30"
+        class="w-[40px] h-full p-2 rounded-lg border border-outline-variant hover:bg-surface-container disabled:opacity-30"
         :disabled="currentPage === totalPages"
         @click="changePage(currentPage + 1)"
       >

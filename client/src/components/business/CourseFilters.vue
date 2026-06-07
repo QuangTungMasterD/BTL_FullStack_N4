@@ -14,7 +14,7 @@
       <Select
         v-model="filters.level"
         label="Trình độ"
-        :options="courseStore.levelOptions"
+        :options="levelOptions"
         @update:model-value="onFilterChange"
       />
 
@@ -22,7 +22,7 @@
       <Select
         v-model="filters.isActive"
         label="Trạng thái"
-        :options="courseStore.statusOptions"
+        :options="statusOptions"
         @update:model-value="onFilterChange"
       />
 
@@ -46,16 +46,10 @@
     </div>
 
     <div class="flex justify-between items-center mt-4 pt-4 border-t border-outline-variant">
-      <div class="flex gap-2">
-        <Button variant="outline" size="sm" @click="resetFilters">
-          <span class="material-symbols-outlined text-sm">refresh</span>
-          Đặt lại
-        </Button>
-        <Button variant="primary" size="sm" @click="applyFilters">
-          <span class="material-symbols-outlined text-sm">filter_alt</span>
-          Áp dụng
-        </Button>
-      </div>
+      <Button variant="outline" size="sm" @click="resetFilters">
+        <span class="material-symbols-outlined text-sm">refresh</span>
+        Đặt lại
+      </Button>
       <div v-if="hasActiveFilters" class="text-label-md text-on-surface-variant">
         Đang lọc theo {{ activeFiltersCount }} tiêu chí
       </div>
@@ -65,29 +59,40 @@
 
 <script setup>
 import { reactive, computed, watch } from 'vue';
-import { storeToRefs } from 'pinia';
-import { useCourseStore } from '@/stores';
 import Input from '@/components/ui/Input.vue';
 import Select from '@/components/ui/Select.vue';
 import Button from '@/components/ui/Button.vue';
 
-const courseStore = useCourseStore();
-const { pagedData } = storeToRefs(courseStore);
-
 const emit = defineEmits(['filter-change']);
+
+// Options định nghĩa tại đây
+const levelOptions = [
+  { value: '', label: 'Tất cả trình độ' },
+  { value: 1, label: 'Sơ cấp' },
+  { value: 2, label: 'Căn bản' },
+  { value: 3, label: 'Trung cấp' },
+  { value: 4, label: 'Cao cấp' },
+  { value: 5, label: 'Chuyên gia' },
+];
+
+const statusOptions = [
+  { value: '', label: 'Tất cả trạng thái' },
+  { value: true, label: 'Đang mở' },
+  { value: false, label: 'Ngừng mở' },
+];
 
 const filters = reactive({
   search: '',
-  level: null,
-  isActive: null,
+  level: '',
+  isActive: '',
   minFee: null,
   maxFee: null,
 });
 
 const hasActiveFilters = computed(() => {
   return filters.search || 
-         filters.level !== null || 
-         filters.isActive !== null || 
+         filters.level !== '' || 
+         filters.isActive !== '' || 
          filters.minFee !== null || 
          filters.maxFee !== null;
 });
@@ -95,8 +100,8 @@ const hasActiveFilters = computed(() => {
 const activeFiltersCount = computed(() => {
   let count = 0;
   if (filters.search) count++;
-  if (filters.level !== null) count++;
-  if (filters.isActive !== null) count++;
+  if (filters.level !== '') count++;
+  if (filters.isActive !== '') count++;
   if (filters.minFee !== null) count++;
   if (filters.maxFee !== null) count++;
   return count;
@@ -104,17 +109,9 @@ const activeFiltersCount = computed(() => {
 
 let debounceTimer = null;
 
-const onFilterChange = () => {
-  if (debounceTimer) clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => {
-    applyFilters();
-  }, 500);
-};
-
+// Hàm áp dụng filter - gửi dữ liệu lên parent
 const applyFilters = () => {
   const queryParams = {
-    page: 1,
-    pageSize: pagedData.value.pageSize,
     search: filters.search || undefined,
     level: filters.level !== null ? filters.level : undefined,
     isActive: filters.isActive !== null ? filters.isActive : undefined,
@@ -124,20 +121,29 @@ const applyFilters = () => {
   
   // Xóa các key có value undefined/null
   Object.keys(queryParams).forEach(key => {
-    if (queryParams[key] === undefined || queryParams[key] === null || queryParams[key] === '') {
+    if (queryParams[key] === undefined || queryParams[key] === null) {
       delete queryParams[key];
     }
   });
-  
   emit('filter-change', queryParams);
+};
+
+const onFilterChange = () => {
+  if (debounceTimer) clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    applyFilters();
+  }, 500);
 };
 
 const resetFilters = () => {
   filters.search = '';
-  filters.level = null;
-  filters.isActive = null;
+  filters.level = '';
+  filters.isActive = '';
   filters.minFee = null;
   filters.maxFee = null;
-  applyFilters();
+  applyFilters();  // Gọi ngay sau khi reset
 };
+
+// Nếu có initial filters từ parent, có thể watch và cập nhật
+// (tuỳ chọn, nếu cần đồng bộ filter từ URL)
 </script>

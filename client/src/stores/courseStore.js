@@ -24,7 +24,7 @@ export const useCourseStore = defineStore('course', {
   getters: {
     // Course level options cho filter
     levelOptions: () => [
-      { value: null, label: 'Tất cả trình độ' },
+      { value: 0, label: 'Tất cả trình độ' },
       { value: 1, label: 'Sơ cấp' },
       { value: 2, label: 'Căn bản' },
       { value: 3, label: 'Trung cấp' },
@@ -34,7 +34,7 @@ export const useCourseStore = defineStore('course', {
     
     // Status options cho filter
     statusOptions: () => [
-      { value: null, label: 'Tất cả trạng thái' },
+      { value: 0, label: 'Tất cả trạng thái' },
       { value: true, label: 'Đang mở' },
       { value: false, label: 'Ngừng mở' },
     ],

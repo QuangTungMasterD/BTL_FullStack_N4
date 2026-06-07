@@ -112,19 +112,25 @@ let debounceTimer = null;
 // Hàm áp dụng filter - gửi dữ liệu lên parent
 const applyFilters = () => {
   const queryParams = {
-    search: filters.search || undefined,
-    level: filters.level !== null ? filters.level : undefined,
-    isActive: filters.isActive !== null ? filters.isActive : undefined,
-    minFee: filters.minFee !== null ? Number(filters.minFee) : undefined,
-    maxFee: filters.maxFee !== null ? Number(filters.maxFee) : undefined,
+    search: filters.search,
   };
+
+  if(filters.minFee !== 0 && filters.minFee !== null) {
+    queryParams.minFee = Number(filters.minFee);
+  }
+
+  if(filters.maxFee !== 0 && filters.maxFee !== null) {
+    queryParams.maxFee = Number(filters.maxFee);
+  }
+
+  if(filters.level !== null) {
+    queryParams.level = filters.level;
+  }
+
+  if(filters.isActive !== null) {
+    queryParams.isActive = filters.isActive;
+  }
   
-  // Xóa các key có value undefined/null
-  Object.keys(queryParams).forEach(key => {
-    if (queryParams[key] === undefined || queryParams[key] === null) {
-      delete queryParams[key];
-    }
-  });
   emit('filter-change', queryParams);
 };
 
@@ -132,7 +138,7 @@ const onFilterChange = () => {
   if (debounceTimer) clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
     applyFilters();
-  }, 500);
+  }, 1000);
 };
 
 const resetFilters = () => {

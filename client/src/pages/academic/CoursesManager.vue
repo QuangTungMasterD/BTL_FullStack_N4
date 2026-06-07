@@ -2,7 +2,7 @@
   <div>
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
-      <div>
+      <div class="text-left">
         <h1 class="font-headline-lg text-headline-lg">Quản lý khóa học</h1>
         <p class="text-body-md text-on-surface-variant mt-1">
           Quản lý danh sách khóa học và chương trình đào tạo của hệ thống
@@ -173,7 +173,7 @@ const statusOptions = [
 // Current query params
 const currentParams = ref({
   page: 1,
-  pageSize: 10,
+  pageSize: 12,
 });
 
 // Methods
@@ -182,7 +182,8 @@ const loadCourses = async () => {
 };
 
 const handleFilterChange = (params) => {
-  currentParams.value = { ...currentParams.value, ...params, page: 1 };
+  currentParams.value = { page: 12, ...params, page: 1 };
+  
   loadCourses();
 };
 

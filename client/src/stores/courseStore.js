@@ -8,7 +8,7 @@ export const useCourseStore = defineStore('course', {
     pagedData: {
       data: [],        // Đổi từ items thành data (theo API)
       page: 1,
-      pageSize: 10,
+      pageSize: 12,
       totalRecords: 0,
       totalPages: 0,
       hasNext: false,

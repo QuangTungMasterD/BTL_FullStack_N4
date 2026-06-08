@@ -103,7 +103,7 @@ namespace CourseScheduleService.Application.Services
 
     public async Task<ApiResponse<ClassResDto?>> RestoreClassAsync(int id)
     {
-      var cls = await _classRepository.GetByIdAsync(id);
+      var cls = await _classRepository.IsClassIdExistsAsync(id);
       if (cls == null)
       {
         return ApiResponse<ClassResDto?>.ErrorResponse($"Không tìm thấy lớp học {id}.", statusCode: 404);

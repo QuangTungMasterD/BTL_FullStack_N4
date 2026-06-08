@@ -70,5 +70,11 @@ namespace CourseScheduleService.Infrastructure.Repositories
 
       return (data, totalRecords);
     }
+
+    public async Task<Teacher?> IsTeacherIdExistsAsync(int Id)
+    {
+      return await _dbSet.FirstOrDefaultAsync(x =>
+            EF.Property<int>(x, "Id") == Id);
+    }
   }
 }

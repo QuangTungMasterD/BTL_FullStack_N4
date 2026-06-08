@@ -10,6 +10,8 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
     public interface IRoomRepository : IRepository<Room>
     {
         Task<Room?> IsRoomNameExistsAsync(string roomName, int? excludeId = null);
+        Task<Room?> IsRoomIdExistsAsync(int Id);
+
         Task<(IEnumerable<Room> Data, int TotalRecords)> GetPagedRoomsAsync(
             int page, int pageSize, string? search,
             RoomType? roomType, RoomStatus? status,

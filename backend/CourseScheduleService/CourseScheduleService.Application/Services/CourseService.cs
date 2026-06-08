@@ -82,7 +82,7 @@ namespace CourseScheduleService.Application.Services
 
     public async Task<ApiResponse<CourseResDto?>> RestoreCourseAsync(int id)
     {
-      var course = await this._courseRepository.GetByIdAsync(id);
+      var course = await this._courseRepository.IsCourseIdExistsAsync(id);
       if (course == null)
       {
         return ApiResponse<CourseResDto?>.ErrorResponse($"Not found course {id}.");

@@ -83,5 +83,11 @@ namespace CourseScheduleService.Infrastructure.Repositories
 
       return (data, totalRecords);
     }
+
+    public async Task<Course?> IsCourseIdExistsAsync(int Id)
+    {
+      return await _dbSet.FirstOrDefaultAsync(x =>
+            EF.Property<int>(x, "Id") == Id);
+    }
   }
 }

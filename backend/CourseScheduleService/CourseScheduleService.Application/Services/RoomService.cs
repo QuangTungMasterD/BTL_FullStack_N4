@@ -75,7 +75,7 @@ namespace CourseScheduleService.Application.Services
 
     public async Task<ApiResponse<RoomResDto?>> RestoreRoomAsync(int id)
     {
-      var room = await _roomRepository.GetByIdAsync(id);
+      var room = await _roomRepository.IsRoomIdExistsAsync(id);
       if (room == null)
         return ApiResponse<RoomResDto?>.ErrorResponse($"Không tìm thấy phòng {id}.", statusCode: 404);
 

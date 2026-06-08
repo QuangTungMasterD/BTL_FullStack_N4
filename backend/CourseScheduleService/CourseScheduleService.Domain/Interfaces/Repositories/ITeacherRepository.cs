@@ -10,6 +10,8 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
   {
     Task<Teacher?> IsEmailExistsAsync(string email, int? excludeId = null);
     Task<Teacher?> IsPhoneExistsAsync(string phone, int? excludeId = null);
+    Task<Teacher?> IsTeacherIdExistsAsync(int Id);
+
     Task<(IEnumerable<Teacher> Data, int TotalRecords)> GetPagedTeachersAsync(
         int page, int pageSize, string? search,
         bool? isActive, int? yoBFrom, int? yoBTo,

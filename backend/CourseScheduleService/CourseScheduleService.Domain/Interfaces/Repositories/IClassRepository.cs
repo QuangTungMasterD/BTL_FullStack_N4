@@ -9,6 +9,7 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
   public interface IClassRepository : IRepository<Class>
   {
     Task<Class?> IsClassNameExistsAsync(string className, int? excludeId = null);
+    Task<Class?> IsClassIdExistsAsync(int Id);
     Task<IEnumerable<Class>> GetClassesByCourseAsync(int courseId);
     Task<(IEnumerable<Class> Data, int TotalRecords)> GetPagedClassesAsync(
         int page, int pageSize, string? search,

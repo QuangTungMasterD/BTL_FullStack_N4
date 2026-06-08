@@ -113,7 +113,7 @@ namespace CourseScheduleService.Application.Services
 
     public async Task<ApiResponse<TeacherResDto?>> RestoreTeacherAsync(int id)
     {
-      var teacher = await _teacherRepository.GetByIdAsync(id);
+      var teacher = await _teacherRepository.IsTeacherIdExistsAsync(id);
       if (teacher == null)
       {
         return ApiResponse<TeacherResDto?>.ErrorResponse($"Không tìm thấy giáo viên {id}.", statusCode: 404);

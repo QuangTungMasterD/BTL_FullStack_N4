@@ -1,0 +1,30 @@
+import api from './api';
+
+const specializationService = {
+  // Lấy danh sách có phân trang
+  getSpecializationsPaged(params = {}) {
+    return api.get('/Specializations/paged', { params });
+  },
+  // Lấy tất cả
+  getAllSpecializations() {
+    return api.get('/Specializations');
+  },
+  // Lấy chi tiết
+  getSpecializationById(id) {
+    return api.get(`/Specializations/${id}`);
+  },
+  // Tạo mới
+  createSpecialization(data) {
+    return api.post('/Specializations', data);
+  },
+  // Cập nhật
+  updateSpecialization(id, data) {
+    return api.put(`/Specializations/${id}`, data);
+  },
+  // Xóa vĩnh viễn (không có xóa mềm theo Swagger)
+  deleteSpecializationPermanent(id) {
+    return api.delete(`/Specializations/${id}/permanent`);
+  },
+};
+
+export default specializationService;

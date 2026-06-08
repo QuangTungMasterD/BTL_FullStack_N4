@@ -2,12 +2,24 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import Index from '@/pages/index.vue';
 
+import CoursesManager from '@/pages/academic/CoursesManager.vue';
+
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    // component: () => import('@/pages/index.vue'), // Nếu dùng cái này không cần import trên
-    component: Index, //Nếu dùng cái này thì import ở trên
+    component: () => import('@/layouts/DefaultLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: { template: '<div>HOME PAGE</div>' }
+      },
+      {
+        path: 'courses',
+        name: 'Courses',
+        component: CoursesManager
+      },
+    ]
   }
 ]
 

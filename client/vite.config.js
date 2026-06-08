@@ -7,11 +7,19 @@ import vuetify from 'vite-plugin-vuetify'
 export default defineConfig({
   plugins: [
     vue(),
-    vuetify()
+    vuetify(),
   ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      }
+    }
+  }
 })

@@ -6,7 +6,7 @@ export const useCourseStore = defineStore('course', {
     courses: [],
     currentCourse: null,
     pagedData: {
-      data: [],        // Đổi từ items thành data (theo API)
+      data: [],
       page: 1,
       pageSize: 12,
       totalRecords: 0,
@@ -19,10 +19,18 @@ export const useCourseStore = defineStore('course', {
     errorStatusCode: null,
     validationErrors: null,
     timestamp: null,
+    // Thêm state riêng cho export/import
+    isExporting: false,
+    isImporting: false,
+    importResult: {
+      show: false,
+      total: 0,
+      successCount: 0,
+      errors: [],
+    },
   }),
 
   getters: {
-    // Course level options cho filter
     levelOptions: () => [
       { value: 0, label: 'Tất cả trình độ' },
       { value: 1, label: 'Sơ cấp' },
@@ -32,7 +40,6 @@ export const useCourseStore = defineStore('course', {
       { value: 5, label: 'Chuyên gia' },
     ],
     
-    // Status options cho filter
     statusOptions: () => [
       { value: 0, label: 'Tất cả trạng thái' },
       { value: true, label: 'Đang mở' },
@@ -46,6 +53,10 @@ export const useCourseStore = defineStore('course', {
       this.errorStatusCode = null;
       this.validationErrors = null;
       this.timestamp = null;
+    },
+
+    closeImportResult() {
+      this.importResult.show = false;
     },
 
     async fetchPaged(params = {}) {
@@ -177,6 +188,51 @@ export const useCourseStore = defineStore('course', {
         throw err;
       } finally {
         this.loading = false;
+      }
+    },
+
+    // EXPORT - dùng isExporting riêng
+    async exportToExcel(params = {}) {
+      this.isExporting = true;
+      this.clearErrors();
+      try {
+        const result = await courseService.exportToExcel(params);
+        return result;
+      } catch (err) {
+        this.error = err.message;
+        throw err;
+      } finally {
+        this.isExporting = false;
+      }
+    },
+
+    // IMPORT - dùng isImporting riêng
+    async importFromExcel(file) {
+      this.isImporting = true;
+      this.clearErrors();
+      this.importResult = { show: false, total: 0, successCount: 0, errors: [] };
+      
+      try {
+        const result = await courseService.importFromExcel(file);
+        
+        this.importResult = {
+          show: true,
+          total: result.total,
+          successCount: result.success.length,
+          errors: result.errors,
+        };
+        
+        await this.fetchPaged({ 
+          page: this.pagedData.page, 
+          pageSize: this.pagedData.pageSize 
+        });
+        
+        return result;
+      } catch (err) {
+        this.error = err.message;
+        throw err;
+      } finally {
+        this.isImporting = false;
       }
     },
   },

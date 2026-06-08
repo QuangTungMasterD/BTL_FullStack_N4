@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import Input from './ui/Input.vue';
+import Input from './Input.vue';
 defineProps({ start: String, end: String });
 defineEmits(['update:start', 'update:end']);
 </script>

@@ -22,6 +22,9 @@ namespace CourseScheduleService.Domain.Entities
         [Column("yob")]
         public DateOnly YoB { get; set; }
 
+        [Column("gender")]
+        public bool Gender { get; set; }
+
         [Column("is_active", TypeName = "bit")]
         public bool IsActive { get; set; } = true;
 

@@ -26,8 +26,8 @@ import SidebarItem from './SideBarItem.vue'
 const menuItems = [
   { label: 'Dashboard', icon: 'dashboard', path: '/' },
   { label: 'Course', icon: 'school', path: '/courses' },
+  { label: 'Finance', icon: 'payments', path: '/teachers' },
   { label: 'Users', icon: 'group', path: '/users' },
-  { label: 'Finance', icon: 'payments', path: '/finance' },
   { label: 'Library', icon: 'local_library', path: '/library' },
   { label: 'Reports', icon: 'analytics', path: '/reports' }
 ]

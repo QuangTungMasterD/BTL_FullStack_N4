@@ -23,6 +23,9 @@ namespace CourseScheduleService.Application.DTOs.TeacherDtos
 
         [ValidDateOfBirth(ErrorMessage = "Ngày sinh không hợp lệ")]
         public DateOnly YoB { get; set; }
+
+        [Required(ErrorMessage = "Giới tính không được để trống")]
+        public bool Gender { get; set; }
         public bool IsActive { get; set; } = true;
     }
 }

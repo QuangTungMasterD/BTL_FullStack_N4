@@ -6,16 +6,27 @@ export const useTeacherStore = defineStore('teacher', {
     teachers: [],
     currentTeacher: null,
     pagedData: {
-      items: [],
-      totalCount: 0,
-      pageNumber: 1,
+      data: [],           // ← sửa: items → data
+      page: 1,
       pageSize: 10,
+      totalRecords: 0,    // ← sửa: totalCount → totalRecords
+      totalPages: 0,
+      hasNext: false,
+      hasPrev: false,
     },
     loading: false,
     error: null,
     errorStatusCode: null,
     validationErrors: null,
     timestamp: null,
+    isExporting: false,
+    isImporting: false,
+    importResult: {
+      show: false,
+      total: 0,
+      successCount: 0,
+      errors: [],
+    },
   }),
 
   actions: {
@@ -26,12 +37,16 @@ export const useTeacherStore = defineStore('teacher', {
       this.timestamp = null;
     },
 
+    closeImportResult() {
+      this.importResult.show = false;
+    },
+
     async fetchAll() {
       this.loading = true;
       this.clearErrors();
       try {
         const data = await teacherService.getAllTeachers();
-        this.teachers = data;
+        this.teachers = Array.isArray(data) ? data : [];
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
@@ -42,12 +57,20 @@ export const useTeacherStore = defineStore('teacher', {
       }
     },
 
-    async fetchPaged(pageNumber = 1, pageSize = 10) {
+    async fetchPaged(params = {}) {
       this.loading = true;
       this.clearErrors();
       try {
-        const data = await teacherService.getTeachersPaged({ pageNumber, pageSize });
-        this.pagedData = data;
+        const data = await teacherService.getTeachersPaged(params);
+        this.pagedData = {
+          data: data?.data || [],
+          page: data?.page || 1,
+          pageSize: data?.pageSize || 10,
+          totalRecords: data?.totalRecords || 0,
+          totalPages: data?.totalPages || 0,
+          hasNext: data?.hasNext || false,
+          hasPrev: data?.hasPrev || false,
+        };
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
@@ -114,8 +137,6 @@ export const useTeacherStore = defineStore('teacher', {
       }
     },
 
-    // Xóa mềm (theo Swagger, teacher chỉ có xóa cứng?)
-    // Nhưng để đồng bộ, giữ method này
     async delete(id) {
       this.loading = true;
       this.clearErrors();
@@ -123,6 +144,10 @@ export const useTeacherStore = defineStore('teacher', {
         await teacherService.deleteTeacher(id);
         this.teachers = this.teachers.filter(t => t.id !== id);
         if (this.currentTeacher?.id === id) this.currentTeacher = null;
+        await this.fetchPaged({ 
+          page: this.pagedData.page, 
+          pageSize: this.pagedData.pageSize 
+        });
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
@@ -134,7 +159,6 @@ export const useTeacherStore = defineStore('teacher', {
       }
     },
 
-    // Xóa vĩnh viễn
     async deletePermanent(id) {
       this.loading = true;
       this.clearErrors();
@@ -142,6 +166,10 @@ export const useTeacherStore = defineStore('teacher', {
         await teacherService.deleteTeacherPermanent(id);
         this.teachers = this.teachers.filter(t => t.id !== id);
         if (this.currentTeacher?.id === id) this.currentTeacher = null;
+        await this.fetchPaged({ 
+          page: this.pagedData.page, 
+          pageSize: this.pagedData.pageSize 
+        });
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
@@ -153,14 +181,15 @@ export const useTeacherStore = defineStore('teacher', {
       }
     },
 
-    // Khôi phục
     async restore(id) {
       this.loading = true;
       this.clearErrors();
       try {
         const restored = await teacherService.restoreTeacher(id);
-        // Refresh lại danh sách sau khi restore
-        await this.fetchPaged(this.pagedData.pageNumber, this.pagedData.pageSize);
+        await this.fetchPaged({ 
+          page: this.pagedData.page, 
+          pageSize: this.pagedData.pageSize 
+        });
         return restored;
       } catch (err) {
         this.error = err.message;
@@ -170,6 +199,46 @@ export const useTeacherStore = defineStore('teacher', {
         throw err;
       } finally {
         this.loading = false;
+      }
+    },
+
+    async exportToExcel(params = {}) {
+      this.isExporting = true;
+      this.clearErrors();
+      try {
+        const result = await teacherService.exportToExcel(params);
+        return result;
+      } catch (err) {
+        this.error = err.message;
+        throw err;
+      } finally {
+        this.isExporting = false;
+      }
+    },
+
+    async importFromExcel(file) {
+      this.isImporting = true;
+      this.clearErrors();
+      this.importResult = { show: false, total: 0, successCount: 0, errors: [] };
+      
+      try {
+        const result = await teacherService.importFromExcel(file);
+        this.importResult = {
+          show: true,
+          total: result.total,
+          successCount: result.success.length,
+          errors: result.errors,
+        };
+        await this.fetchPaged({ 
+          page: this.pagedData.page, 
+          pageSize: this.pagedData.pageSize 
+        });
+        return result;
+      } catch (err) {
+        this.error = err.message;
+        throw err;
+      } finally {
+        this.isImporting = false;
       }
     },
   },

@@ -11,6 +11,7 @@ namespace CourseScheduleService.Application.DTOs.TeacherDtos
         public bool? IsActive { get; set; }
         public int? YoBFrom { get; set; }
         public int? YoBTo { get; set; }
+        public bool Gender { get; set; }
         public bool? IsDeleted {get; set; } = false;
     }
 }

@@ -6,16 +6,27 @@ export const useClassStore = defineStore('class', {
     classes: [],
     currentClass: null,
     pagedData: {
-      items: [],
-      totalCount: 0,
-      pageNumber: 1,
+      data: [],           // ← sửa: items → data
+      page: 1,
       pageSize: 10,
+      totalRecords: 0,    // ← sửa: totalCount → totalRecords
+      totalPages: 0,
+      hasNext: false,
+      hasPrev: false,
     },
     loading: false,
     error: null,
     errorStatusCode: null,
     validationErrors: null,
     timestamp: null,
+    isExporting: false,
+    isImporting: false,
+    importResult: {
+      show: false,
+      total: 0,
+      successCount: 0,
+      errors: [],
+    },
   }),
 
   actions: {
@@ -26,12 +37,16 @@ export const useClassStore = defineStore('class', {
       this.timestamp = null;
     },
 
+    closeImportResult() {
+      this.importResult.show = false;
+    },
+
     async fetchAll() {
       this.loading = true;
       this.clearErrors();
       try {
         const data = await classService.getAllClasses();
-        this.classes = data;
+        this.classes = Array.isArray(data) ? data : [];
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
@@ -42,12 +57,20 @@ export const useClassStore = defineStore('class', {
       }
     },
 
-    async fetchPaged(pageNumber = 1, pageSize = 10) {
+    async fetchPaged(params = {}) {
       this.loading = true;
       this.clearErrors();
       try {
-        const data = await classService.getClassesPaged({ pageNumber, pageSize });
-        this.pagedData = data;
+        const data = await classService.getClassesPaged(params);
+        this.pagedData = {
+          data: data?.data || [],
+          page: data?.page || 1,
+          pageSize: data?.pageSize || 10,
+          totalRecords: data?.totalRecords || 0,
+          totalPages: data?.totalPages || 0,
+          hasNext: data?.hasNext || false,
+          hasPrev: data?.hasPrev || false,
+        };
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
@@ -125,6 +148,10 @@ export const useClassStore = defineStore('class', {
         }
         this.classes = this.classes.filter(c => c.id !== id);
         if (this.currentClass?.id === id) this.currentClass = null;
+        await this.fetchPaged({ 
+          page: this.pagedData.page, 
+          pageSize: this.pagedData.pageSize 
+        });
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
@@ -141,7 +168,10 @@ export const useClassStore = defineStore('class', {
       this.clearErrors();
       try {
         const restored = await classService.restoreClass(id);
-        await this.fetchPaged(this.pagedData.pageNumber, this.pagedData.pageSize);
+        await this.fetchPaged({ 
+          page: this.pagedData.page, 
+          pageSize: this.pagedData.pageSize 
+        });
         return restored;
       } catch (err) {
         this.error = err.message;
@@ -159,8 +189,8 @@ export const useClassStore = defineStore('class', {
       this.clearErrors();
       try {
         const data = await classService.getClassesByCourseId(courseId);
-        this.classes = data;
-        return data;
+        this.classes = Array.isArray(data) ? data : [];
+        return this.classes;
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
@@ -169,6 +199,46 @@ export const useClassStore = defineStore('class', {
         throw err;
       } finally {
         this.loading = false;
+      }
+    },
+
+    async exportToExcel(params = {}) {
+      this.isExporting = true;
+      this.clearErrors();
+      try {
+        const result = await classService.exportToExcel(params);
+        return result;
+      } catch (err) {
+        this.error = err.message;
+        throw err;
+      } finally {
+        this.isExporting = false;
+      }
+    },
+
+    async importFromExcel(file) {
+      this.isImporting = true;
+      this.clearErrors();
+      this.importResult = { show: false, total: 0, successCount: 0, errors: [] };
+      
+      try {
+        const result = await classService.importFromExcel(file);
+        this.importResult = {
+          show: true,
+          total: result.total,
+          successCount: result.success.length,
+          errors: result.errors,
+        };
+        await this.fetchPaged({ 
+          page: this.pagedData.page, 
+          pageSize: this.pagedData.pageSize 
+        });
+        return result;
+      } catch (err) {
+        this.error = err.message;
+        throw err;
+      } finally {
+        this.isImporting = false;
       }
     },
   },

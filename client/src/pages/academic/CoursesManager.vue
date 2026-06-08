@@ -13,6 +13,10 @@
           <span class="material-symbols-outlined">delete_sweep</span>
           Thùng rác
         </Link>
+        <ImportExportButtons 
+          :store="courseStore" 
+          :export-params="currentParams" 
+        />
         <Button variant="primary" @click="openCreateForm">
           <span class="material-symbols-outlined">add</span>
           Thêm khóa học
@@ -162,6 +166,8 @@ import CourseCard from '@/components/business/CourseCard.vue';
 import CourseFilters from '@/components/business/CourseFilters.vue';
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import Link from '@/components/ui/Link.vue';
+import { LEVEL_OPTIONS, STATUS_OPTIONS } from '@/constants';
+import ImportExportButtons from '@/components/business/ImportExportButtons.vue';
 
 const courseStore = useCourseStore();
 const specializationStore = useSpecializationStore()
@@ -186,18 +192,8 @@ const formData = reactive({
 });
 
 // Options
-const levelOptions = [
-  { value: 1, label: 'Sơ cấp' },
-  { value: 2, label: 'Căn bản' },
-  { value: 3, label: 'Trung cấp' },
-  { value: 4, label: 'Cao cấp' },
-  { value: 5, label: 'Chuyên gia' },
-];
-
-const statusOptions = [
-  { value: true, label: 'Đang mở' },
-  { value: false, label: 'Ngừng mở' },
-];
+const levelOptions = LEVEL_OPTIONS;
+const statusOptions = STATUS_OPTIONS;
 
 const specializationOptions = computed(() =>
   specializationStore.specializations.map(item => ({

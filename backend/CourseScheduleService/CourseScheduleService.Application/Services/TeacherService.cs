@@ -91,7 +91,7 @@ namespace CourseScheduleService.Application.Services
 
     public async Task<ApiResponse<bool>> HardDeleteTeacherAsync(int id)
     {
-      var teacher = await _teacherRepository.GetByIdAsync(id);
+      var teacher = await _teacherRepository.IsTeacherIdExistsAsync(id);
       if (teacher == null)
       {
         return ApiResponse<bool>.ErrorResponse($"Không tìm thấy giáo viên {id}.", statusCode: 404);
@@ -186,7 +186,7 @@ namespace CourseScheduleService.Application.Services
       var (data, totalRecords) = await _teacherRepository.GetPagedTeachersAsync(
           req.Page, req.PageSize, req.Search,
           req.IsActive, req.YoBFrom, req.YoBTo,
-          req.SortBy, req.SortDesc
+          req.SortBy, req.SortDesc, req.IsDeleted
       );
 
       var result = new PagedResponse<TeacherResDto>

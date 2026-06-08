@@ -11,7 +11,7 @@
         @change="$emit('update:modelValue', $event.target.value)"
       >
         <option v-if="placeholder" value="">{{ placeholder }}</option>
-        <option v-for="opt in options" :key="opt.value" :value="opt.value" :selected="(!modelValue && defaultValue === opt.value) || modelValue === opt.value">
+        <option v-for="opt in options" :key="opt.value" :value="opt.value">
           {{ opt.label }}
         </option>
       </select>

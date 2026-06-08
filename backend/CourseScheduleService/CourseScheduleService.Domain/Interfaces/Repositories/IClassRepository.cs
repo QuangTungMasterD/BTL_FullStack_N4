@@ -15,7 +15,7 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
         int page, int pageSize, string? search,
         int? courseId, ClassStatus? status,
         DateOnly? startDateFrom, DateOnly? startDateTo,
-        string? sortBy, bool sortDesc
+        string? sortBy, bool sortDesc, bool? IsDeleted = false
     );
   }
 }

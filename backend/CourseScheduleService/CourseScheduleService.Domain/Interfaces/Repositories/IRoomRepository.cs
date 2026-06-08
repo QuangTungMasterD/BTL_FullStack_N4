@@ -15,7 +15,7 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
         Task<(IEnumerable<Room> Data, int TotalRecords)> GetPagedRoomsAsync(
             int page, int pageSize, string? search,
             RoomType? roomType, RoomStatus? status,
-            string? sortBy, bool sortDesc
+            string? sortBy, bool sortDesc, bool? IsDeleted = false
         );
     }
 }

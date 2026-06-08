@@ -42,8 +42,9 @@ namespace CourseScheduleService.Infrastructure.Repositories
         decimal? minFee, 
         decimal? maxFee,
         string? sortBy, 
-        bool sortDesc) {
-      var query = _dbSet.Where(c => !c.IsDeleted);
+        bool sortDesc,
+        bool? IsDeleted = false) {
+      var query = _dbSet.Where(c => c.IsDeleted == IsDeleted);
 
       if (!string.IsNullOrWhiteSpace(search))
         query = query.Where(c => c.CourseName.Contains(search));

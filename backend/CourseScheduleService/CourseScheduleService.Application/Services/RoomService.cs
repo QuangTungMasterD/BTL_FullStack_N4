@@ -58,7 +58,7 @@ namespace CourseScheduleService.Application.Services
 
     public async Task<ApiResponse<bool>> HardDeleteRoomAsync(int id)
     {
-      var room = await _roomRepository.GetByIdAsync(id);
+      var room = await _roomRepository.IsRoomIdExistsAsync(id);
       if (room == null)
         return ApiResponse<bool>.ErrorResponse($"Không tìm thấy phòng {id}.", statusCode: 404);
 
@@ -145,7 +145,7 @@ namespace CourseScheduleService.Application.Services
       var (data, totalRecords) = await _roomRepository.GetPagedRoomsAsync(
           req.Page, req.PageSize, req.Search,
           req.RoomType, req.Status,
-          req.SortBy, req.SortDesc
+          req.SortBy, req.SortDesc, req.IsDeleted
       );
 
       var result = new PagedResponse<RoomResDto>

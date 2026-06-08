@@ -13,5 +13,6 @@ namespace CourseScheduleService.Application.DTOs.ClassDtos
     public ClassStatus? Status { get; set; }
     public DateOnly? StartDateFrom { get; set; }
     public DateOnly? StartDateTo { get; set; }
+    public bool? IsDeleted {get; set; } = false;
   }
 }

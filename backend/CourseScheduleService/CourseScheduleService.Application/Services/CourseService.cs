@@ -158,7 +158,7 @@ namespace CourseScheduleService.Application.Services
 
     public async Task<ApiResponse<bool>> HardDeleteCourseAsync(int id)
     {
-      var course = await this._courseRepository.GetByIdAsync(id);
+      var course = await this._courseRepository.IsCourseIdExistsAsync(id);
       if (course == null)
       {
         return ApiResponse<bool>.ErrorResponse(String.Format($"Not found course {id}."));
@@ -175,7 +175,7 @@ namespace CourseScheduleService.Application.Services
       var (data, totalRecords) = await _courseRepository.GetPagedCoursesAsync(
           req.Page, req.PageSize, req.Search,
           req.SpecializationId, req.Level, req.IsActive,
-          req.MinFee, req.MaxFee, req.SortBy, req.SortDesc
+          req.MinFee, req.MaxFee, req.SortBy, req.SortDesc, req.IsDeleted
       );
 
       var result = new PagedResponse<CourseResDto>

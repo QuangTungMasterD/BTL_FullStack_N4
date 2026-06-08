@@ -2,20 +2,38 @@
   <div class="group relative bg-surface-container-lowest rounded-xl border border-outline-variant hover:shadow-lg transition-all duration-200">
     <!-- Action buttons - hiện khi hover -->
     <div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-      <button 
-        @click="$emit('edit', course)"
-        class="w-[36px] h-[36px] p-1.5 rounded-xl bg-surface-container hover:bg-primary-container/20 text-on-surface-variant hover:text-primary transition-colors"
-        title="Sửa khóa học"
-      >
-        <span class="material-symbols-outlined text-sm">edit</span>
-      </button>
-      <button 
-        @click="$emit('delete', course)"
-        class="w-[36px] h-[36px] p-1.5 rounded-xl bg-surface-container hover:bg-error-container/20 text-on-surface-variant hover:text-error transition-colors"
-        title="Xóa khóa học"
-      >
-        <span class="material-symbols-outlined text-sm">delete</span>
-      </button>
+      <template v-if="isTrash">
+        <button 
+          @click="$emit('restore', course)"
+          class="w-[36px] h-[36px] p-1.5 rounded-xl bg-surface-container hover:bg-success-container/20 text-on-surface-variant hover:text-success transition-colors"
+          title="Khôi phục khóa học"
+        >
+          <span class="material-symbols-outlined text-sm">restore_from_trash</span>
+        </button>
+        <button 
+          @click="$emit('delete-permanent', course)"
+          class="w-[36px] h-[36px] p-1.5 rounded-xl bg-surface-container hover:bg-error-container/20 text-on-surface-variant hover:text-error transition-colors"
+          title="Xóa vĩnh viễn"
+        >
+          <span class="material-symbols-outlined text-sm">delete_forever</span>
+        </button>
+      </template>
+      <template v-else>
+        <button 
+          @click="$emit('edit', course.id)"
+          class="w-[36px] h-[36px] p-1.5 rounded-xl bg-surface-container hover:bg-primary-container/20 text-on-surface-variant hover:text-primary transition-colors"
+          title="Sửa khóa học"
+        >
+          <span class="material-symbols-outlined text-sm">edit</span>
+        </button>
+        <button 
+          @click="$emit('delete', course)"
+          class="w-[36px] h-[36px] p-1.5 rounded-xl bg-surface-container hover:bg-error-container/20 text-on-surface-variant hover:text-error transition-colors"
+          title="Xóa khóa học"
+        >
+          <span class="material-symbols-outlined text-sm">delete</span>
+        </button>
+      </template>
     </div>
 
     <div class="p-4">
@@ -71,9 +89,14 @@ defineProps({
     type: Object,
     required: true,
   },
+  isTrash: {
+    type: Boolean,
+    default: false,
+  },
+
 });
 
-defineEmits(['edit', 'delete']);
+defineEmits(['edit', 'delete', 'restore', 'delete-permanent']);
 </script>
 
 <style scoped>

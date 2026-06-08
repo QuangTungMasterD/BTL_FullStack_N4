@@ -8,10 +8,16 @@
           Quản lý danh sách khóa học và chương trình đào tạo của hệ thống
         </p>
       </div>
-      <Button variant="primary" @click="openCreateForm">
-        <span class="material-symbols-outlined">add</span>
-        Thêm khóa học
-      </Button>
+      <div class="flex gap-3">
+        <Link to="/courses/trash" variant="primary" class="">
+          <span class="material-symbols-outlined">delete_sweep</span>
+          Thùng rác
+        </Link>
+        <Button variant="primary" @click="openCreateForm">
+          <span class="material-symbols-outlined">add</span>
+          Thêm khóa học
+        </Button>
+      </div>
     </div>
 
     <!-- Error Alert -->
@@ -114,6 +120,13 @@
           />
         </div>
 
+        <Select
+          v-model="formData.specializationId"
+          label="Chuyên ngành"
+          :options="specializationOptions"
+          required
+        />
+
         <div class="flex justify-end gap-3 pt-4">
           <Button variant="outline" @click="closeModal">Hủy</Button>
           <Button variant="primary" type="submit" :loading="courseStore.loading">
@@ -136,7 +149,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useCourseStore } from '@/stores';
+import { useCourseStore, useSpecializationStore } from '@/stores';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Select from '@/components/ui/Select.vue';
@@ -148,8 +161,10 @@ import ErrorAlert from '@/components/ui/ErrorAlert.vue';
 import CourseCard from '@/components/business/CourseCard.vue';
 import CourseFilters from '@/components/business/CourseFilters.vue';
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
+import Link from '@/components/ui/Link.vue';
 
 const courseStore = useCourseStore();
+const specializationStore = useSpecializationStore()
 const { pagedData, loading, validationErrors } = storeToRefs(courseStore);
 
 // Modal state
@@ -167,6 +182,7 @@ const formData = reactive({
   lesson: null,
   level: null,
   isActive: true,
+  specializationId: null,
 });
 
 // Options
@@ -182,6 +198,13 @@ const statusOptions = [
   { value: true, label: 'Đang mở' },
   { value: false, label: 'Ngừng mở' },
 ];
+
+const specializationOptions = computed(() =>
+  specializationStore.specializations.map(item => ({
+    value: item.id,
+    label: item.specializationName
+  }))
+);
 
 // Current query params
 const currentParams = ref({
@@ -214,12 +237,6 @@ const handleDeleteCourse = async () => {
   }
 };
 
-// Open edit modal
-const openEditModal = (course) => {
-  selectedCourse.value = course;
-  showModal.value = true;
-};
-
 const handlePageChange = (page) => {
   currentParams.value.page = page;
   loadCourses();
@@ -237,7 +254,8 @@ const openCreateForm = () => {
   showModal.value = true;
 };
 
-const openEditForm = async (id) => {
+const openEditModal = async (id) => {
+  console.log(id)
   isEditing.value = true;
   editingId.value = id;
   try {
@@ -248,6 +266,7 @@ const openEditForm = async (id) => {
     formData.lesson = course.lesson;
     formData.level = course.level;
     formData.isActive = course.isActive;
+    formData.specializationId = course.specializationId;
     showModal.value = true;
   } catch (err) {
     console.error('Failed to load course:', err);
@@ -269,11 +288,20 @@ const closeModal = () => {
 };
 
 const handleSubmit = async () => {
+  const submitData = {
+    courseName: formData.courseName,
+    desct: formData.desct,
+    tuitionFee: Number(formData.tuitionFee),
+    lesson: Number(formData.lesson),
+    level: Number(formData.level),
+    isActive: formData.isActive === true || formData.isActive === 'true',
+    specializationId: formData.specializationId,
+  };
   try {
     if (isEditing.value) {
-      await courseStore.update(editingId.value, { ...formData });
+      await courseStore.update(editingId.value, { ...submitData });
     } else {
-      await courseStore.create({ ...formData });
+      await courseStore.create({ ...submitData });
     }
     closeModal();
     await loadCourses();
@@ -283,7 +311,8 @@ const handleSubmit = async () => {
   }
 };
 
-onMounted(() => {
-  loadCourses();
+onMounted(async () => {
+  await specializationStore.fetchAll();
+  await loadCourses();
 });
 </script>

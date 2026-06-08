@@ -11,5 +11,6 @@ namespace CourseScheduleService.Application.DTOs.RoomDtos
     {
         public RoomType? RoomType { get; set; }
         public RoomStatus? Status { get; set; }
+        public bool? IsDeleted {get; set; } = false;
     }
 }

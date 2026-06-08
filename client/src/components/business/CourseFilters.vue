@@ -138,7 +138,7 @@ const onFilterChange = () => {
   if (debounceTimer) clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
     applyFilters();
-  }, 1000);
+  }, 700);
 };
 
 const resetFilters = () => {

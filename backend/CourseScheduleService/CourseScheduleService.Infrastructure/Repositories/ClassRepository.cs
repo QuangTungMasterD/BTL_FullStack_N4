@@ -33,9 +33,9 @@ namespace CourseScheduleService.Infrastructure.Repositories
         int page, int pageSize, string? search,
         int? courseId, ClassStatus? status,
         DateOnly? startDateFrom, DateOnly? startDateTo,
-        string? sortBy, bool sortDesc)
+        string? sortBy, bool sortDesc, bool? IsDeleted = false)
     {
-      var query = _dbSet.Where(c => !c.IsDeleted);
+      var query = _dbSet.Where(c => c.IsDeleted == IsDeleted);
 
       if (!string.IsNullOrWhiteSpace(search))
         query = query.Where(c => c.ClassName.Contains(search));

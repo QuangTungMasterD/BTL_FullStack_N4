@@ -14,5 +14,6 @@ namespace CourseScheduleService.Application.DTOs.CourseDtos
         public bool? IsActive { get; set; }
         public decimal? MinFee { get; set; }
         public decimal? MaxFee { get; set; }
+        public bool? IsDeleted {get; set; } = false;
     }
 }

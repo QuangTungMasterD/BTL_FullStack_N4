@@ -22,7 +22,8 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
         decimal? minFee,
         decimal? maxFee,
         string? sortBy,
-        bool sortDesc
+        bool sortDesc,
+        bool? IsDeleted = false
     );
   }
 }

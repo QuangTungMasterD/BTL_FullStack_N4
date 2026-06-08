@@ -7,7 +7,7 @@
       <div class="relative w-full max-w-lg rounded-2xl bg-surface-container-lowest shadow-xl overflow-hidden animate-fade-in-up">
         <div class="flex items-center justify-between border-b border-outline-variant px-6 py-4 bg-surface-container-low">
           <h3 class="font-headline-md text-headline-md">{{ title }}</h3>
-          <button class="p-1 rounded-full hover:bg-surface-container-high" @click="close">
+          <button class="p-1 w-[50px] h-[50px] flex align-center justify-center rounded-full hover:bg-surface-container-high" @click="close">
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>

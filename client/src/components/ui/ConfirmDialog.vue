@@ -3,7 +3,7 @@
     <p class="text-body-md text-on-surface-variant">{{ message }}</p>
     <template #footer>
       <Button variant="outline" @click="cancel">Hủy</Button>
-      <Button variant="error" @click="confirm">{{ confirmText }}</Button>
+      <Button :variant="type" @click="confirm">{{ confirmText }}</Button>
     </template>
   </Modal>
 </template>
@@ -18,6 +18,7 @@ const props = defineProps({
   title: { type: String, default: 'Xác nhận' },
   message: String,
   confirmText: { type: String, default: 'Xóa' },
+  type: { type: String, default: 'error' }
 });
 const emit = defineEmits(['update:modelValue', 'confirm']);
 

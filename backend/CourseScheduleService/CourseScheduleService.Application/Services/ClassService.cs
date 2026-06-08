@@ -81,7 +81,7 @@ namespace CourseScheduleService.Application.Services
 
     public async Task<ApiResponse<bool>> HardDeleteClassAsync(int id)
     {
-      var cls = await _classRepository.GetByIdAsync(id);
+      var cls = await _classRepository.IsClassIdExistsAsync(id);
       if (cls == null)
       {
         return ApiResponse<bool>.ErrorResponse($"Không tìm thấy lớp học {id}.", statusCode: 404);
@@ -218,7 +218,7 @@ namespace CourseScheduleService.Application.Services
           req.Page, req.PageSize, req.Search,
           req.CourseId, req.Status,
           req.StartDateFrom, req.StartDateTo,
-          req.SortBy, req.SortDesc
+          req.SortBy, req.SortDesc, req.IsDeleted
       );
 
       var result = new PagedResponse<ClassResDto>

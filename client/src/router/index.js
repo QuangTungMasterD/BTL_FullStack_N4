@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Index from '@/pages/index.vue';
 
 import CoursesManager from '@/pages/academic/CoursesManager.vue';
+import CoursesTrash from '@/pages/academic/CoursesTrash.vue';
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
         path: 'courses',
         name: 'Courses',
         component: CoursesManager
+      },
+      {
+        path: 'courses/trash',
+        name: 'Courses trash',
+        component: CoursesTrash
       },
     ]
   }

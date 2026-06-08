@@ -15,7 +15,7 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
     Task<(IEnumerable<Teacher> Data, int TotalRecords)> GetPagedTeachersAsync(
         int page, int pageSize, string? search,
         bool? isActive, int? yoBFrom, int? yoBTo,
-        string? sortBy, bool sortDesc
+        string? sortBy, bool sortDesc, bool? IsDeleted = false
     );
   }
 }

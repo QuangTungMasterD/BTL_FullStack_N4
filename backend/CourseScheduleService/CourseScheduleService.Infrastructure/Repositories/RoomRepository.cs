@@ -25,9 +25,9 @@ namespace CourseScheduleService.Infrastructure.Repositories
         public async Task<(IEnumerable<Room> Data, int TotalRecords)> GetPagedRoomsAsync(
             int page, int pageSize, string? search,
             RoomType? roomType, RoomStatus? status,
-            string? sortBy, bool sortDesc)
+            string? sortBy, bool sortDesc, bool? IsDeleted = false)
         {
-            var query = _dbSet.Where(r => !r.IsDeleted);
+            var query = _dbSet.Where(r => r.IsDeleted == IsDeleted);
 
             if (!string.IsNullOrWhiteSpace(search))
                 query = query.Where(r => r.RoomName.Contains(search));

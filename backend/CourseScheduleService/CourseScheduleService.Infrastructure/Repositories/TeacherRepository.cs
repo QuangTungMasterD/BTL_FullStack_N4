@@ -34,9 +34,9 @@ namespace CourseScheduleService.Infrastructure.Repositories
     public async Task<(IEnumerable<Teacher> Data, int TotalRecords)> GetPagedTeachersAsync(
         int page, int pageSize, string? search,
         bool? isActive, int? yoBFrom, int? yoBTo,
-        string? sortBy, bool sortDesc)
+        string? sortBy, bool sortDesc, bool? IsDeleted = false)
     {
-      var query = _dbSet.Where(t => !t.IsDeleted);
+      var query = _dbSet.Where(t => t.IsDeleted == IsDeleted);
 
       if (!string.IsNullOrWhiteSpace(search))
         query = query.Where(t => t.FullName.Contains(search) || t.Email.Contains(search) || t.Phone.Contains(search));

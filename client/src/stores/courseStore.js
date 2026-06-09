@@ -214,7 +214,7 @@ export const useCourseStore = defineStore('course', {
       
       try {
         const result = await courseService.importFromExcel(file);
-        
+        console.log(result)
         this.importResult = {
           show: true,
           total: result.total,

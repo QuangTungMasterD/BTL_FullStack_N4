@@ -56,6 +56,13 @@ namespace CourseScheduleService.API.Controllers
       return StatusCode(result.StatusCode, result);
     }
 
+    [HttpPatch("{id}/restore")]
+    public async Task<ActionResult<ApiResponse<TeacherReqDto?>>> RestoreCourseAsync(int id)
+    {
+      var result = await _teacherService.RestoreTeacherAsync(id);
+      return StatusCode(result.StatusCode, result);
+    }
+
     [HttpPut("{id}")]
     public async Task<ActionResult<ApiResponse<TeacherResDto?>>> UpdateTeacher([FromRoute] int id, [FromBody] TeacherReqDto teacherReqDto)
     {

@@ -5,7 +5,7 @@
       <div class="text-left">
         <h1 class="font-headline-lg text-headline-lg">Quản lý giáo viên</h1>
         <p class="text-body-md text-on-surface-variant mt-1">
-          Quản lý danh sách giáo viên của hệ thống
+          Quản lý danh sách giáo viên và thông tin giảng dạy
         </p>
       </div>
       <div class="flex gap-3">
@@ -97,18 +97,37 @@
         </div>
 
         <div class="grid grid-cols-2 gap-4">
+          <Input
+            v-model="formData.yoB"
+            type="date"
+            label="Năm sinh"
+            :error="validationErrors?.yoB?.join(', ')"
+          />
           <Select
             v-model="formData.gender"
             label="Giới tính"
             :options="genderOptions"
-          />
-          <Input
-            v-model="formData.yoB"
-            type="number"
-            label="Năm sinh"
-            placeholder="VD: 1990"
+            :error="validationErrors?.gender?.join(', ')"
           />
         </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <Select
+            v-model="formData.isActive"
+            label="Trạng thái"
+            :options="statusOptions"
+          />
+          <!-- Có thể thêm multiselect cho specialization nếu cần -->
+        </div>
+
+        <!-- Chuyên ngành (có thể chọn nhiều) 
+        Cần component multiselect, tạm thời dùng select multiple -->
+        <SpecializationSelector
+          v-model="formData.specializationIds"
+          :options="specializationOptions"
+          label="Chuyên ngành"
+          :error="validationErrors?.specializationIds?.join(', ')"
+        />
 
         <div class="flex justify-end gap-3 pt-4">
           <Button variant="outline" @click="closeModal">Hủy</Button>
@@ -119,7 +138,6 @@
       </form>
     </Modal>
 
-    <!-- Confirm Delete Dialog -->
     <ConfirmDialog
       v-model="showDeleteConfirm"
       title="Xác nhận xóa"
@@ -132,22 +150,26 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue';
-import { useTeacherStore } from '@/stores';
+import { storeToRefs } from 'pinia';
+import { useTeacherStore, useSpecializationStore } from '@/stores';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Select from '@/components/ui/Select.vue';
 import Modal from '@/components/ui/Modal.vue';
-import Link from '@/components/ui/Link.vue';
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
 import Pagination from '@/components/ui/Pagination.vue';
 import ErrorAlert from '@/components/ui/ErrorAlert.vue';
-import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import TeacherCard from '@/components/business/TeacherCard.vue';
 import TeacherFilters from '@/components/business/TeacherFilters.vue';
+import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
+import Link from '@/components/ui/Link.vue';
 import ImportExportButtons from '@/components/business/ImportExportButtons.vue';
+import SpecializationSelector from '@/components/business/SpecializationSelector.vue';
 
 const teacherStore = useTeacherStore();
+const specializationStore = useSpecializationStore();
+const { pagedData, loading, validationErrors } = storeToRefs(teacherStore);
 
 // Modal state
 const showModal = ref(false);
@@ -161,8 +183,10 @@ const formData = reactive({
   fullName: '',
   email: '',
   phone: '',
+  yoB: '',
   gender: null,
-  yoB: null,
+  isActive: true,
+  specializationIds: [], // mảng ID chuyên ngành
 });
 
 // Options
@@ -171,14 +195,22 @@ const genderOptions = [
   { value: true, label: 'Nam' },
   { value: false, label: 'Nữ' },
 ];
+const statusOptions = [
+  { value: true, label: 'Đang hoạt động' },
+  { value: false, label: 'Ngừng hoạt động' },
+];
+const specializationOptions = computed(() =>
+  specializationStore.specializations.map(spec => ({
+    value: spec.id,
+    label: spec.specializationName
+  }))
+);
 
 // Current query params
 const currentParams = ref({
   page: 1,
   pageSize: 12,
 });
-
-const validationErrors = computed(() => teacherStore.validationErrors);
 
 // Methods
 const loadTeachers = async () => {
@@ -188,6 +220,19 @@ const loadTeachers = async () => {
 const handleFilterChange = (params) => {
   currentParams.value = { pageSize: 12, ...params, page: 1 };
   loadTeachers();
+};
+
+const confirmDelete = (teacher) => {
+  selectedTeacher.value = teacher;
+  showDeleteConfirm.value = true;
+};
+
+const handleDeleteTeacher = async () => {
+  if (selectedTeacher.value) {
+    await teacherStore.delete(selectedTeacher.value.id);
+    showDeleteConfirm.value = false;
+    await loadTeachers();
+  }
 };
 
 const handlePageChange = (page) => {
@@ -215,8 +260,10 @@ const openEditModal = async (id) => {
     formData.fullName = teacher.fullName;
     formData.email = teacher.email || '';
     formData.phone = teacher.phone || '';
+    formData.yoB = teacher.yoB ? teacher.yoB.split('T')[0] : '';
     formData.gender = teacher.gender;
-    formData.yoB = teacher.yoB || null;
+    formData.isActive = teacher.isActive;
+    formData.specializationIds = teacher.specialization || []; // mảng ID
     showModal.value = true;
   } catch (err) {
     console.error('Failed to load teacher:', err);
@@ -227,8 +274,10 @@ const resetForm = () => {
   formData.fullName = '';
   formData.email = '';
   formData.phone = '';
+  formData.yoB = '';
   formData.gender = null;
-  formData.yoB = null;
+  formData.isActive = true;
+  formData.specializationIds = [];
 };
 
 const closeModal = () => {
@@ -239,12 +288,14 @@ const closeModal = () => {
 const handleSubmit = async () => {
   const submitData = {
     fullName: formData.fullName,
-    email: formData.email || null,
-    phone: formData.phone || null,
-    gender: formData.gender,
-    yoB: formData.yoB ? String(formData.yoB) : null,
+    email: formData.email,
+    phone: formData.phone,
+    yoB: formData.yoB || null,
+    gender: formData.gender === true || formData.gender === 'true',
+    isActive: formData.isActive === true || formData.isActive === 'true',
+    specializationIds: formData.specializationIds, // gửi mảng
   };
-  
+  console.log(submitData)
   try {
     if (isEditing.value) {
       await teacherStore.update(editingId.value, submitData);
@@ -258,20 +309,8 @@ const handleSubmit = async () => {
   }
 };
 
-const confirmDelete = (teacher) => {
-  selectedTeacher.value = teacher;
-  showDeleteConfirm.value = true;
-};
-
-const handleDeleteTeacher = async () => {
-  if (selectedTeacher.value) {
-    await teacherStore.delete(selectedTeacher.value.id);
-    showDeleteConfirm.value = false;
-    await loadTeachers();
-  }
-};
-
-onMounted(() => {
-  loadTeachers();
+onMounted(async () => {
+  await specializationStore.fetchAll();
+  await loadTeachers();
 });
 </script>

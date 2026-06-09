@@ -3,13 +3,13 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
       <div class="text-left">
-        <h1 class="font-headline-lg text-headline-lg">Thùng rác - Giáo viên</h1>
+        <h1 class="font-headline-lg text-headline-lg">Thùng rác</h1>
         <p class="text-body-md text-on-surface-variant mt-1">
           Các giáo viên đã bị xóa tạm thời, có thể khôi phục hoặc xóa vĩnh viễn
         </p>
       </div>
       <div class="flex gap-3">
-        <Link to="/teachers" variant="outline">
+        <Link to="/teachers" variant="outline" class="px-4 py-2 rounded-lg border">
           <span class="material-symbols-outlined">arrow_back</span>
           Quay lại
         </Link>
@@ -50,8 +50,8 @@
           :options="genderOptions"
           @update:model-value="onFilterChange"
         />
+        <!-- Có thể thêm filter năm sinh -->
       </div>
-
       <div class="flex justify-between items-center mt-4 pt-4 border-t border-outline-variant">
         <Button variant="outline" size="sm" @click="resetFilters">
           <span class="material-symbols-outlined text-sm">refresh</span>
@@ -127,6 +127,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 import { useTeacherStore } from '@/stores';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
@@ -141,8 +142,8 @@ import TeacherCard from '@/components/business/TeacherCard.vue';
 
 const router = useRouter();
 const teacherStore = useTeacherStore();
+const { pagedData, loading } = storeToRefs(teacherStore);
 
-// Filter state
 const filters = reactive({
   search: '',
   gender: '',
@@ -154,33 +155,17 @@ const genderOptions = [
   { value: false, label: 'Nữ' },
 ];
 
-// Modal state
-const showRestoreConfirm = ref(false);
-const showDeletePermanentConfirm = ref(false);
-const showEmptyTrashConfirm = ref(false);
-const selectedTeacher = ref(null);
-
-// Current query params
 const currentParams = ref({
   page: 1,
   pageSize: 12,
-  isDeleted: true,  // Lấy các giáo viên đã xóa
+  isDeleted: true,
 });
 
-const hasActiveFilters = computed(() => {
-  return filters.search || filters.gender !== '';
-});
-
-const activeFiltersCount = computed(() => {
-  let count = 0;
-  if (filters.search) count++;
-  if (filters.gender !== '') count++;
-  return count;
-});
+const hasActiveFilters = computed(() => filters.search || filters.gender !== '');
+const activeFiltersCount = computed(() => (filters.search ? 1 : 0) + (filters.gender !== '' ? 1 : 0));
 
 let debounceTimer = null;
 
-// Methods
 const loadTeachers = async () => {
   const params = {
     ...currentParams.value,
@@ -215,6 +200,11 @@ const goBack = () => {
 };
 
 // Restore handlers
+const showRestoreConfirm = ref(false);
+const showDeletePermanentConfirm = ref(false);
+const showEmptyTrashConfirm = ref(false);
+const selectedTeacher = ref(null);
+
 const confirmRestore = (teacher) => {
   selectedTeacher.value = teacher;
   showRestoreConfirm.value = true;
@@ -228,7 +218,6 @@ const handleRestoreTeacher = async () => {
   }
 };
 
-// Delete permanent handlers
 const confirmDeletePermanent = (teacher) => {
   selectedTeacher.value = teacher;
   showDeletePermanentConfirm.value = true;
@@ -242,7 +231,6 @@ const handleDeletePermanentTeacher = async () => {
   }
 };
 
-// Empty trash
 const confirmEmptyTrash = () => {
   if (teacherStore.pagedData.data.length === 0) return;
   showEmptyTrashConfirm.value = true;

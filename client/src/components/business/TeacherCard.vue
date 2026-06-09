@@ -62,6 +62,15 @@
               <span>{{ teacher.phone || 'Chưa có số điện thoại' }}</span>
             </div>
           </div>
+
+          <div class="mt-2 flex flex-wrap gap-1">
+            <Badge v-for="spec in displayedSpecializations" :key="spec.id" variant="info" size="sm">
+              {{ spec.specializationName }}
+            </Badge>
+            <span v-if="extraSpecializationsCount > 0" class="text-label-sm text-on-surface-variant">
+              +{{ extraSpecializationsCount }}
+            </span>
+          </div>
           
           <!-- Thông tin khác -->
           <div class="mt-2 flex items-center gap-3 text-label-sm text-on-surface-variant">
@@ -81,10 +90,13 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import Link from '@/components/ui/Link.vue';
 import Avatar from '@/components/ui/Avatar.vue';
+import Badge from '@/components/ui/Badge.vue';
+import { useSpecializationStore } from '@/stores';
 
-defineProps({
+const props = defineProps({
   teacher: {
     type: Object,
     required: true,
@@ -95,5 +107,17 @@ defineProps({
   },
 });
 
-defineEmits(['edit', 'delete', 'restore', 'delete-permanent']);
+const emit = defineEmits(['edit', 'delete', 'restore', 'delete-permanent']);
+
+const specializationStore = useSpecializationStore();
+
+const teacherSpecializations = computed(() => {
+  if (!props.teacher?.specialization) return [];
+  return props.teacher.specialization
+    .map(id => specializationStore.specializations.find(s => s.id === id))
+    .filter(Boolean);
+});
+
+const displayedSpecializations = computed(() => teacherSpecializations.value.slice(0, 2));
+const extraSpecializationsCount = computed(() => Math.max(0, teacherSpecializations.value.length - 2));
 </script>

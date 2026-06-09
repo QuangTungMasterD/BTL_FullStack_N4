@@ -27,5 +27,6 @@ namespace CourseScheduleService.Application.DTOs.TeacherDtos
         [Required(ErrorMessage = "Giới tính không được để trống")]
         public bool Gender { get; set; }
         public bool IsActive { get; set; } = true;
+        public List<int> SpecializationIds { get; set; } = new List<int>();
     }
 }

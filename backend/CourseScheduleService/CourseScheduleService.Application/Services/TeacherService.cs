@@ -177,13 +177,20 @@ namespace CourseScheduleService.Application.Services
         );
       }
 
+      var existingSpecializations = await _teacherSpecializationRepository.GetByTeacherIdAsync(id);
+      foreach (var existing in existingSpecializations)
+      {
+          _teacherSpecializationRepository.DeleteAsync(existing);
+      }
+      await _teacherSpecializationRepository.SaveChangeAsync();
+
       foreach (var specializationId in teacherReqDto.SpecializationIds)
       {
-        await _teacherSpecializationRepository.AddAsync(new TeacherSpecialization
-        {
-          TeacherId = id,
-          SpecializationId = specializationId
-        });
+          await _teacherSpecializationRepository.AddAsync(new TeacherSpecialization
+          {
+              TeacherId = id,
+              SpecializationId = specializationId
+          });
       }
       await _teacherSpecializationRepository.SaveChangeAsync();
 

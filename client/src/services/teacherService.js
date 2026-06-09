@@ -1,4 +1,6 @@
 import api from "./api";
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const teacherService = {
   // Lấy danh sách có phân trang
@@ -57,8 +59,8 @@ const teacherService = {
       "Giới tính":
         teacher.gender === true ? "Nam" : teacher.gender === false ? "Nữ" : "",
       "Trạng thái": teacher.isActive ? "Đang hoạt động" : "Ngừng hoạt động",
-      "Chuyên ngành IDs": Array.isArray(teacher.specialization)
-        ? teacher.specialization.join(", ")
+      "Chuyên ngành IDs": Array.isArray(teacher.specializationIds)
+        ? teacher.specializationIds.join(", ")
         : "",
     }));
 

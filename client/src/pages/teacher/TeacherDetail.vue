@@ -68,7 +68,7 @@
           </div>
           <div class="md:col-span-2">
             <p class="text-label-md text-on-surface-variant">Chuyên ngành</p>
-            <div class="flex flex-wrap gap-2 mt-1">
+            <div class="flex flex-wrap gap-2 mt-1 justify-center">
               <Badge v-for="spec in teacherSpecializations" :key="spec.id" variant="info">
                 {{ spec.specializationName }}
               </Badge>
@@ -171,6 +171,7 @@
           v-model="editForm.specializationIds"
           :options="specializationOptions"
           label="Chuyên ngành"
+          :modelValue="editForm.specializationIds"
           :error="validationErrors?.specializationIds?.join(', ')"
         />
 
@@ -221,8 +222,8 @@ const { validationErrors } = storeToRefs(teacherStore);
 const teacher = ref(null);
 // SỬA: dùng computed thay vì ref để reactive
 const teacherSpecializations = computed(() => {
-  if (!teacher.value?.specialization) return [];
-  return teacher.value.specialization
+  if (!teacher.value?.specializationIds) return [];
+  return teacher.value.specializationIds
     .map(id => specializationStore.specializations.find(s => s.id === id))
     .filter(Boolean);
 });
@@ -299,7 +300,7 @@ const openEditModal = () => {
   editForm.yoB = teacher.value.yoB ? teacher.value.yoB.split('T')[0] : '';
   editForm.gender = teacher.value.gender;
   editForm.isActive = teacher.value.isActive;
-  editForm.specializationIds = teacher.value.specialization ? [...teacher.value.specialization] : [];
+  editForm.specializationIds = teacher.value.specializationIds ? [...teacher.value.specializationIds] : [];
   showEditModal.value = true;
 };
 

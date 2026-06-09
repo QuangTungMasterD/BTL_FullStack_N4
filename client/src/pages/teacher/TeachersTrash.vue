@@ -50,6 +50,13 @@
           :options="genderOptions"
           @update:model-value="onFilterChange"
         />
+
+        <Select
+          v-model="filters.specializationId"
+          label="Chuyên ngành"
+          :options="specializationOptions"
+          @update:model-value="onFilterChange"
+        />
         <!-- Có thể thêm filter năm sinh -->
       </div>
       <div class="flex justify-between items-center mt-4 pt-4 border-t border-outline-variant">
@@ -128,7 +135,7 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useTeacherStore } from '@/stores';
+import { useTeacherStore, useSpecializationStore } from '@/stores';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Select from '@/components/ui/Select.vue';
@@ -142,11 +149,13 @@ import TeacherCard from '@/components/business/TeacherCard.vue';
 
 const router = useRouter();
 const teacherStore = useTeacherStore();
+const specializationStore = useSpecializationStore();
 const { pagedData, loading } = storeToRefs(teacherStore);
 
 const filters = reactive({
   search: '',
   gender: '',
+  specializationId: '',
 });
 
 const genderOptions = [
@@ -160,6 +169,14 @@ const currentParams = ref({
   pageSize: 12,
   isDeleted: true,
 });
+
+const specializationOptions = computed(() => [
+  { value: '', label: 'Tất cả chuyên ngành' },
+  ...specializationStore.specializations.map(spec => ({
+    value: spec.id,
+    label: spec.specializationName
+  }))
+]);
 
 const hasActiveFilters = computed(() => filters.search || filters.gender !== '');
 const activeFiltersCount = computed(() => (filters.search ? 1 : 0) + (filters.gender !== '' ? 1 : 0));
@@ -247,5 +264,6 @@ const handleEmptyTrash = async () => {
 
 onMounted(() => {
   loadTeachers();
+  specializationStore.fetchAll();
 });
 </script>

@@ -35,7 +35,7 @@
     />
 
     <!-- Filters -->
-    <TeacherFilters @filter-change="handleFilterChange" />
+    <TeacherFilters @filter-change="handleFilterChange" :specializations="specializationOptions" />
 
     <!-- Loading -->
     <LoadingSpinner v-if="teacherStore.loading" />
@@ -186,7 +186,7 @@ const formData = reactive({
   yoB: '',
   gender: null,
   isActive: true,
-  specializationIds: [], // mảng ID chuyên ngành
+  specializationIds: [],
 });
 
 // Options
@@ -263,7 +263,7 @@ const openEditModal = async (id) => {
     formData.yoB = teacher.yoB ? teacher.yoB.split('T')[0] : '';
     formData.gender = teacher.gender;
     formData.isActive = teacher.isActive;
-    formData.specializationIds = teacher.specialization || []; // mảng ID
+    formData.specializationIds = teacher.specializationIds || []; // mảng ID
     showModal.value = true;
   } catch (err) {
     console.error('Failed to load teacher:', err);

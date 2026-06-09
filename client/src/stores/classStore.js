@@ -1,15 +1,16 @@
-import { defineStore } from 'pinia';
-import classService from '@/services/classService';
+import { defineStore } from "pinia";
+import classService from "@/services/classService";
+import { useCourseStore } from '@/stores';
 
-export const useClassStore = defineStore('class', {
+export const useClassStore = defineStore("class", {
   state: () => ({
     classes: [],
     currentClass: null,
     pagedData: {
-      data: [],           // ← sửa: items → data
+      data: [], // ← sửa: items → data
       page: 1,
       pageSize: 10,
-      totalRecords: 0,    // ← sửa: totalCount → totalRecords
+      totalRecords: 0, // ← sửa: totalCount → totalRecords
       totalPages: 0,
       hasNext: false,
       hasPrev: false,
@@ -122,7 +123,7 @@ export const useClassStore = defineStore('class', {
       this.clearErrors();
       try {
         const updated = await classService.updateClass(id, classData);
-        const index = this.classes.findIndex(c => c.id === id);
+        const index = this.classes.findIndex((c) => c.id === id);
         if (index !== -1) this.classes[index] = updated;
         if (this.currentClass?.id === id) this.currentClass = updated;
         return updated;
@@ -146,11 +147,11 @@ export const useClassStore = defineStore('class', {
         } else {
           await classService.deleteClass(id);
         }
-        this.classes = this.classes.filter(c => c.id !== id);
+        this.classes = this.classes.filter((c) => c.id !== id);
         if (this.currentClass?.id === id) this.currentClass = null;
-        await this.fetchPaged({ 
-          page: this.pagedData.page, 
-          pageSize: this.pagedData.pageSize 
+        await this.fetchPaged({
+          page: this.pagedData.page,
+          pageSize: this.pagedData.pageSize,
         });
       } catch (err) {
         this.error = err.message;
@@ -168,9 +169,9 @@ export const useClassStore = defineStore('class', {
       this.clearErrors();
       try {
         const restored = await classService.restoreClass(id);
-        await this.fetchPaged({ 
-          page: this.pagedData.page, 
-          pageSize: this.pagedData.pageSize 
+        await this.fetchPaged({
+          page: this.pagedData.page,
+          pageSize: this.pagedData.pageSize,
         });
         return restored;
       } catch (err) {
@@ -219,19 +220,32 @@ export const useClassStore = defineStore('class', {
     async importFromExcel(file) {
       this.isImporting = true;
       this.clearErrors();
-      this.importResult = { show: false, total: 0, successCount: 0, errors: [] };
-      
+      this.importResult = {
+        show: false,
+        total: 0,
+        successCount: 0,
+        errors: [],
+      };
+
       try {
-        const result = await classService.importFromExcel(file);
+        // Lấy danh sách khóa học để map tên -> id
+        const courseStore = useCourseStore();
+        await courseStore.fetchAll();
+        const courseMap = {};
+        courseStore.courses.forEach((c) => {
+          courseMap[c.courseName] = c.id;
+        });
+
+        const result = await classService.importFromExcel(file, courseMap);
         this.importResult = {
           show: true,
           total: result.total,
           successCount: result.success.length,
           errors: result.errors,
         };
-        await this.fetchPaged({ 
-          page: this.pagedData.page, 
-          pageSize: this.pagedData.pageSize 
+        await this.fetchPaged({
+          page: this.pagedData.page,
+          pageSize: this.pagedData.pageSize,
         });
         return result;
       } catch (err) {

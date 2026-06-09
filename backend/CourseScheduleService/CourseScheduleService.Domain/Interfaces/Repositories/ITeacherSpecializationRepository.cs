@@ -9,5 +9,6 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
     public interface ITeacherSpecializationRepository : IRepository<TeacherSpecialization>
     {
         Task<TeacherSpecialization?> GetByTeacherAndSpecializationAsync(int teacherId, int specializationId);
+        Task<IEnumerable<TeacherSpecialization>> GetByTeacherIdAsync(int teacherId);
     }
 }

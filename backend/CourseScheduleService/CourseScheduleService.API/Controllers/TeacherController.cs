@@ -56,6 +56,13 @@ namespace CourseScheduleService.API.Controllers
       return StatusCode(result.StatusCode, result);
     }
 
+    [HttpDelete("{id}/permanent")]
+    public async Task<ActionResult<ApiResponse<bool>>> HardDeleteCourse([FromRoute] int id)
+    {
+      var result = await this._teacherService.HardDeleteTeacherAsync(id);
+      return StatusCode(result.StatusCode, result);
+    }
+
     [HttpPatch("{id}/restore")]
     public async Task<ActionResult<ApiResponse<TeacherReqDto?>>> RestoreCourseAsync(int id)
     {

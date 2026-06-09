@@ -21,5 +21,11 @@ namespace CourseScheduleService.Infrastructure.Repositories
                 !ts.IsDeleted
             );
         }
+
+        public async Task<IEnumerable<TeacherSpecialization>> GetByTeacherIdAsync(int teacherId)
+        {
+            var specializations = await _dbSet.Where(ta => ta.TeacherId == teacherId).ToListAsync();
+            return specializations;
+        }
     }
 }

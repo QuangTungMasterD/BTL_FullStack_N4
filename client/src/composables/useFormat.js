@@ -67,6 +67,16 @@ export function classSessionStatusText(status) {
   return map[status] || 'Không xác định';
 }
 
+export function classSessionStatusBadgeVariant(status) {
+  const map = {
+    1: 'info',     // Đã lên lịch
+    2: 'success',  // Đang diễn ra
+    3: 'default',  // Đã kết thúc
+    4: 'error',    // Đã hủy
+  };
+  return map[status] || 'default';
+}
+
 /**
  * Chuyển đổi RoomStatus từ số sang text
  */

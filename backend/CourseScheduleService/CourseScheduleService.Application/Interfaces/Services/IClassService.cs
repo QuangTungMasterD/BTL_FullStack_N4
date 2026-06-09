@@ -15,6 +15,6 @@ namespace CourseScheduleService.Application.Interfaces.Services
     Task<ApiResponse<bool>> HardDeleteClassAsync(int id);
     Task<ApiResponse<ClassResDto?>> RestoreClassAsync(int id);
     Task<ApiResponse<IEnumerable<ClassResDto>>> GetClassesByCourseAsync(int courseId);
-    Task<ApiResponse<PagedResponse<ClassResDto>>> GetPagedClassesAsync(ClassFilterRequest req);
+    Task<MemoryStream> ExportClassesToExcelAsync(ClassFilterRequest req);
   }
 }

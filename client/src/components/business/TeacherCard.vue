@@ -49,7 +49,7 @@
           <h4 class="font-title-md font-semibold group-hover:text-primary transition-colors truncate">
             {{ teacher.fullName }}
           </h4>
-          <p class="text-label-sm text-on-surface-variant mt-0.5">ID: {{ teacher.id }}</p>
+          <!-- <p class="text-label-sm text-on-surface-variant mt-0.5">ID: {{ teacher.id }}</p> -->
           
           <!-- Email & Phone -->
           <div class="mt-2 space-y-1">
@@ -112,8 +112,8 @@ const emit = defineEmits(['edit', 'delete', 'restore', 'delete-permanent']);
 const specializationStore = useSpecializationStore();
 
 const teacherSpecializations = computed(() => {
-  if (!props.teacher?.specialization) return [];
-  return props.teacher.specialization
+  if (!props.teacher?.specializationIds) return [];
+  return props.teacher.specializationIds
     .map(id => specializationStore.specializations.find(s => s.id === id))
     .filter(Boolean);
 });

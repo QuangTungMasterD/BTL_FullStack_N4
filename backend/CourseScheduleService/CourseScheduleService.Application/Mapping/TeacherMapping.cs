@@ -12,7 +12,15 @@ namespace CourseScheduleService.Application.Mapping
     {
         public TeacherMapping()
         {
-            CreateMap<Teacher, TeacherResDto>();
+            CreateMap<Teacher, TeacherResDto>()
+                .ForMember(
+                    dest => dest.SpecializationIds,
+                    opt => opt.MapFrom(src =>
+                        src.TeacherSpecializations
+                            .Select(x => x.SpecializationId)
+                            .ToList()
+                    )
+                );
             CreateMap<TeacherReqDto, Teacher>();
         }
     }

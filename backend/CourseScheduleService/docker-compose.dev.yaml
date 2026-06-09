@@ -28,9 +28,17 @@ services:
     volumes:
       # Mount source code vào container để hot reload
       - ./CourseScheduleService.API:/app/CourseScheduleService.API
+      - /app/CourseScheduleService.API/bin
+      - /app/CourseScheduleService.API/obj
       - ./CourseScheduleService.Domain:/app/CourseScheduleService.Domain
+      - /app/CourseScheduleService.Domain/bin
+      - /app/CourseScheduleService.Domain/obj
       - ./CourseScheduleService.Application:/app/CourseScheduleService.Application
+      - /app/CourseScheduleService.Application/bin
+      - /app/CourseScheduleService.Application/obj
       - ./CourseScheduleService.Infrastructure:/app/CourseScheduleService.Infrastructure
+      - /app/CourseScheduleService.Infrastructure/bin
+      - /app/CourseScheduleService.Infrastructure/obj
       # Mount NuGet cache để tránh restore lại mỗi lần
       - ~/.nuget/packages:/root/.nuget/packages:ro
     restart: unless-stopped

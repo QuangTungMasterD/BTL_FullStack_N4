@@ -17,5 +17,6 @@ namespace CourseScheduleService.Application.DTOs.TeacherDtos
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
         public bool IsDeleted { get; set; } = false;
+        public List<int> SpecializationIds { get; set; } = new List<int>();
     }
 }

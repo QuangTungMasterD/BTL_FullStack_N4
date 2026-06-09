@@ -32,6 +32,7 @@ builder.Services.AddScoped(typeof(ITeacherRepository), typeof(TeacherRepository)
 builder.Services.AddScoped(typeof(IClassRepository), typeof(ClassRepository));
 builder.Services.AddScoped(typeof(IRoomRepository), typeof(RoomRepository));
 builder.Services.AddScoped(typeof(ITeacherAssignmentRepository), typeof(TeacherAssignmentRepository));
+builder.Services.AddScoped(typeof(ITeacherSpecializationRepository), typeof(TeacherSpecializationRepository));
 builder.Services.AddScoped(typeof(IClassSessionRepository), typeof(ClassSessionRepository));
 
 // Register services
@@ -41,6 +42,7 @@ builder.Services.AddScoped<ITeacherService, TeacherService>();
 builder.Services.AddScoped<IClassService, ClassService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<ITeacherAssignmentService, TeacherAssignmentService>();
+builder.Services.AddScoped<ITeacherSpecializationService, TeacherSpecializationService>();
 builder.Services.AddScoped<IClassSessionService, ClassSessionService>();
 
 // Register AutoMapper

@@ -15,8 +15,10 @@ services:
     #   - course_network
 
   api:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: course-schedule-service:v2
-    # build: .
     container_name: course_schedule_service
     ports:
       - "8080:8080"

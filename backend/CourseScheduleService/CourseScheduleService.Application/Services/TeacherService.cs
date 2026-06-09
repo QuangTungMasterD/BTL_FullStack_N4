@@ -14,12 +14,14 @@ namespace CourseScheduleService.Application.Services
   public class TeacherService : ITeacherService
   {
     private readonly ITeacherRepository _teacherRepository;
+    private readonly ITeacherSpecializationRepository _teacherSpecializationRepository;
     private readonly IMapper _mapper;
 
-    public TeacherService(ITeacherRepository teacherRepository, IMapper mapper)
+    public TeacherService(ITeacherRepository teacherRepository, ITeacherSpecializationRepository teacherSpecializationRepository, IMapper mapper)
     {
       _teacherRepository = teacherRepository;
       _mapper = mapper;
+      _teacherSpecializationRepository = teacherSpecializationRepository;
     }
 
     public async Task<ApiResponse<TeacherResDto?>> CreateTeacherAsync(TeacherReqDto teacherReqDto)
@@ -48,6 +50,16 @@ namespace CourseScheduleService.Application.Services
 
       await _teacherRepository.AddAsync(newTeacher);
       await _teacherRepository.SaveChangeAsync();
+
+      foreach (var specializationId in teacherReqDto.SpecializationIds)
+      {
+        await _teacherSpecializationRepository.AddAsync(new TeacherSpecialization
+        {
+          TeacherId = newTeacher.Id,
+          SpecializationId = specializationId
+        });
+      }
+      await _teacherSpecializationRepository.SaveChangeAsync();
 
       TeacherResDto teacherRes = _mapper.Map<TeacherResDto>(newTeacher);
 
@@ -79,7 +91,7 @@ namespace CourseScheduleService.Application.Services
 
     public async Task<ApiResponse<TeacherResDto?>> GetOneByIdAsync(int id)
     {
-      var teacher = await _teacherRepository.GetByIdAsync(id);
+      var teacher = await _teacherRepository.GetDetailTeacherByIdAsync(id);
       if (teacher == null)
       {
         return ApiResponse<TeacherResDto?>.ErrorResponse($"Không tìm thấy giáo viên {id}.");
@@ -164,6 +176,16 @@ namespace CourseScheduleService.Application.Services
             409
         );
       }
+
+      foreach (var specializationId in teacherReqDto.SpecializationIds)
+      {
+        await _teacherSpecializationRepository.AddAsync(new TeacherSpecialization
+        {
+          TeacherId = id,
+          SpecializationId = specializationId
+        });
+      }
+      await _teacherSpecializationRepository.SaveChangeAsync();
 
       teacher.FullName = teacherReqDto.FullName;
       teacher.Email = teacherReqDto.Email;

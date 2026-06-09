@@ -15,6 +15,16 @@ namespace CourseScheduleService.Infrastructure.Repositories
     {
     }
 
+    public async Task<Teacher?> GetDetailTeacherByIdAsync(int id)
+    {
+      return await _dbSet
+                .Include(t => t.TeacherSpecializations)
+                .ThenInclude(ts => ts.Specialization)
+                .FirstOrDefaultAsync(x =>
+                  EF.Property<int>(x, "Id") == id &&
+                  !EF.Property<bool>(x, "IsDeleted"));
+    }
+
     public async Task<Teacher?> IsEmailExistsAsync(string email, int? excludeId = null)
     {
       return await _dbSet
@@ -36,7 +46,10 @@ namespace CourseScheduleService.Infrastructure.Repositories
         bool? isActive, int? yoBFrom, int? yoBTo,
         string? sortBy, bool sortDesc, bool? IsDeleted = false)
     {
-      var query = _dbSet.Where(t => t.IsDeleted == IsDeleted);
+      var query = _dbSet
+                .Include(t => t.TeacherSpecializations)
+                .ThenInclude(ts => ts.Specialization)
+                .Where(t => t.IsDeleted == IsDeleted);
 
       if (!string.IsNullOrWhiteSpace(search))
         query = query.Where(t => t.FullName.Contains(search) || t.Email.Contains(search) || t.Phone.Contains(search));

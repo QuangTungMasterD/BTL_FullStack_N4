@@ -17,5 +17,6 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
         bool? isActive, int? yoBFrom, int? yoBTo,
         string? sortBy, bool sortDesc, bool? IsDeleted = false
     );
+    Task<Teacher?> GetDetailTeacherByIdAsync(int id);
   }
 }

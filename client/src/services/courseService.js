@@ -165,7 +165,36 @@ const courseService = {
     
     return results;
   },
+  _parseNumber(value) {
+    if (value === undefined || value === null) return NaN;
+    if (typeof value === 'number') return value;
+    // Xử lý string: loại bỏ dấu phân cách hàng nghìn, ký tự đặc biệt
+    const cleaned = String(value).replace(/[^\d.-]/g, '');
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? NaN : num;
+  },
 
+  _parseStatus(value) {
+    if (value === undefined || value === null) return true; // default active
+    if (typeof value === 'boolean') return value;
+    const str = String(value).toLowerCase().trim();
+    if (str === 'đang mở' || str === 'active' || str === 'true' || str === '1') return true;
+    if (str === 'ngừng mở' || str === 'inactive' || str === 'false' || str === '0') return false;
+    return true; // default
+  },
+
+  _parseLevelFromText(text) {
+    if (!text) return null;
+    const str = String(text).toLowerCase().trim();
+    const map = {
+      'sơ cấp': 1,
+      'căn bản': 2,
+      'trung cấp': 3,
+      'cao cấp': 4,
+      'chuyên gia': 5
+    };
+    return map[str] || null;
+  },
 };
 
 export default courseService;

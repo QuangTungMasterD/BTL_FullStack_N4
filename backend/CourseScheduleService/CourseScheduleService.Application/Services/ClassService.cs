@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CourseScheduleService.Application.Common;
 using CourseScheduleService.Application.DTOs.ClassDtos;
+using CourseScheduleService.Application.Events;
+using CourseScheduleService.Application.Interfaces.EventBus;
 using CourseScheduleService.Application.Interfaces.Services;
 using CourseScheduleService.Domain.Entities;
 using CourseScheduleService.Domain.Interfaces.Repositories;
@@ -14,12 +16,14 @@ namespace CourseScheduleService.Application.Services
   {
     private readonly IClassRepository _classRepository;
     private readonly ICourseRepository _courseRepository;
+    private readonly IEventBus _eventBus;
     private readonly IMapper _mapper;
 
-    public ClassService(IClassRepository classRepository, ICourseRepository courseRepository, IMapper mapper)
+    public ClassService(IClassRepository classRepository, ICourseRepository courseRepository, IEventBus eventBus, IMapper mapper)
     {
       _classRepository = classRepository;
       _courseRepository = courseRepository;
+      _eventBus = eventBus;
       _mapper = mapper;
     }
 
@@ -56,6 +60,18 @@ namespace CourseScheduleService.Application.Services
       Class newClass = _mapper.Map<Class>(classReqDto);
       await _classRepository.AddAsync(newClass);
       await _classRepository.SaveChangeAsync();
+
+      var classOpenedEvent = new ClassOpenedEvent
+      {
+          ClassId = newClass.Id,
+          ClassName = newClass.ClassName,
+          CourseId = newClass.CourseId,
+          StartDate = newClass.StartDate.ToDateTime(TimeOnly.MinValue),
+          EndDate = newClass.EndDate.ToDateTime(TimeOnly.MinValue),
+          MaxStudent = newClass.MaxStudent
+      };
+
+      await _eventBus.PublishAsync("class.opened", classOpenedEvent);
 
       return ApiResponse<ClassResDto?>.SuccessResponse(
           _mapper.Map<ClassResDto>(newClass),

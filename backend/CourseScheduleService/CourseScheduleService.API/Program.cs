@@ -1,10 +1,12 @@
 using CourseScheduleService.API.Filters;
 using CourseScheduleService.API.Middlewares;
+using CourseScheduleService.Application.Interfaces.EventBus;
 using CourseScheduleService.Application.Interfaces.Services;
 using CourseScheduleService.Application.Mapping;
 using CourseScheduleService.Application.Services;
 using CourseScheduleService.Domain.Interfaces.Repositories;
 using CourseScheduleService.Infrastructure.Data;
+using CourseScheduleService.Infrastructure.Messages;
 using CourseScheduleService.Infrastructure.Repositories;
 using CourseScheduleService.interfaces.services;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +56,9 @@ builder.Services.AddAutoMapper(typeof(SpecializationMapping));
 builder.Services.AddAutoMapper(typeof(TeacherAssignmentMapping));
 builder.Services.AddAutoMapper(typeof(TeacherMapping));
 builder.Services.AddAutoMapper(typeof(TeacherSpecializationMapping));
+
+// EBA
+builder.Services.AddSingleton<IEventBus, KafkaEventBus>();
 
 // Register Filter
 builder.Services.AddScoped<ValidationFilter>();

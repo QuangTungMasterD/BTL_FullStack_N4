@@ -1,0 +1,21 @@
+version: '3.0'
+
+networks:
+  microservices-net:
+    driver: bridge
+
+volumes:
+  courseschedule_data:
+    name: courseschedule_data
+
+services:
+
+
+  gateway:
+    build: ./Gateway
+    image: gateway-service:v1
+    ports:
+      - "8080:8080"
+    networks:
+      - btl-ft-d4
+  

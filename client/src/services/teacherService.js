@@ -51,7 +51,7 @@ const teacherService = {
 
     // Dùng các hàm format từ useFormat nếu cần
     const excelData = teachers.map((teacher) => ({
-      ID: teacher.id,
+      // ID: teacher.id,
       "Họ tên": teacher.fullName,
       Email: teacher.email || "",
       "Số điện thoại": teacher.phone || "",
@@ -66,7 +66,7 @@ const teacherService = {
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     worksheet["!cols"] = [
-      { wch: 10 }, // ID
+      // { wch: 10 }, // ID
       { wch: 30 }, // Họ tên
       { wch: 30 }, // Email
       { wch: 15 }, // SĐT

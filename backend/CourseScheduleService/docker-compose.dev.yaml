@@ -19,7 +19,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: course_schedule_service_dev
     ports:
-      - "8080:8080"
+      - "5000:5000"
     depends_on:
       - sqlserver
     environment:
@@ -45,4 +45,4 @@ services:
 
 volumes:
   course_schedule_db_dev:
-    name: course_schedule_db_dev
+    name: course_schedule_db

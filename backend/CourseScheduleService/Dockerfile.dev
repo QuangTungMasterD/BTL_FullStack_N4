@@ -15,10 +15,10 @@ RUN dotnet restore
 # Copy source code (sau restore để cache)
 COPY . .
 
-EXPOSE 8080
+EXPOSE 5000
 
 # Docker Desktop on Windows does not propagate inotify events into mounted volumes.
 ENV DOTNET_USE_POLLING_FILE_WATCHER=1
 
 # Build once from mounted source before watch starts to avoid stale Windows bin/obj artifacts.
-CMD ["sh", "-c", "dotnet build CourseScheduleService.API/CourseScheduleService.API.csproj -c Debug && exec dotnet watch run --project CourseScheduleService.API/CourseScheduleService.API.csproj --urls http://0.0.0.0:8080"]
+CMD ["sh", "-c", "dotnet build CourseScheduleService.API/CourseScheduleService.API.csproj -c Debug && exec dotnet watch run --project CourseScheduleService.API/CourseScheduleService.API.csproj --urls http://0.0.0.0:5000"]

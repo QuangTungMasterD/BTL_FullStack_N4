@@ -76,7 +76,21 @@ Console.WriteLine("========================================");
 Console.WriteLine($"🔥 Connection String đang dùng: {connectionString}");
 Console.WriteLine("========================================");
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors("FrontendPolicy");
 
 using(var scope = app.Services.CreateScope())
 {

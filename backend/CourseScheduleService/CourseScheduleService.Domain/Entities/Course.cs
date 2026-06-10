@@ -14,7 +14,7 @@ namespace CourseScheduleService.Domain.Entities
         public required String CourseName { get; set; }
 
         [Column("desct")]
-        public required String Desct { get; set; }
+        public String? Desct { get; set; }
 
         [Column("tuition_fee")]
         public Decimal TuitionFee { get; set; }

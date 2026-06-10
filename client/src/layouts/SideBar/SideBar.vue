@@ -26,10 +26,11 @@ import SidebarItem from './SideBarItem.vue'
 const menuItems = [
   { label: 'Dashboard', icon: 'dashboard', path: '/' },
   { label: 'Course', icon: 'school', path: '/courses' },
-  { label: 'Finance', icon: 'payments', path: '/teachers' },
-  { label: 'Users', icon: 'group', path: '/users' },
-  { label: 'Library', icon: 'local_library', path: '/library' },
-  { label: 'Reports', icon: 'analytics', path: '/reports' }
+  { label: 'Teacher', icon: 'payments', path: '/teachers' },
+  { label: 'Classes', icon: 'group', path: '/classes' },
+  { label: 'Rooms', icon: 'local_library', path: '/rooms' },
+  { label: 'Specialization', icon: 'analytics', path: '/specializations' },
+  { label: 'teacherschedule', icon: 'analytics', path: '/teachers/schedule' },
 ]
 const footerMenuItems = [
   { label: 'Settings', icon: 'settings', path: '/settings' },

@@ -17,7 +17,7 @@ namespace CourseScheduleService.Application.DTOs.RoomDtos
         public RoomType RoomType { get; set; }
 
         [MaxLength(500, ErrorMessage = "Mô tả không được vượt quá 500 ký tự")]
-        public String Descrt { get; set; } = String.Empty;
+        public String? Descrt { get; set; } = String.Empty;
         public RoomStatus Status { get; set; }
     }
 }

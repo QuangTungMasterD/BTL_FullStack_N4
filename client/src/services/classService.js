@@ -55,7 +55,7 @@ const classService = {
     }
 
     const excelData = classes.map((cls) => ({
-      ID: cls.id,
+      // ID: cls.id,
       "Tên lớp": cls.className,
       "Sĩ số tối đa": cls.maxStudent,
       "Ngày bắt đầu": cls.startDate
@@ -71,7 +71,7 @@ const classService = {
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     worksheet["!cols"] = [
-      { wch: 10 }, // ID
+      // { wch: 10 }, // ID
       { wch: 30 }, // Tên lớp
       { wch: 15 }, // Sĩ số
       { wch: 15 }, // Ngày bắt đầu

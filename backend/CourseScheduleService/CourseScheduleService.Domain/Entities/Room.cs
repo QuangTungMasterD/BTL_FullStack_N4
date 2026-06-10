@@ -17,7 +17,7 @@ namespace CourseScheduleService.Domain.Entities
         public RoomType RoomType { get; set; }
 
         [Column("descrt")]
-        public String Descrt { get; set; } = String.Empty;
+        public String? Descrt { get; set; } = String.Empty;
 
         [Column("status")]
         public RoomStatus Status { get; set; }

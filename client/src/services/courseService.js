@@ -60,7 +60,7 @@ const courseService = {
     
     // Dùng courseLevelText từ useFormat.js
     const excelData = courses.map(course => ({
-      'ID': course.id,
+      // 'ID': course.id,
       'Tên khóa học': course.courseName,
       'Mô tả': course.desct || '',
       'Học phí (VNĐ)': course.tuitionFee,
@@ -74,7 +74,7 @@ const courseService = {
     
     // Độ rộng cột
     worksheet['!cols'] = [
-      { wch: 10 },  // ID
+      // { wch: 10 },  // ID
       { wch: 35 },  // Tên khóa học
       { wch: 50 },  // Mô tả
       { wch: 15 },  // Học phí

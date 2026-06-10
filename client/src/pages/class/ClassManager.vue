@@ -2,7 +2,7 @@
   <div>
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
-      <div>
+      <div class="text-left">
         <h1 class="font-headline-lg text-headline-lg">Quản lý lớp học</h1>
         <p class="text-body-md text-on-surface-variant mt-1">
           Quản lý danh sách lớp học, lịch trình và giáo viên phụ trách

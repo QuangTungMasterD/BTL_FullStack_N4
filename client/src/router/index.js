@@ -17,6 +17,11 @@ import ClassDetail from '@/pages/class/ClassDetail.vue';
 
 import StudentSchedule from '@/pages/student/StudentSchedule.vue';
 
+import RoomsManager from '@/pages/rooms/RoomsManager.vue';
+import RoomsTrash from '@/pages/rooms/RoomsTrash.vue';
+
+import SpecializationsManager from '@/pages/specializations/SpecializationsManager.vue';
+
 const routes = [
   {
     path: '/',
@@ -81,7 +86,22 @@ const routes = [
         path: 'student/schedule',
         name: 'Student Schedule',
         component: StudentSchedule
-      }
+      },
+      {
+        path: 'rooms',
+        name: 'Rooms Manager',
+        component: RoomsManager
+      },
+      {
+        path: 'rooms/trash',
+        name: 'Rooms Trash',
+        component: RoomsTrash
+      },
+      {
+        path: 'specializations',
+        name: 'Specialization Trash',
+        component: SpecializationsManager
+      },
     ]
   }
 ]

@@ -13,7 +13,7 @@ namespace CourseScheduleService.Domain.Entities
         public required String SpecializationName { get; set; }
 
         [Column("descrt")]
-        public String Descrt { get; set; } = String.Empty;
+        public String? Descrt { get; set; } = String.Empty;
 
         [Column("is_active")]
         public bool IsActive { get; set; } = true;

@@ -6,10 +6,10 @@ export const useRoomStore = defineStore('room', {
     rooms: [],
     currentRoom: null,
     pagedData: {
-      data: [],           // ← sửa: items → data
+      data: [],
       page: 1,
       pageSize: 10,
-      totalRecords: 0,    // ← sửa: totalCount → totalRecords
+      totalRecords: 0,
       totalPages: 0,
       hasNext: false,
       hasPrev: false,
@@ -137,20 +137,41 @@ export const useRoomStore = defineStore('room', {
       }
     },
 
-    async delete(id, permanent = false) {
+    // Xóa mềm (chuyển vào thùng rác)
+    async delete(id) {
       this.loading = true;
       this.clearErrors();
       try {
-        if (permanent) {
-          await roomService.deleteRoomPermanent(id);
-        } else {
-          await roomService.deleteRoom(id);
-        }
+        await roomService.deleteRoom(id);
         this.rooms = this.rooms.filter(r => r.id !== id);
         if (this.currentRoom?.id === id) this.currentRoom = null;
-        await this.fetchPaged({ 
-          page: this.pagedData.page, 
-          pageSize: this.pagedData.pageSize 
+        // Reload lại trang hiện tại
+        await this.fetchPaged({
+          page: this.pagedData.page,
+          pageSize: this.pagedData.pageSize,
+        });
+      } catch (err) {
+        this.error = err.message;
+        this.errorStatusCode = err.statusCode;
+        this.validationErrors = err.errors;
+        this.timestamp = err.timestamp;
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // Xóa vĩnh viễn
+    async deletePermanent(id) {
+      this.loading = true;
+      this.clearErrors();
+      try {
+        await roomService.deleteRoomPermanent(id);
+        this.rooms = this.rooms.filter(r => r.id !== id);
+        if (this.currentRoom?.id === id) this.currentRoom = null;
+        await this.fetchPaged({
+          page: this.pagedData.page,
+          pageSize: this.pagedData.pageSize,
         });
       } catch (err) {
         this.error = err.message;
@@ -168,9 +189,9 @@ export const useRoomStore = defineStore('room', {
       this.clearErrors();
       try {
         const restored = await roomService.restoreRoom(id);
-        await this.fetchPaged({ 
-          page: this.pagedData.page, 
-          pageSize: this.pagedData.pageSize 
+        await this.fetchPaged({
+          page: this.pagedData.page,
+          pageSize: this.pagedData.pageSize,
         });
         return restored;
       } catch (err) {
@@ -202,7 +223,6 @@ export const useRoomStore = defineStore('room', {
       this.isImporting = true;
       this.clearErrors();
       this.importResult = { show: false, total: 0, successCount: 0, errors: [] };
-      
       try {
         const result = await roomService.importFromExcel(file);
         this.importResult = {
@@ -211,9 +231,9 @@ export const useRoomStore = defineStore('room', {
           successCount: result.success.length,
           errors: result.errors,
         };
-        await this.fetchPaged({ 
-          page: this.pagedData.page, 
-          pageSize: this.pagedData.pageSize 
+        await this.fetchPaged({
+          page: this.pagedData.page,
+          pageSize: this.pagedData.pageSize,
         });
         return result;
       } catch (err) {

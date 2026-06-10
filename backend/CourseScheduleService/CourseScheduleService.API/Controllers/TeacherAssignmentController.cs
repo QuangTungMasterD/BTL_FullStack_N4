@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CourseScheduleService.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]s")]
+    [Route("api/v1/teacherassignments")]
     public class TeacherAssignmentController : ControllerBase
     {
         private readonly ITeacherAssignmentService _assignmentService;

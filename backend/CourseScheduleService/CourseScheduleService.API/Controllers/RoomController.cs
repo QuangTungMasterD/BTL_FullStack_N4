@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CourseScheduleService.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]s")]
+    [Route("api/v1/rooms")]
     public class RoomController : ControllerBase
     {
         private readonly IRoomService _roomService;

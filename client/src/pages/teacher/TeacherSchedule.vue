@@ -101,7 +101,7 @@ const classSessionStore = useClassSessionStore()
 const classStore = useClassStore()
 const roomStore = useRoomStore()
 
-const teacherId = ref(3) // hardcode tạm, sau thay bằng auth
+const teacherId = ref(1) // hardcode tạm, sau thay bằng auth
 const loading = ref(false)
 const submitting = ref(false)
 const sessions = ref([])

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CourseScheduleService.API.Controllers
 {
   [ApiController]
-  [Route("api/[controller]es")]
+  [Route("api/v1/classes")]
   public class ClassController : ControllerBase
   {
     private readonly IClassService _classService;

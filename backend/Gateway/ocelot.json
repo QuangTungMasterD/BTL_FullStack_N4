@@ -1,267 +1,235 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/Courses",
+      "DownstreamPathTemplate": "/api/v1/Courses",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/courses",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/courses",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Courses/paged",
+      "DownstreamPathTemplate": "/api/v1/Courses/paged",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/courses/paged",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/courses/paged",
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Courses/{id}",
+      "DownstreamPathTemplate": "/api/v1/Courses/{id}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/courses/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/courses/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Courses/{id}/permanent",
+      "DownstreamPathTemplate": "/api/v1/Courses/{id}/permanent",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/courses/{id}/permanent",
-      "UpstreamHttpMethod": [ "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/courses/{id}/permanent",
+      "UpstreamHttpMethod": [ "DELETE" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Courses/{id}/restore",
+      "DownstreamPathTemplate": "/api/v1/Courses/{id}/restore",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/courses/{id}/restore",
-      "UpstreamHttpMethod": [ "PATCH" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/courses/{id}/restore",
+      "UpstreamHttpMethod": [ "PATCH" ]
     },
 
     {
-      "DownstreamPathTemplate": "/api/Classes",
+      "DownstreamPathTemplate": "/api/v1/Classes",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/classes",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classes",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Classes/paged",
+      "DownstreamPathTemplate": "/api/v1/Classes/paged",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/classes/paged",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classes/paged",
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Classes/{id}",
+      "DownstreamPathTemplate": "/api/v1/Classes/{id}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/classes/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classes/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Classes/{id}/permanent",
+      "DownstreamPathTemplate": "/api/v1/Classes/{id}/permanent",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/classes/{id}/permanent",
-      "UpstreamHttpMethod": [ "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classes/{id}/permanent",
+      "UpstreamHttpMethod": [ "DELETE" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Classes/{id}/restore",
+      "DownstreamPathTemplate": "/api/v1/Classes/{id}/restore",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/classes/{id}/restore",
-      "UpstreamHttpMethod": [ "PATCH" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classes/{id}/restore",
+      "UpstreamHttpMethod": [ "PATCH" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Classes/course/{courseId}",
+      "DownstreamPathTemplate": "/api/v1/Classes/course/{courseId}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/classes/course/{courseId}",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classes/course/{courseId}",
+      "UpstreamHttpMethod": [ "GET" ]
     },
 
     {
-      "DownstreamPathTemplate": "/api/ClassSessions",
+      "DownstreamPathTemplate": "/api/v1/ClassSessions",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/classsessions",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classsessions",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/ClassSessions/paged",
+      "DownstreamPathTemplate": "/api/v1/ClassSessions/paged",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/classsessions/paged",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classsessions/paged",
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/ClassSessions/{id}",
+      "DownstreamPathTemplate": "/api/v1/ClassSessions/{id}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/classsessions/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classsessions/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
     },
     {
-      "DownstreamPathTemplate": "/api/ClassSessions/{id}/status",
+      "DownstreamPathTemplate": "/api/v1/ClassSessions/{id}/status",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/classsessions/{id}/status",
-      "UpstreamHttpMethod": [ "PATCH" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classsessions/{id}/status",
+      "UpstreamHttpMethod": [ "PATCH" ]
     },
 
     {
-      "DownstreamPathTemplate": "/api/Rooms",
+      "DownstreamPathTemplate": "/api/v1/Rooms",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/rooms",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/rooms",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Rooms/paged",
+      "DownstreamPathTemplate": "/api/v1/Rooms/paged",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/rooms/paged",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/rooms/paged",
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Rooms/{id}",
+      "DownstreamPathTemplate": "/api/v1/Rooms/{id}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/rooms/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/rooms/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Rooms/{id}/permanent",
+      "DownstreamPathTemplate": "/api/v1/Rooms/{id}/permanent",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/rooms/{id}/permanent",
-      "UpstreamHttpMethod": [ "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/rooms/{id}/permanent",
+      "UpstreamHttpMethod": [ "DELETE" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Rooms/{id}/restore",
+      "DownstreamPathTemplate": "/api/v1/Rooms/{id}/restore",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/rooms/{id}/restore",
-      "UpstreamHttpMethod": [ "PATCH" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/rooms/{id}/restore",
+      "UpstreamHttpMethod": [ "PATCH" ]
     },
 
     {
-      "DownstreamPathTemplate": "/api/Specializations",
+      "DownstreamPathTemplate": "/api/v1/Specializations",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/specializations",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/specializations",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Specializations/paged",
+      "DownstreamPathTemplate": "/api/v1/Specializations/paged",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/specializations/paged",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/specializations/paged",
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Specializations/{id}",
+      "DownstreamPathTemplate": "/api/v1/Specializations/{id}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/specializations/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/specializations/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Specializations/{id}/permanent",
+      "DownstreamPathTemplate": "/api/v1/Specializations/{id}/permanent",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/specializations/{id}/permanent",
-      "UpstreamHttpMethod": [ "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/specializations/{id}/permanent",
+      "UpstreamHttpMethod": [ "DELETE" ]
     },
 
     {
-      "DownstreamPathTemplate": "/api/Teachers",
+      "DownstreamPathTemplate": "/api/v1/Teachers",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/teachers",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teachers",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Teachers/paged",
+      "DownstreamPathTemplate": "/api/v1/Teachers/paged",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/teachers/paged",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teachers/paged",
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Teachers/{id}",
+      "DownstreamPathTemplate": "/api/v1/Teachers/{id}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/teachers/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teachers/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Teachers/{id}/restore",
+      "DownstreamPathTemplate": "/api/v1/Teachers/{id}/restore",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/teachers/{id}/restore",
-      "UpstreamHttpMethod": [ "PATCH" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teachers/{id}/restore",
+      "UpstreamHttpMethod": [ "PATCH" ]
     },
 
     {
-      "DownstreamPathTemplate": "/api/TeacherAssignments",
+      "DownstreamPathTemplate": "/api/v1/TeacherAssignments",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/teacherassignments",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teacherassignments",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/TeacherAssignments/{id}",
+      "DownstreamPathTemplate": "/api/v1/TeacherAssignments/{id}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/teacherassignments/{id}",
-      "UpstreamHttpMethod": [ "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teacherassignments/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ]
     },
 
     {
-      "DownstreamPathTemplate": "/api/TeacherSpecializations",
+      "DownstreamPathTemplate": "/api/v1/TeacherSpecializations",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/teacherspecializations",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teacherspecializations",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/TeacherSpecializations/{id}",
+      "DownstreamPathTemplate": "/api/v1/TeacherSpecializations/{id}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 8080 }],
-      "UpstreamPathTemplate": "/teacherspecializations/{id}",
-      "UpstreamHttpMethod": [ "DELETE" ],
-      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teacherspecializations/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ]
     }
   ],
   "GlobalConfiguration": {

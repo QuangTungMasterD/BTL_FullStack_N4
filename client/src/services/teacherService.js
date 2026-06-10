@@ -5,35 +5,35 @@ import { saveAs } from 'file-saver';
 const teacherService = {
   // Lấy danh sách có phân trang
   getTeachersPaged(params = {}) {
-    return api.get("/Teachers/paged", { params });
+    return api.get("v1/Teachers/paged", { params });
   },
   // Lấy tất cả
   getAllTeachers() {
-    return api.get("/Teachers");
+    return api.get("v1/Teachers");
   },
   // Lấy chi tiết
   getTeacherById(id) {
-    return api.get(`/Teachers/${id}`);
+    return api.get(`v1/Teachers/${id}`);
   },
   // Tạo mới
   createTeacher(data) {
-    return api.post("/Teachers", data);
+    return api.post("v1/Teachers", data);
   },
   // Cập nhật
   updateTeacher(id, data) {
-    return api.put(`/Teachers/${id}`, data);
+    return api.put(`v1/Teachers/${id}`, data);
   },
   // Xóa
   deleteTeacher(id) {
-    return api.delete(`/Teachers/${id}`);
+    return api.delete(`v1/Teachers/${id}`);
   },
   deleteTeacherPermanent(id) {
-    return api.delete(`/Teachers/${id}/permanent`);
+    return api.delete(`v1/Teachers/${id}/permanent`);
   },
 
   // Khôi phục
   restoreTeacher(id) {
-    return api.patch(`/Teachers/${id}/restore`);
+    return api.patch(`v1/Teachers/${id}/restore`);
   },
 
   async exportToExcel(params = {}) {

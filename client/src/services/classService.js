@@ -6,39 +6,39 @@ import { saveAs } from 'file-saver';
 const classService = {
   // Lấy danh sách có phân trang
   getClassesPaged(params = {}) {
-    return api.get("/Classes/paged", { params });
+    return api.get("v1/Classes/paged", { params });
   },
   // Lấy tất cả
   getAllClasses() {
-    return api.get("/Classes");
+    return api.get("v1/Classes");
   },
   // Lấy chi tiết
   getClassById(id) {
-    return api.get(`/Classes/${id}`);
+    return api.get(`v1/Classes/${id}`);
   },
   // Lấy lớp theo khóa học
   getClassesByCourseId(courseId) {
-    return api.get(`/Classes/course/${courseId}`);
+    return api.get(`v1/Classes/course/${courseId}`);
   },
   // Tạo mới
   createClass(data) {
-    return api.post("/Classes", data);
+    return api.post("v1/Classes", data);
   },
   // Cập nhật
   updateClass(id, data) {
-    return api.put(`/Classes/${id}`, data);
+    return api.put(`v1/Classes/${id}`, data);
   },
   // Xóa mềm
   deleteClass(id) {
-    return api.delete(`/Classes/${id}`);
+    return api.delete(`v1/Classes/${id}`);
   },
   // Xóa vĩnh viễn
   deleteClassPermanent(id) {
-    return api.delete(`/Classes/${id}/permanent`);
+    return api.delete(`v1/Classes/${id}/permanent`);
   },
   // Khôi phục
   restoreClass(id) {
-    return api.patch(`/Classes/${id}/restore`);
+    return api.patch(`v1/Classes/${id}/restore`);
   },
   // ---------- Export Excel (client-side) ----------
   async exportToExcel(params = {}) {

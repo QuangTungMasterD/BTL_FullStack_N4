@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CourseScheduleService.API.Controllers
 {
   [ApiController]
-  [Route("api/[controller]s")]
+  [Route("api/v1/courses")]
   public class CourseController : ControllerBase
   {
     private readonly ICourseService _courseService;

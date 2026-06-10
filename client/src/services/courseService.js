@@ -6,42 +6,42 @@ import { courseLevelText } from '@/composables/useFormat.js'
 const courseService = {
   // Lấy danh sách có phân trang + filter
   getCoursesPaged(params = {}) {
-    return api.get('/courses/paged', { params });
+    return api.get('v1/courses/paged', { params });
   },
   
   // Lấy tất cả (không phân trang)
   getAllCourses() {
-    return api.get('/Courses');
+    return api.get('v1/Courses');
   },
   
   // Lấy chi tiết theo id
   getCourseById(id) {
-    return api.get(`/Courses/${id}`);
+    return api.get(`v1/Courses/${id}`);
   },
   
   // Tạo mới
   createCourse(data) {
-    return api.post('/Courses', data);
+    return api.post('v1/Courses', data);
   },
   
   // Cập nhật
   updateCourse(id, data) {
-    return api.put(`/Courses/${id}`, data);
+    return api.put(`v1/Courses/${id}`, data);
   },
   
   // Xóa mềm
   deleteCourse(id) {
-    return api.delete(`/Courses/${id}`);
+    return api.delete(`v1/Courses/${id}`);
   },
   
   // Xóa vĩnh viễn
   deleteCoursePermanent(id) {
-    return api.delete(`/Courses/${id}/permanent`);
+    return api.delete(`v1/Courses/${id}/permanent`);
   },
   
   // Khôi phục
   restoreCourse(id) {
-    return api.patch(`/Courses/${id}/restore`);
+    return api.patch(`v1/Courses/${id}/restore`);
   },
 
   // Export Excel

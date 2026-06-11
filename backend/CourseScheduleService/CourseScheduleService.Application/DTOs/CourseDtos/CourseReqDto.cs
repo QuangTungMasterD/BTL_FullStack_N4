@@ -25,8 +25,8 @@ namespace CourseScheduleService.Application.DTOs.CourseDtos
         [Range(1, 5, ErrorMessage = "Cấp độ phải từ 1 đến 5")]
         public CourseLevel Level { get; set; }
 
-        [Required(ErrorMessage = "Số buổi học không được để trống")]
-        [Range(1, 200, ErrorMessage = "Số buổi học phải từ 1 đến 200")]
+        [Required(ErrorMessage = "số tiết học không được để trống")]
+        [Range(1, 200, ErrorMessage = "số tiết học phải từ 1 đến 200")]
         public int Lesson { get; set; }
         public bool IsActive { get; set; } = true;
 

@@ -17,5 +17,7 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
         DateOnly? startDateFrom, DateOnly? startDateTo,
         string? sortBy, bool sortDesc, bool? IsDeleted = false
     );
+
+    Task<IEnumerable<Class>> GetClassesByTeacherIdAsync(int teacherId);
   }
 }

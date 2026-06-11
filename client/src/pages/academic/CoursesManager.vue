@@ -101,7 +101,7 @@
           <Input
             v-model="formData.lesson"
             type="number"
-            label="Số buổi"
+            label="số tiết"
             required
             :error="validationErrors?.lesson?.join(', ')"
           />

@@ -64,7 +64,7 @@ const courseService = {
       'Tên khóa học': course.courseName,
       'Mô tả': course.desct || '',
       'Học phí (VNĐ)': course.tuitionFee,
-      'Số buổi': course.lesson,
+      'số tiết': course.lesson,
       'Trình độ': courseLevelText(course.level),  // ← dùng hàm có sẵn
       'Trạng thái': course.isActive ? 'Đang mở' : 'Ngừng mở',
       'Chuyên môn ID': course.specializationId || '',
@@ -78,7 +78,7 @@ const courseService = {
       { wch: 35 },  // Tên khóa học
       { wch: 50 },  // Mô tả
       { wch: 15 },  // Học phí
-      { wch: 10 },  // Số buổi
+      { wch: 10 },  // số tiết
       { wch: 15 },  // Trình độ
       { wch: 12 },  // Trạng thái
       { wch: 15 },  // Chuyên môn ID
@@ -119,7 +119,7 @@ const courseService = {
         const courseName = row['Tên khóa học'] || row['courseName'];
         const desct = row['Mô tả'] || row['desct'] || '';
         const tuitionFee = this._parseNumber(row['Học phí (VNĐ)'] || row['Học phí'] || row['tuitionFee']);
-        const lesson = this._parseNumber(row['Số buổi'] || row['lesson']);
+        const lesson = this._parseNumber(row['số tiết'] || row['lesson']);
         const levelText = row['Trình độ'] || row['level'];
         const isActive = this._parseStatus(row['Trạng thái'] || row['isActive']);
         const specializationId = this._parseNumber(row['Chuyên môn ID'] || row['specializationId']) || null;
@@ -132,7 +132,7 @@ const courseService = {
           throw new Error('Học phí không hợp lệ');
         }
         if (isNaN(lesson) || lesson <= 0) {
-          throw new Error('Số buổi phải lớn hơn 0');
+          throw new Error('số tiết phải lớn hơn 0');
         }
         
         // Chuyển đổi level từ text sang số (dùng LEVEL_OPTIONS)

@@ -43,7 +43,7 @@
             <p class="font-body-md text-primary font-bold">{{ formatVND(course?.tuitionFee) }}</p>
           </div>
           <div>
-            <p class="text-label-md text-on-surface-variant">Số buổi</p>
+            <p class="text-label-md text-on-surface-variant">số tiết</p>
             <p class="font-body-md">{{ course?.lesson }} buổi</p>
           </div>
           <div>
@@ -155,7 +155,7 @@
           <Input
             v-model="editForm.lesson"
             type="number"
-            label="Số buổi"
+            label="số tiết"
             required
             :error="validationErrors?.lesson?.join(', ')"
           />

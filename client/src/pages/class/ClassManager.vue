@@ -219,7 +219,7 @@
           <Input
             v-model="formData.lesson"
             type="number"
-            label="Số buổi"
+            label="số tiết"
             required
             :min="1"
             :error="validationErrors?.lesson?.join(', ')"

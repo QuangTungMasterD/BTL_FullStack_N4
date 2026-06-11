@@ -80,5 +80,15 @@ namespace CourseScheduleService.Infrastructure.Repositories
       return await _dbSet.FirstOrDefaultAsync(x =>
             EF.Property<int>(x, "Id") == Id);
     }
+
+    public async Task<IEnumerable<Class>> GetClassesByTeacherIdAsync(int teacherId)
+    {
+        return await _dbSet
+            .Where(c => !c.IsDeleted)
+            .Where(c => c.TeacherAssignments.Any(ta => ta.TeacherId == teacherId && !ta.IsDeleted))
+            .Include(c => c.TeacherAssignments) // tuỳ chọn, nếu cần thông tin teacher
+            .ThenInclude(ta => ta.Teacher)
+            .ToListAsync();
+    }
   }
 }

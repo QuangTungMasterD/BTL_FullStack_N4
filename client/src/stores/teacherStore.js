@@ -201,6 +201,22 @@ export const useTeacherStore = defineStore('teacher', {
         this.loading = false;
       }
     },
+    async fetchTeacherClasses(teacherId) {
+      this.loading = true;
+      this.clearErrors();
+      try {
+        const data = await teacherService.getTeacherClasses(teacherId);
+        return Array.isArray(data) ? data : [];
+      } catch (err) {
+        this.error = err.message;
+        this.errorStatusCode = err.statusCode;
+        this.validationErrors = err.errors;
+        this.timestamp = err.timestamp;
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
 
     async exportToExcel(params = {}) {
       this.isExporting = true;

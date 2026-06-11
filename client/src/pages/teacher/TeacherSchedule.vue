@@ -43,7 +43,7 @@
         @session-click="openSessionDetail"
       />
       <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard label="Tổng số buổi dạy" :value="totalSessions" />
+        <StatCard label="Tổng số tiết dạy" :value="totalSessions" />
         <StatCard label="Số lớp đang dạy" :value="uniqueClassesCount" />
         <StatCard label="Yêu cầu đổi lịch" :value="pendingRequests" />
       </div>
@@ -83,8 +83,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
-import { useClassSessionStore, useClassStore, useRoomStore } from '@/stores'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useClassSessionStore, useClassStore, useRoomStore, useTeacherAssignmentStore } from '@/stores'
 import { formatDateTime } from '@/composables/useFormat'
 import api from '@/services/api'
 import Button from '@/components/ui/Button.vue'
@@ -100,8 +100,9 @@ import ScheduleCalendar from '@/components/business/ScheduleCalendar.vue'
 const classSessionStore = useClassSessionStore()
 const classStore = useClassStore()
 const roomStore = useRoomStore()
+const teacherAssignmentStore = useTeacherAssignmentStore()
 
-const teacherId = ref(1) // hardcode tạm, sau thay bằng auth
+const teacherId = ref(1) // hardcode, sau thay bằng auth
 const loading = ref(false)
 const submitting = ref(false)
 const sessions = ref([])
@@ -118,7 +119,7 @@ const requestTypeOptions = [
   { value: 'cancel', label: 'Nghỉ buổi học' }
 ]
 
-// Hàm tạo mảng weekDays - KHÔNG dùng computed để tránh lỗi stack overflow
+// Hàm tạo mảng weekDays
 const getWeekDays = (baseDate) => {
   const start = new Date(baseDate)
   const dayOfWeek = start.getDay()
@@ -153,7 +154,6 @@ const getMonthDays = (baseDate) => {
   return days
 }
 
-// Dùng computed nhưng gọi hàm bên trong – an toàn vì không tạo vòng lặp
 const weekDays = computed(() => getWeekDays(currentDate.value))
 const monthDays = computed(() => getMonthDays(currentDate.value))
 const hours = computed(() => Array.from({ length: 14 }, (_, i) => i + 7))
@@ -209,11 +209,23 @@ const loadSchedule = async () => {
     }
     await classSessionStore.fetchPaged(params)
     let data = classSessionStore.pagedData.data
-    data = data.map(s => ({
-      ...s,
-      className: classStore.classes.find(c => c.id === s.classId)?.className || 'N/A',
-      roomName: roomStore.rooms.find(r => r.id === s.roomId)?.roomName || 'N/A'
-    }))
+
+    // Tạo map từ teacherAssignmentId -> classId
+    const assignmentMap = {}
+    teacherAssignmentStore.assignments.forEach(ta => {
+      assignmentMap[ta.id] = ta.classId
+    })
+
+    data = data.map(s => {
+      const classId = assignmentMap[s.teacherAssignmentId]
+      const cls = classStore.classes.find(c => c.id === classId)
+      return {
+        ...s,
+        classId: classId,
+        className: cls?.className || 'N/A',
+        roomName: roomStore.rooms.find(r => r.id === s.roomId)?.roomName || 'N/A'
+      }
+    })
     sessions.value = data
   } catch (err) {
     console.error(err)
@@ -259,8 +271,17 @@ const submitRequest = async () => {
   }
 }
 
+// watch
+watch(viewMode, () => {
+  loadSchedule()
+})
+
 onMounted(async () => {
-  await Promise.all([classStore.fetchAll(), roomStore.fetchAll()])
+  await Promise.all([
+    classStore.fetchAll(),
+    roomStore.fetchAll(),
+    teacherAssignmentStore.fetchAll()
+  ])
   await loadSchedule()
 })
 </script>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CourseScheduleService.Application.Common;
+using CourseScheduleService.Application.DTOs.ClassDtos;
 using CourseScheduleService.Application.DTOs.TeacherDtos;
 using CourseScheduleService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,13 @@ namespace CourseScheduleService.API.Controllers
     {
       var result = await _teacherService.GetPagedTeachersAsync(req);
       return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpGet("{id}/classes")]
+    public async Task<ActionResult<ApiResponse<IEnumerable<ClassResDto>>>> GetClassesByTeacher(int id)
+    {
+        var result = await _teacherService.GetClassesByTeacherAsync(id);
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpGet("{id}")]

@@ -15,11 +15,11 @@ namespace CourseScheduleService.Application.DTOs.ClassSessionDtos
         [Required(ErrorMessage = "Thời gian kết thúc không được để trống")]
         public DateTime EndTime { get; set; }
 
-        [Required(ErrorMessage = "Số buổi học không được để trống")]
-        [Range(1, int.MaxValue, ErrorMessage = "Số buổi học phải lớn hơn 0")]
+        [Required(ErrorMessage = "số tiết học không được để trống")]
+        [Range(1, int.MaxValue, ErrorMessage = "số tiết học phải lớn hơn 0")]
         public int Lesson { get; set; }
         
-        public ClassSessionStatus Status { get; set; }
+        public ClassSessionStatus Status { get; set; } = ClassSessionStatus.Scheduled;
 
         [Required(ErrorMessage = "Phòng học không được để trống")]
         public int RoomId { get; set; }

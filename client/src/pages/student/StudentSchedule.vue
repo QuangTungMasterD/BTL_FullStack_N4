@@ -40,7 +40,7 @@
         @session-click="openSessionDetail"
       />
       <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <StatCard label="Tổng số buổi học" :value="totalSessions" trend="Trong tháng" />
+        <StatCard label="Tổng số tiết học" :value="totalSessions" trend="Trong tháng" />
         <StatCard label="Số lớp đang học" :value="uniqueClassesCount" />
       </div>
     </div>

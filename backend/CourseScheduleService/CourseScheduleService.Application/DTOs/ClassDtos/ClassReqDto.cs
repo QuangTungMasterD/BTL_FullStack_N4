@@ -22,7 +22,7 @@ namespace CourseScheduleService.Application.DTOs.ClassDtos
     public DateOnly EndDate { get; set; }
     public ClassStatus Status { get; set; }
 
-    [Range(1, int.MaxValue, ErrorMessage = "Số buổi học phải lớn hơn 0")]
+    [Range(1, int.MaxValue, ErrorMessage = "số tiết học phải lớn hơn 0")]
     public int Lesson { get; set; }
 
     [Required(ErrorMessage = "Khóa học không được để trống")]

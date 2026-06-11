@@ -26,7 +26,7 @@
     <LoadingSpinner v-if="teacherStore.loading" />
 
     <div v-else class="space-y-6">
-      <!-- Thông tin giáo viên -->
+      <!-- Thông tin giáo viên (giữ nguyên) -->
       <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
         <div class="flex items-center gap-4 mb-6">
           <Avatar :name="teacher?.fullName" size="lg" />
@@ -78,7 +78,7 @@
         </div>
       </div>
 
-      <!-- Danh sách lớp được phân công (nếu có) -->
+      <!-- Danh sách lớp được phân công -->
       <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
         <h2 class="font-headline-md text-headline-md mb-4">Lớp học giảng dạy</h2>
         
@@ -106,18 +106,14 @@
                 {{ classStatusText(classItem.status) }}
               </Badge>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3 text-label-sm text-on-surface-variant">
+            <div class="grid grid-cols-2 md:grid-cols-2 gap-3 mt-3 text-label-sm text-on-surface-variant">
               <div class="flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">school</span>
-                Khóa học: {{ classItem.courseName || 'N/A' }}
+                Khóa học: {{ classItem.courseName }}
               </div>
               <div class="flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">group</span>
-                Sĩ số: {{ classItem.currentSlots || 0 }}/{{ classItem.maxSlots }}
-              </div>
-              <div class="flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">meeting_room</span>
-                Phòng: {{ classItem.roomName || 'Chưa có' }}
+                Sĩ số: {{ classItem.currentSlots }}/{{ classItem.maxStudent }}
               </div>
             </div>
           </div>
@@ -125,7 +121,7 @@
       </div>
     </div>
 
-    <!-- Modal Edit (tương tự như trong TeachersManager, có thể tái sử dụng component) -->
+    <!-- Modal Edit (giữ nguyên) -->
     <Modal v-model="showEditModal" title="Sửa giáo viên">
       <form @submit.prevent="handleUpdate" class="space-y-4">
         <Input
@@ -199,7 +195,7 @@
 import { ref, reactive, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useTeacherStore, useSpecializationStore, useClassStore } from '@/stores';
+import { useTeacherStore, useSpecializationStore, useCourseStore } from '@/stores';
 import Link from '@/components/ui/Link.vue';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
@@ -216,11 +212,10 @@ const router = useRouter();
 const route = useRoute();
 const teacherStore = useTeacherStore();
 const specializationStore = useSpecializationStore();
-const classStore = useClassStore();
+const courseStore = useCourseStore();
 const { validationErrors } = storeToRefs(teacherStore);
 
 const teacher = ref(null);
-// SỬA: dùng computed thay vì ref để reactive
 const teacherSpecializations = computed(() => {
   if (!teacher.value?.specializationIds) return [];
   return teacher.value.specializationIds
@@ -260,16 +255,22 @@ const specializationOptions = computed(() =>
   }))
 );
 
-// Bỏ hàm loadTeacherSpecializations vì đã dùng computed
-
 const loadClasses = async () => {
   const teacherId = route.params.id;
   if (!teacherId) return;
   loadingClasses.value = true;
   try {
-    // Giả sử có API lấy lớp theo teacherId
-    // classes.value = await classStore.fetchByTeacherId(teacherId);
-    classes.value = []; // tạm thời
+    // Gọi API lấy các lớp của giáo viên (cần backend hỗ trợ endpoint /Teachers/{id}/classes)
+    // Giả sử teacherStore đã có action fetchTeacherClasses
+    const data = await teacherStore.fetchTeacherClasses(teacherId);
+    // Enrich thêm tên khóa học (courseName) vì API trả về courseId
+    const enriched = data.map(cls => ({
+      ...cls,
+      courseName: courseStore.courses.find(c => c.id === cls.courseId)?.courseName || 'N/A',
+      currentSlots: cls.currentSlots || 0, // Nếu có, nếu không thì để 0
+      maxStudent: cls.maxStudent,
+    }));
+    classes.value = enriched;
   } catch (err) {
     console.error('Failed to load classes:', err);
   } finally {
@@ -285,7 +286,6 @@ const loadTeacherDetail = async () => {
   }
   try {
     teacher.value = await teacherStore.fetchById(id);
-    // Không cần gán teacherSpecializations thủ công nữa
   } catch (err) {
     console.error('Failed to load teacher:', err);
     router.push('/teachers');
@@ -350,7 +350,10 @@ const goToClassDetail = (classId) => {
 };
 
 onMounted(async () => {
-  await specializationStore.fetchAll(); // Đảm bảo chuyên ngành được tải trước
+  await Promise.all([
+    specializationStore.fetchAll(),
+    courseStore.fetchAll()
+  ]);
   await loadTeacherDetail();
   await loadClasses();
 });

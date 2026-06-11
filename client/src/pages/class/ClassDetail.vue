@@ -71,7 +71,7 @@
             </Badge>
           </div>
           <div>
-            <p class="text-label-md text-on-surface-variant">Số buổi</p>
+            <p class="text-label-md text-on-surface-variant">số tiết</p>
             <p class="font-body-md">{{ classData?.lesson }} buổi</p>
           </div>
         </div>
@@ -145,18 +145,14 @@
       </div>
 
       <!-- Danh sách học viên (tạm thời placeholder nếu chưa có API) -->
-      <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
+      <!-- <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
         <div class="flex justify-between items-center mb-4">
           <h2 class="font-headline-md text-headline-md">Danh sách học viên</h2>
-          <!-- <Button size="sm" variant="primary" @click="manageStudents">
-            <span class="material-symbols-outlined">person_add</span>
-            Quản lý học viên
-          </Button> -->
         </div>
         <div class="text-center py-8 text-on-surface-variant">
           Tính năng đang phát triển
         </div>
-      </div>
+      </div> -->
     </div>
 
     <!-- Modal Sửa lớp -->
@@ -205,7 +201,7 @@
           <Input
             v-model="editForm.lesson"
             type="number"
-            label="Số buổi"
+            label="số tiết"
             required
             :min="1"
             :error="validationErrors?.lesson?.join(', ')"

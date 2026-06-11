@@ -65,7 +65,7 @@ const classService = {
         ? new Date(cls.endDate).toLocaleDateString("vi-VN")
         : "",
       "Trạng thái": classStatusText(cls.status),
-      "Số buổi": cls.lesson,
+      "số tiết": cls.lesson,
       "ID khóa học": cls.courseId,
     }));
 
@@ -77,7 +77,7 @@ const classService = {
       { wch: 15 }, // Ngày bắt đầu
       { wch: 15 }, // Ngày kết thúc
       { wch: 18 }, // Trạng thái
-      { wch: 10 }, // Số buổi
+      { wch: 10 }, // số tiết
       { wch: 15 }, // ID khóa học
     ];
 
@@ -126,7 +126,7 @@ const classService = {
         );
         const endDate = this._parseDate(row["Ngày kết thúc"] || row["endDate"]);
         const statusText = row["Trạng thái"] || row["status"];
-        const lesson = this._parseNumber(row["Số buổi"] || row["lesson"]);
+        const lesson = this._parseNumber(row["số tiết"] || row["lesson"]);
         let courseId = this._parseNumber(row["ID khóa học"] || row["courseId"]);
 
         // Nếu không có courseId nhưng có tên khóa học trong courseMap
@@ -147,7 +147,7 @@ const classService = {
         if (new Date(startDate) > new Date(endDate))
           throw new Error("Ngày bắt đầu phải trước ngày kết thúc");
         if (isNaN(lesson) || lesson < 1)
-          throw new Error("Số buổi phải lớn hơn 0");
+          throw new Error("số tiết phải lớn hơn 0");
         if (!courseId) throw new Error("Không xác định được ID khóa học");
 
         const status = this._parseClassStatus(statusText);

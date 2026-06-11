@@ -35,6 +35,9 @@ const teacherService = {
   restoreTeacher(id) {
     return api.patch(`v1/Teachers/${id}/restore`);
   },
+  getTeacherClasses(teacherId) {
+    return api.get(`v1/Teachers/${teacherId}/classes`);
+  },
 
   async exportToExcel(params = {}) {
     const response = await this.getTeachersPaged({

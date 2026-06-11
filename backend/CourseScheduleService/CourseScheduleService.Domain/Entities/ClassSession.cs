@@ -20,7 +20,7 @@ namespace CourseScheduleService.Domain.Entities
         public int Lesson { get; set; }
 
         [Column("status")]
-        public ClassSessionStatus Status { get; set; }
+        public ClassSessionStatus Status { get; set; } = ClassSessionStatus.Scheduled;
 
         [Column("room_id")]
         [ForeignKey("Room")]

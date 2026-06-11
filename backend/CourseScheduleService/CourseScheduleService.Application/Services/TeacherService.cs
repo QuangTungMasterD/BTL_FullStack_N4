@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CourseScheduleService.Application.Common;
+using CourseScheduleService.Application.DTOs.ClassDtos;
 using CourseScheduleService.Application.DTOs.TeacherDtos;
 using CourseScheduleService.Application.Interfaces.Services;
 using CourseScheduleService.Domain.Entities;
@@ -15,13 +16,18 @@ namespace CourseScheduleService.Application.Services
   {
     private readonly ITeacherRepository _teacherRepository;
     private readonly ITeacherSpecializationRepository _teacherSpecializationRepository;
+    private readonly IClassRepository _classRepository;
     private readonly IMapper _mapper;
 
-    public TeacherService(ITeacherRepository teacherRepository, ITeacherSpecializationRepository teacherSpecializationRepository, IMapper mapper)
+    public TeacherService(ITeacherRepository teacherRepository, 
+    ITeacherSpecializationRepository teacherSpecializationRepository, 
+    IMapper mapper,
+    IClassRepository classRepository)
     {
       _teacherRepository = teacherRepository;
       _mapper = mapper;
       _teacherSpecializationRepository = teacherSpecializationRepository;
+      _classRepository = classRepository;
     }
 
     public async Task<ApiResponse<TeacherResDto?>> CreateTeacherAsync(TeacherReqDto teacherReqDto)
@@ -227,6 +233,17 @@ namespace CourseScheduleService.Application.Services
       };
 
       return ApiResponse<PagedResponse<TeacherResDto>>.SuccessResponse(result);
+    }
+
+    public async Task<ApiResponse<IEnumerable<ClassResDto>>> GetClassesByTeacherAsync(int teacherId)
+    {
+        var teacher = await _teacherRepository.IsTeacherIdExistsAsync(teacherId); // hoặc IsTeacherIdExists
+        if (teacher == null)
+            return ApiResponse<IEnumerable<ClassResDto>>.ErrorResponse($"Không tìm thấy giáo viên {teacherId}", statusCode: 404);
+
+        var classes = await _classRepository.GetClassesByTeacherIdAsync(teacherId);
+        var classDtos = _mapper.Map<IEnumerable<ClassResDto>>(classes);
+        return ApiResponse<IEnumerable<ClassResDto>>.SuccessResponse(classDtos);
     }
   }
 }

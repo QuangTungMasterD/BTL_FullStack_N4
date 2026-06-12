@@ -94,5 +94,21 @@ namespace CourseScheduleService.Infrastructure.Repositories
 
             return await query.AnyAsync();
         }
+        public async Task<TeacherAssignment?> GetTeacherAssignmentAsync(int sessionId)
+        {
+            var session = await _dbSet
+                .Include(s => s.TeacherAssignment)
+                .FirstOrDefaultAsync(s => s.Id == sessionId);
+            return session?.TeacherAssignment;
+        }
+
+        public async Task<Class?> GetClassBySessionIdAsync(int sessionId)
+        {
+            var session = await _dbSet
+                .Include(s => s.TeacherAssignment)
+                .ThenInclude(ta => ta.Class)
+                .FirstOrDefaultAsync(s => s.Id == sessionId);
+            return session?.TeacherAssignment?.Class;
+        }
     }
 }

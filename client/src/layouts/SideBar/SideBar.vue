@@ -31,6 +31,7 @@ const menuItems = [
   { label: 'Rooms', icon: 'local_library', path: '/rooms' },
   { label: 'Specialization', icon: 'analytics', path: '/specializations' },
   { label: 'teacherschedule', icon: 'analytics', path: '/teachers/schedule' },
+  { label: 'schedule req', icon: 'analytics', path: '/admin/schedule-requests' },
 ]
 const footerMenuItems = [
   { label: 'Settings', icon: 'settings', path: '/settings' },

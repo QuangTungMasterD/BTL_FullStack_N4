@@ -36,6 +36,7 @@ builder.Services.AddScoped(typeof(IRoomRepository), typeof(RoomRepository));
 builder.Services.AddScoped(typeof(ITeacherAssignmentRepository), typeof(TeacherAssignmentRepository));
 builder.Services.AddScoped(typeof(ITeacherSpecializationRepository), typeof(TeacherSpecializationRepository));
 builder.Services.AddScoped(typeof(IClassSessionRepository), typeof(ClassSessionRepository));
+builder.Services.AddScoped<IScheduleChangeRequestRepository, ScheduleChangeRequestRepository>();
 
 // Register services
 builder.Services.AddScoped<ICourseService, CourseService>();
@@ -46,6 +47,7 @@ builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<ITeacherAssignmentService, TeacherAssignmentService>();
 builder.Services.AddScoped<ITeacherSpecializationService, TeacherSpecializationService>();
 builder.Services.AddScoped<IClassSessionService, ClassSessionService>();
+builder.Services.AddScoped<IScheduleChangeRequestService, ScheduleChangeRequestService>();
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(ClassMapping));
@@ -56,6 +58,7 @@ builder.Services.AddAutoMapper(typeof(SpecializationMapping));
 builder.Services.AddAutoMapper(typeof(TeacherAssignmentMapping));
 builder.Services.AddAutoMapper(typeof(TeacherMapping));
 builder.Services.AddAutoMapper(typeof(TeacherSpecializationMapping));
+builder.Services.AddAutoMapper(typeof(ScheduleChangeRequestMapping));
 
 // EBA
 builder.Services.AddSingleton<IEventBus, KafkaEventBus>();

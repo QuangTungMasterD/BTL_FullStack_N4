@@ -18,5 +18,7 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
         );
         Task<bool> IsRoomConflictAsync(int roomId, DateTime startTime, DateTime endTime, int? excludeId = null);
         Task<bool> IsTeacherConflictAsync(int teacherId, DateTime startTime, DateTime endTime, int? excludeId = null);
+        Task<TeacherAssignment?> GetTeacherAssignmentAsync(int sessionId);
+        Task<Class?> GetClassBySessionIdAsync(int sessionId);
     }
 }

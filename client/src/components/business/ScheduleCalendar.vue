@@ -37,7 +37,12 @@
               <div
                 v-for="session in getSessionsAt(day.fullDate, hour)"
                 :key="session.id"
-                class="absolute inset-x-1 rounded-lg p-2 text-xs shadow-sm cursor-pointer hover:shadow-md transition-all z-10 bg-primary-container/20 border-l-4 border-primary"
+                :class="[
+                  'absolute inset-x-1 rounded-lg p-2 text-xs shadow-sm cursor-pointer hover:shadow-md transition-all z-10',
+                  session.status === 4
+                    ? 'bg-error-container/20 border-l-4 border-error'
+                    : 'bg-primary-container/20 border-l-4 border-primary'
+                ]"
                 :style="getSessionStyle(session, hour)"
                 @click.stop="$emit('sessionClick', session)"
               >
@@ -67,7 +72,12 @@
             <div
               v-for="session in getSessionsOnDate(day.date)"
               :key="session.id"
-              class="text-xs p-1 rounded cursor-pointer truncate bg-primary-container/20 border-l-4 border-primary"
+              :class="[
+                'text-xs p-1 rounded cursor-pointer truncate',
+                session.status === 4
+                  ? 'bg-error-container/20 border-l-4 border-error'
+                  : 'bg-primary-container/20 border-l-4 border-primary'
+              ]"
               @click="$emit('sessionClick', session)"
             >
               {{ formatTime(session.startTime) }} {{ session.className }}

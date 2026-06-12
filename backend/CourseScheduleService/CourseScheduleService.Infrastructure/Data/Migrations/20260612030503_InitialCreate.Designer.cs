@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseScheduleService.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CourseScheduleDbContext))]
-    [Migration("20260531142806_MakeSpecializationIdNullable")]
-    partial class MakeSpecializationIdNullable
+    [Migration("20260612030503_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -165,7 +165,6 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<string>("Desct")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("desct");
 
@@ -218,7 +217,6 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<string>("Descrt")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("descrt");
 
@@ -248,6 +246,85 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                     b.ToTable("rooms");
                 });
 
+            modelBuilder.Entity("CourseScheduleService.Domain.Entities.ScheduleChangeRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdminNote")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("admin_note");
+
+                    b.Property<int>("ClassSessionId")
+                        .HasColumnType("int")
+                        .HasColumnName("class_session_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("processed_at");
+
+                    b.Property<int?>("ProcessedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("processed_by");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("reason");
+
+                    b.Property<string>("RequestType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("request_type");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime?>("SuggestedEndTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("suggested_end_time");
+
+                    b.Property<int?>("SuggestedRoomId")
+                        .HasColumnType("int")
+                        .HasColumnName("suggested_room_id");
+
+                    b.Property<DateTime?>("SuggestedStartTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("suggested_start_time");
+
+                    b.Property<int>("TeacherId")
+                        .HasColumnType("int")
+                        .HasColumnName("teacher_id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassSessionId");
+
+                    b.HasIndex("SuggestedRoomId");
+
+                    b.HasIndex("TeacherId");
+
+                    b.ToTable("schedule_change_requests");
+                });
+
             modelBuilder.Entity("CourseScheduleService.Domain.Entities.Specialization", b =>
                 {
                     b.Property<int>("Id")
@@ -262,7 +339,6 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<string>("Descrt")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("descrt");
 
@@ -310,6 +386,10 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("fullname");
+
+                    b.Property<bool>("Gender")
+                        .HasColumnType("bit")
+                        .HasColumnName("gender");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit")
@@ -458,6 +538,32 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                         .HasForeignKey("SpecializationId");
 
                     b.Navigation("Specialization");
+                });
+
+            modelBuilder.Entity("CourseScheduleService.Domain.Entities.ScheduleChangeRequest", b =>
+                {
+                    b.HasOne("CourseScheduleService.Domain.Entities.ClassSession", "ClassSession")
+                        .WithMany()
+                        .HasForeignKey("ClassSessionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CourseScheduleService.Domain.Entities.Room", "SuggestedRoom")
+                        .WithMany()
+                        .HasForeignKey("SuggestedRoomId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CourseScheduleService.Domain.Entities.Teacher", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ClassSession");
+
+                    b.Navigation("SuggestedRoom");
+
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("CourseScheduleService.Domain.Entities.TeacherAssignment", b =>

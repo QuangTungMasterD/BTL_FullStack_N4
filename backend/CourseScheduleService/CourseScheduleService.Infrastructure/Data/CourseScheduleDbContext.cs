@@ -24,6 +24,7 @@ public partial class CourseScheduleDbContext : DbContext
     public DbSet<Specialization> Specializations { get; set; }
     public DbSet<TeacherAssignment> TeacherAssignments { get; set; }
     public DbSet<TeacherSpecialization> TeacherSpecializations { get; set; }
+    public DbSet<ScheduleChangeRequest> ScheduleChangeRequests { get; set; }
 
 //     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 // #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -31,6 +32,24 @@ public partial class CourseScheduleDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ScheduleChangeRequest>(entity =>
+        {
+            entity.HasOne(r => r.Teacher)
+                .WithMany()
+                .HasForeignKey(r => r.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(r => r.ClassSession)
+                .WithMany()
+                .HasForeignKey(r => r.ClassSessionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(r => r.SuggestedRoom)
+                .WithMany()
+                .HasForeignKey(r => r.SuggestedRoomId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
         OnModelCreatingPartial(modelBuilder);
     }
 

@@ -55,7 +55,20 @@
         <Select v-model="requestData.sessionId" label="Chọn buổi học" :options="sessionOptions" required />
         <Select v-model="requestData.type" label="Loại yêu cầu" :options="requestTypeOptions" required />
         <Input v-model="requestData.reason" label="Lý do" type="textarea" rows="3" required />
-        <Input v-model="requestData.suggestedDate" type="datetime-local" label="Ngày giờ đề xuất" />
+        <div class="space-y-2">
+          <Input v-model="requestData.suggestedDate" type="date" label="Chọn ngày" required />
+          <label class="font-label-md text-label-md">Chọn ca học mới</label>
+          <div class="flex gap-4">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" value="Morning" v-model="requestData.preferredSession" />
+              <span>Sáng (7:20 - 10:20)</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" value="Afternoon" v-model="requestData.preferredSession" />
+              <span>Chiều (13:15 - 16:15)</span>
+            </label>
+          </div>
+        </div>
         <div class="flex justify-end gap-3">
           <Button variant="outline" @click="showRequestModal = false">Hủy</Button>
           <Button variant="primary" type="submit" :loading="submitting">Gửi yêu cầu</Button>
@@ -84,7 +97,7 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue'
-import { useClassSessionStore, useClassStore, useRoomStore, useTeacherAssignmentStore } from '@/stores'
+import { useClassSessionStore, useClassStore, useRoomStore, useTeacherAssignmentStore, useScheduleChangeRequestStore } from '@/stores'
 import { formatDateTime } from '@/composables/useFormat'
 import api from '@/services/api'
 import Button from '@/components/ui/Button.vue'
@@ -101,6 +114,7 @@ const classSessionStore = useClassSessionStore()
 const classStore = useClassStore()
 const roomStore = useRoomStore()
 const teacherAssignmentStore = useTeacherAssignmentStore()
+const scheduleRequestStore = useScheduleChangeRequestStore();
 
 const teacherId = ref(1) // hardcode, sau thay bằng auth
 const loading = ref(false)
@@ -113,7 +127,13 @@ const showDetailModal = ref(false)
 const showConfirmDialog = ref(false)
 const selectedSession = ref(null)
 
-const requestData = reactive({ sessionId: '', type: 'change', reason: '', suggestedDate: '' })
+const requestData = reactive({ 
+    sessionId: '', 
+    type: 'change', 
+    reason: '', 
+    preferredSession: 'Morning',
+    suggestedDate: ''
+});
 const requestTypeOptions = [
   { value: 'change', label: 'Đổi lịch dạy' },
   { value: 'cancel', label: 'Nghỉ buổi học' }
@@ -258,18 +278,26 @@ const openSessionDetail = (session) => {
   selectedSession.value = session
   showDetailModal.value = true
 }
+
 const submitRequest = async () => {
-  submitting.value = true
+  submitting.value = true;
   try {
-    await api.post('/teacher-requests', requestData)
-    showRequestModal.value = false
-    showConfirmDialog.value = true
+    await scheduleRequestStore.createRequest({
+    classSessionId: requestData.sessionId,
+    requestType: requestData.type,
+    reason: requestData.reason,
+    preferredSession: requestData.preferredSession,
+    suggestedDate: requestData.suggestedDate,
+});
+    showRequestModal.value = false;
+    showConfirmDialog.value = true;
   } catch (err) {
-    console.error(err)
+    console.error(err);
+    alert(err.message);
   } finally {
-    submitting.value = false
+    submitting.value = false;
   }
-}
+};
 
 // watch
 watch(viewMode, () => {

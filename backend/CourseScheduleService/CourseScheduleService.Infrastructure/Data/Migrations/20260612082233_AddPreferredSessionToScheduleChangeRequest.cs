@@ -5,25 +5,24 @@
 namespace CourseScheduleService.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class TenMigration : Migration
+    public partial class AddPreferredSessionToScheduleChangeRequest : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "gender",
-                table: "teachers",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
+            migrationBuilder.AddColumn<string>(
+                name: "preferred_session",
+                table: "schedule_change_requests",
+                type: "nvarchar(max)",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "gender",
-                table: "teachers");
+                name: "preferred_session",
+                table: "schedule_change_requests");
         }
     }
 }

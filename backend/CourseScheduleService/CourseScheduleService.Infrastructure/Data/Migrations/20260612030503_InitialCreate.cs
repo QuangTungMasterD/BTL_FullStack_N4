@@ -19,7 +19,7 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     room_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     room_type = table.Column<int>(type: "int", nullable: false),
-                    descrt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    descrt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     status = table.Column<int>(type: "int", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -37,7 +37,7 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     specialization_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    descrt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    descrt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -58,6 +58,7 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                     email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     yob = table.Column<DateOnly>(type: "date", nullable: false),
+                    gender = table.Column<bool>(type: "bit", nullable: false),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -75,12 +76,12 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     course_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    desct = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    desct = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     tuition_fee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     level = table.Column<int>(type: "int", nullable: false),
                     lesson = table.Column<int>(type: "int", nullable: false),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
-                    specialization_id = table.Column<int>(type: "int", nullable: false),
+                    specialization_id = table.Column<int>(type: "int", nullable: true),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     is_deleted = table.Column<bool>(type: "bit", nullable: false)
@@ -92,8 +93,7 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                         name: "FK_courses_specializations_specialization_id",
                         column: x => x.specialization_id,
                         principalTable: "specializations",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -227,6 +227,50 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                         principalColumn: "id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "schedule_change_requests",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    class_session_id = table.Column<int>(type: "int", nullable: false),
+                    teacher_id = table.Column<int>(type: "int", nullable: false),
+                    request_type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    suggested_start_time = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    suggested_end_time = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    suggested_room_id = table.Column<int>(type: "int", nullable: true),
+                    status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    admin_note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    processed_at = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    processed_by = table.Column<int>(type: "int", nullable: true),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    is_deleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_schedule_change_requests", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_schedule_change_requests_class_sessions_class_session_id",
+                        column: x => x.class_session_id,
+                        principalTable: "class_sessions",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_schedule_change_requests_rooms_suggested_room_id",
+                        column: x => x.suggested_room_id,
+                        principalTable: "rooms",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_schedule_change_requests_teachers_teacher_id",
+                        column: x => x.teacher_id,
+                        principalTable: "teachers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_class_sessions_ClassId",
                 table: "class_sessions",
@@ -258,6 +302,21 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                 column: "specialization_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_schedule_change_requests_class_session_id",
+                table: "schedule_change_requests",
+                column: "class_session_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_schedule_change_requests_suggested_room_id",
+                table: "schedule_change_requests",
+                column: "suggested_room_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_schedule_change_requests_teacher_id",
+                table: "schedule_change_requests",
+                column: "teacher_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_teacher_assignments_class_id",
                 table: "teacher_assignments",
                 column: "class_id");
@@ -282,10 +341,13 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "class_sessions");
+                name: "schedule_change_requests");
 
             migrationBuilder.DropTable(
                 name: "teacher_specializations");
+
+            migrationBuilder.DropTable(
+                name: "class_sessions");
 
             migrationBuilder.DropTable(
                 name: "rooms");

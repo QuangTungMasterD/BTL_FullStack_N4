@@ -6,3 +6,4 @@ export { useSpecializationStore } from './specializationStore';
 export { useTeacherStore } from './teacherStore';
 export { useTeacherAssignmentStore } from './teacherAssignmentStore';
 export { useTeacherSpecializationStore } from './teacherSpecializationStore';
+export { useScheduleChangeRequestStore } from './scheduleChangeRequestStore';

@@ -22,6 +22,8 @@ import RoomsTrash from '@/pages/rooms/RoomsTrash.vue';
 
 import SpecializationsManager from '@/pages/specializations/SpecializationsManager.vue';
 
+import ScheudleChangeRequestManager from '@/pages/admin/ScheduleChangeRequests.vue';
+
 const routes = [
   {
     path: '/',
@@ -102,6 +104,11 @@ const routes = [
         name: 'Specialization Trash',
         component: SpecializationsManager
       },
+      {
+        path: 'admin/schedule-requests',
+        name: 'ScheduleChangeRequests Manager',
+        component: ScheudleChangeRequestManager
+      }
     ]
   }
 ]

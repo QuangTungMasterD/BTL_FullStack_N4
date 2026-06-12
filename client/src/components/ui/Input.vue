@@ -15,7 +15,7 @@
         :placeholder="placeholder"
         :required="required"
         :disabled="disabled"
-        class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-2.5 text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+        class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-2.5 text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-60 disabled:bg-surface-container-high disabled:cursor-not-allowed"
         :class="{ 'pl-10': icon }"
         @input="$emit('update:modelValue', $event.target.value)"
         @blur="$emit('blur')"

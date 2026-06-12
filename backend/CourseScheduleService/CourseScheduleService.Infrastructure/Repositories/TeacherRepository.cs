@@ -89,5 +89,13 @@ namespace CourseScheduleService.Infrastructure.Repositories
       return await _dbSet.FirstOrDefaultAsync(x =>
             EF.Property<int>(x, "Id") == Id);
     }
+
+    public async Task<List<Teacher>> GetAvailableTeachersBySpecializationAsync(int specializationId, DateTime startDate, DateTime endDate)
+    {
+        var query = _dbSet
+            .Where(t => t.IsActive && !t.IsDeleted &&
+                        t.TeacherSpecializations.Any(ts => ts.SpecializationId == specializationId && !ts.IsDeleted));
+        return await query.ToListAsync();
+    }
   }
 }

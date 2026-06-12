@@ -27,5 +27,7 @@ namespace CourseScheduleService.Application.DTOs.ClassDtos
 
     [Required(ErrorMessage = "Khóa học không được để trống")]
     public int CourseId { get; set; }
+
+    public bool AutoSchedule { get; set; } = true;
   }
 }

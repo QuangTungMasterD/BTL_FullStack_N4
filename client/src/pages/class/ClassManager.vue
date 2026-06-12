@@ -222,6 +222,7 @@
             label="số tiết"
             required
             :min="1"
+            :disabled="!isEditing"
             :error="validationErrors?.lesson?.join(', ')"
           />
           <Select
@@ -238,6 +239,17 @@
           :options="teacherOptionsForForm"
           :error="validationErrors?.teacherId?.join(', ')"
         />
+
+        <div class="mt-4" v-if="!isEditing">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" v-model="formData.autoSchedule" class="w-4 h-4 rounded border-outline-variant text-primary" />
+            <span class="text-body-md">Tự động xếp lịch và phân công giáo viên</span>
+          </label>
+          <p class="text-label-sm text-on-surface-variant mt-1 ml-6">
+            Hệ thống sẽ tự tìm giáo viên phù hợp (theo chuyên môn) và xếp lịch mỗi tuần 1 buổi, 4 tiết/buổi.
+          </p>
+        </div>
+
         <div class="flex justify-end gap-3 pt-4">
           <Button variant="outline" @click="closeModal">Hủy</Button>
           <Button variant="primary" type="submit" :loading="classStore.loading">
@@ -471,7 +483,8 @@ const formData = reactive({
   endDate: '',
   lesson: 0,
   courseId: '',
-  teacherId: ''
+  teacherId: '',
+  autoSchedule: true,
 })
 
 const openCreateModal = () => {
@@ -491,6 +504,7 @@ const openEditModal = (classItem) => {
   formData.lesson = classItem.lesson
   formData.courseId = classItem.courseId
   formData.teacherId = assignmentMap.value[classItem.id] || ''
+  formData.autoSchedule = classItem.autoSchedule !== undefined ? classItem.autoSchedule : true;
   showModal.value = true
 }
 const resetForm = () => {
@@ -515,7 +529,8 @@ const handleSubmit = async () => {
     startDate: formData.startDate,
     endDate: formData.endDate,
     lesson: Number(formData.lesson),
-    courseId: Number(formData.courseId)
+    courseId: Number(formData.courseId),
+    autoSchedule: formData.autoSchedule,
   }
   try {
     let savedClass
@@ -560,6 +575,17 @@ const handleDeleteClass = async () => {
 // Watch teacherId filter: reload classes when teacherId changes (client-side filter)
 watch(() => filters.teacherId, () => {
   // No need to reload, computed will handle display
+})
+
+watch(() => formData.courseId, (newCourseId) => {
+  if (!isEditing.value && newCourseId) {
+    const selectedCourse = courseStore.courses.find(c => c.id === Number(newCourseId))
+    if (selectedCourse) {
+      formData.lesson = selectedCourse.lesson
+    } else {
+      formData.lesson = 0
+    }
+  }
 })
 
 onMounted(async () => {

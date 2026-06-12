@@ -18,5 +18,7 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
         string? sortBy, bool sortDesc, bool? IsDeleted = false
     );
     Task<Teacher?> GetDetailTeacherByIdAsync(int id);
+
+    Task<List<Teacher>> GetAvailableTeachersBySpecializationAsync(int specializationId, DateTime startDate, DateTime endDate);
   }
 }

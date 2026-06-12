@@ -17,5 +17,6 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
             RoomType? roomType, RoomStatus? status,
             string? sortBy, bool sortDesc, bool? IsDeleted = false
         );
+        Task<List<Room>> GetAvailableRoomsAsync(DateTime startTime, DateTime endTime, RoomType? preferredType = null);
     }
 }

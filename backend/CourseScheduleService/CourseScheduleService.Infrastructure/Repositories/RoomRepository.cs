@@ -42,13 +42,13 @@ namespace CourseScheduleService.Infrastructure.Repositories
 
             query = sortBy?.ToLower() switch
             {
-                "roomname"  => sortDesc ? query.OrderByDescending(r => r.RoomName)
+                "roomname" => sortDesc ? query.OrderByDescending(r => r.RoomName)
                                         : query.OrderBy(r => r.RoomName),
-                "roomtype"  => sortDesc ? query.OrderByDescending(r => r.RoomType)
+                "roomtype" => sortDesc ? query.OrderByDescending(r => r.RoomType)
                                         : query.OrderBy(r => r.RoomType),
                 "createdat" => sortDesc ? query.OrderByDescending(r => r.CreatedAt)
                                         : query.OrderBy(r => r.CreatedAt),
-                _           => query.OrderByDescending(r => r.CreatedAt)
+                _ => query.OrderByDescending(r => r.CreatedAt)
             };
 
             var data = await query
@@ -59,10 +59,24 @@ namespace CourseScheduleService.Infrastructure.Repositories
             return (data, totalRecords);
         }
 
-    public async Task<Room?> IsRoomIdExistsAsync(int Id)
-    {
-      return await _dbSet.FirstOrDefaultAsync(x =>
-            EF.Property<int>(x, "Id") == Id);
+        public async Task<Room?> IsRoomIdExistsAsync(int Id)
+        {
+            return await _dbSet.FirstOrDefaultAsync(x =>
+                  EF.Property<int>(x, "Id") == Id);
+        }
+
+        public async Task<List<Room>> GetAvailableRoomsAsync(DateTime startTime, DateTime endTime, RoomType? preferredType = null)
+        {
+            var query = _dbSet
+                .Where(r => r.Status == RoomStatus.Available && !r.IsDeleted)
+                .Where(r => !r.ClassSessions.Any(cs =>
+                    !cs.IsDeleted &&
+                    cs.StartTime < endTime &&
+                    cs.EndTime > startTime
+                ));
+            if (preferredType.HasValue)
+                query = query.Where(r => r.RoomType == preferredType.Value);
+            return await query.ToListAsync();
+        }
     }
-  }
 }

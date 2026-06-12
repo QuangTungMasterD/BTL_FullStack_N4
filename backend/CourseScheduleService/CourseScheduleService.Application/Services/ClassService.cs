@@ -8,6 +8,7 @@ using CourseScheduleService.Application.Events;
 using CourseScheduleService.Application.Interfaces.EventBus;
 using CourseScheduleService.Application.Interfaces.Services;
 using CourseScheduleService.Domain.Entities;
+using CourseScheduleService.Domain.Enums;
 using CourseScheduleService.Domain.Interfaces.Repositories;
 
 namespace CourseScheduleService.Application.Services
@@ -18,13 +19,29 @@ namespace CourseScheduleService.Application.Services
     private readonly ICourseRepository _courseRepository;
     private readonly IEventBus _eventBus;
     private readonly IMapper _mapper;
+    private readonly ITeacherRepository _teacherRepository;
+    private readonly IRoomRepository _roomRepository;
+    private readonly IClassSessionRepository _classSessionRepository;
+    private readonly ITeacherAssignmentRepository _teacherAssignmentRepository;
 
-    public ClassService(IClassRepository classRepository, ICourseRepository courseRepository, IEventBus eventBus, IMapper mapper)
+    public ClassService(
+        IClassRepository classRepository,
+        ICourseRepository courseRepository,
+        IEventBus eventBus,
+        IMapper mapper,
+        ITeacherRepository teacherRepository,
+        IRoomRepository roomRepository,
+        IClassSessionRepository classSessionRepository,
+        ITeacherAssignmentRepository teacherAssignmentRepository)
     {
-      _classRepository = classRepository;
-      _courseRepository = courseRepository;
-      _eventBus = eventBus;
-      _mapper = mapper;
+        _classRepository = classRepository;
+        _courseRepository = courseRepository;
+        _eventBus = eventBus;
+        _mapper = mapper;
+        _teacherRepository = teacherRepository;
+        _roomRepository = roomRepository;
+        _classSessionRepository = classSessionRepository;
+        _teacherAssignmentRepository = teacherAssignmentRepository;
     }
 
     public async Task<ApiResponse<ClassResDto?>> CreateClassAsync(ClassReqDto classReqDto)
@@ -61,23 +78,49 @@ namespace CourseScheduleService.Application.Services
       await _classRepository.AddAsync(newClass);
       await _classRepository.SaveChangeAsync();
 
-      var classOpenedEvent = new ClassOpenedEvent
+      if (classReqDto.AutoSchedule)
       {
-          ClassId = newClass.Id,
-          ClassName = newClass.ClassName,
-          CourseId = newClass.CourseId,
-          StartDate = newClass.StartDate.ToDateTime(TimeOnly.MinValue),
-          EndDate = newClass.EndDate.ToDateTime(TimeOnly.MinValue),
-          MaxStudent = newClass.MaxStudent
-      };
+          try
+          {
+              await AutoAssignTeacherAndSchedule(newClass);
+          }
+          catch (Exception ex)
+          {
+              // Xóa class vừa tạo nếu xếp lịch thất bại
+              _classRepository.DeleteAsync(newClass);
+              await _classRepository.SaveChangeAsync();
+              return ApiResponse<ClassResDto?>.ErrorResponse(ex.Message, statusCode: 400);
+          }
+      }
 
-      await _eventBus.PublishAsync("class.opened", classOpenedEvent);
+      _ = PublishClassOpenedEventAsync(newClass);
 
       return ApiResponse<ClassResDto?>.SuccessResponse(
           _mapper.Map<ClassResDto>(newClass),
           "Tạo lớp học thành công",
           201
       );
+    }
+
+    private async Task PublishClassOpenedEventAsync(Class newClass)
+    {
+        try
+        {
+            var classOpenedEvent = new ClassOpenedEvent
+            {
+                ClassId = newClass.Id,
+                ClassName = newClass.ClassName,
+                CourseId = newClass.CourseId,
+                StartDate = newClass.StartDate.ToDateTime(TimeOnly.MinValue),
+                EndDate = newClass.EndDate.ToDateTime(TimeOnly.MinValue),
+                MaxStudent = newClass.MaxStudent
+            };
+            await _eventBus.PublishAsync("class.opened", classOpenedEvent);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[WARN] Failed to publish event: {ex.Message}");
+        }
     }
 
     public async Task<ApiResponse<bool>> DeleteClassAsync(int id)
@@ -246,6 +289,164 @@ namespace CourseScheduleService.Application.Services
       };
 
       return ApiResponse<PagedResponse<ClassResDto>>.SuccessResponse(result);
+    }
+
+    private async Task AutoAssignTeacherAndSchedule(Class newClass)
+    {
+        var course = await _courseRepository.GetByIdAsync(newClass.CourseId);
+        if (course == null)
+            throw new Exception($"Không tìm thấy khóa học ID {newClass.CourseId}");
+
+        if (course.SpecializationId == null)
+            throw new Exception("Khóa học chưa có chuyên ngành, không thể tự động phân công giáo viên");
+
+        var startDateTime = newClass.StartDate.ToDateTime(TimeOnly.MinValue);
+        var endDateTime = newClass.EndDate.ToDateTime(TimeOnly.MaxValue);
+
+        var availableTeachers = await _teacherRepository.GetAvailableTeachersBySpecializationAsync(
+            course.SpecializationId.Value, startDateTime, endDateTime);
+
+        if (availableTeachers == null || availableTeachers.Count == 0)
+            throw new Exception($"Không có giáo viên nào phù hợp với chuyên ngành ID {course.SpecializationId} và rảnh trong thời gian lớp học");
+
+        var orderedTeachers = availableTeachers.OrderBy(t => t.TeacherAssignments?.Count ?? 0).ToList();
+
+        TeacherAssignment selectedAssignment = null;
+        List<ClassSession> generatedSessions = null;
+
+        foreach (var teacher in orderedTeachers)
+        {
+            var (success, sessions) = await TryScheduleClassSessions(newClass, teacher.Id);
+            if (success)
+            {
+                selectedAssignment = new TeacherAssignment
+                {
+                    TeacherId = teacher.Id,
+                    ClassId = newClass.Id,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    IsDeleted = false
+                };
+                generatedSessions = sessions;
+                break;
+            }
+        }
+
+        if (selectedAssignment == null)
+            throw new Exception("Không thể xếp lịch cho bất kỳ giáo viên nào");
+
+        await _teacherAssignmentRepository.AddAsync(selectedAssignment);
+        await _teacherAssignmentRepository.SaveChangeAsync();
+
+        foreach (var session in generatedSessions)
+        {
+            session.TeacherAssignmentId = selectedAssignment.Id;
+            await _classSessionRepository.AddAsync(session);
+        }
+        await _classSessionRepository.SaveChangeAsync();
+    }
+
+    private async Task<(bool Success, List<ClassSession> Sessions)> TryScheduleClassSessions(Class newClass, int teacherId)
+    {
+        int totalLessons = newClass.Lesson;
+        int lessonsPerSession = 4;
+        int numberOfSessions = (int)Math.Ceiling((double)totalLessons / lessonsPerSession);
+        int remainingLessons = totalLessons;
+
+        DateTime startDate = newClass.StartDate.ToDateTime(TimeOnly.MinValue);
+        DateTime endDate = newClass.EndDate.ToDateTime(TimeOnly.MaxValue);
+        var sessions = new List<ClassSession>();
+
+        var allRooms = await _roomRepository.GetAllAsync();
+        var availableRooms = allRooms.Where(r => r.Status == RoomStatus.Available && !r.IsDeleted).ToList();
+        if (availableRooms.Count == 0) return (false, null);
+
+        DateTime currentCursor = startDate;
+
+        for (int i = 0; i < numberOfSessions; i++)
+        {
+            int lessonCount = Math.Min(lessonsPerSession, remainingLessons);
+            bool scheduled = false;
+            DateTime sessionStart = default, sessionEnd = default;
+            int? chosenRoomId = null;
+
+            DateTime cursor = currentCursor;
+            while (cursor <= endDate && !scheduled)
+            {
+                if (cursor.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    // Ca sáng 7:20 - 10:20
+                    var morningStart = cursor.Date.AddHours(7).AddMinutes(20);
+                    var morningEnd = morningStart.AddHours(3);
+                    if (morningEnd <= endDate)
+                    {
+                        var freeRoom = await FindFreeRoom(morningStart, morningEnd, availableRooms);
+                        if (freeRoom != null)
+                        {
+                            bool teacherFree = !(await _classSessionRepository.IsTeacherConflictAsync(teacherId, morningStart, morningEnd));
+                            if (teacherFree)
+                            {
+                                chosenRoomId = freeRoom.Id;
+                                sessionStart = morningStart;
+                                sessionEnd = morningEnd;
+                                scheduled = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Ca chiều 13:15 - 16:15
+                    var afternoonStart = cursor.Date.AddHours(13).AddMinutes(15);
+                    var afternoonEnd = afternoonStart.AddHours(3);
+                    if (afternoonEnd <= endDate)
+                    {
+                        var freeRoom = await FindFreeRoom(afternoonStart, afternoonEnd, availableRooms);
+                        if (freeRoom != null)
+                        {
+                            bool teacherFree = !(await _classSessionRepository.IsTeacherConflictAsync(teacherId, afternoonStart, afternoonEnd));
+                            if (teacherFree)
+                            {
+                                chosenRoomId = freeRoom.Id;
+                                sessionStart = afternoonStart;
+                                sessionEnd = afternoonEnd;
+                                scheduled = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                cursor = cursor.AddDays(1);
+            }
+
+            if (!scheduled) return (false, null);
+
+            sessions.Add(new ClassSession
+            {
+                StartTime = sessionStart,
+                EndTime = sessionEnd,
+                Lesson = lessonCount,
+                Status = ClassSessionStatus.Scheduled,
+                RoomId = chosenRoomId.Value,
+                TeacherAssignmentId = 0,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                IsDeleted = false
+            });
+
+            remainingLessons -= lessonCount;
+            currentCursor = sessionStart.AddDays(7);
+        }
+        return (true, sessions);
+    }
+
+    private async Task<Room> FindFreeRoom(DateTime start, DateTime end, List<Room> availableRooms)
+    {
+        foreach (var room in availableRooms)
+        {
+            bool isBusy = await _classSessionRepository.IsRoomConflictAsync(room.Id, start, end);
+            if (!isBusy) return room;
+        }
+        return null;
     }
   }
 }

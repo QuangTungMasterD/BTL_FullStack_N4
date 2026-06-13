@@ -34,7 +34,15 @@ namespace CourseScheduleService.Infrastructure.Messages
                     { "Type", System.Text.Encoding.UTF8.GetBytes(typeof(T).Name) }
                 }
             };
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine($"[Kafka] Publishing to topic '{topic}': {json}");
             await _producer.ProduceAsync(topic, message);
+            Console.WriteLine($"[Kafka] Published successfully to topic '{topic}'");
         }
     }
 }

@@ -20,6 +20,15 @@ namespace CourseScheduleService.API.Middlewares
             var userId = context.Request.Headers["X-User-Id"].FirstOrDefault();
             var rolesHeader = context.Request.Headers["X-Roles"].FirstOrDefault();
 
+            Console.WriteLine("======================");
+            Console.WriteLine("======================");
+            Console.WriteLine("======================");
+            Console.WriteLine("======================");
+            Console.WriteLine("======================");
+            Console.WriteLine("======================");
+            Console.WriteLine($"[HeaderClaims] X-User-Id: {userId}");
+            Console.WriteLine($"[HeaderClaims] X-Roles: {rolesHeader}");
+
             if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(rolesHeader))
             {
                 var claims = new List<Claim>

@@ -68,6 +68,16 @@ namespace CourseScheduleService.API.Controllers
         private int GetCurrentTeacherId()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine("+============================");
+            Console.WriteLine($"[ScheduleChangeRequest] GetCurrentTeacherId - Claim NameIdentifier: {userId}");
             return int.TryParse(userId, out int id) ? id : 0;
         }
 

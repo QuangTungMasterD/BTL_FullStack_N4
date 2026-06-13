@@ -112,12 +112,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<HeaderClaimsMiddleware>();
+app.UseAuthorization();
 app.MapControllers();
 
 app.MapHealthChecks("/health");
-
-// app.UseMiddleware<HeaderClaimsMiddleware>();
-
-// app.UseAuthorization();
 
 app.Run();

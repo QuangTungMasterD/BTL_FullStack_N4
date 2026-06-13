@@ -23,7 +23,7 @@
     </div>
 
     <!-- Loading -->
-    <LoadingSpinner v-if="teacherStore.loading" />
+    <SkeletonDetail v-if="teacherStore.loading" />
 
     <div v-else class="space-y-6">
       <!-- Thông tin giáo viên (giữ nguyên) -->
@@ -207,6 +207,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import { formatDate, formatDateTime, classStatusText } from '@/composables/useFormat';
 import SpecializationSelector from '@/components/business/SpecializationSelector.vue';
+import SkeletonDetail from '@/components/skeleton/SkeletonDetail.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -349,12 +350,12 @@ const goToClassDetail = (classId) => {
   router.push(`/classes/${classId}`);
 };
 
-onMounted(async () => {
-  await Promise.all([
+onMounted(() => {
+  Promise.all([
     specializationStore.fetchAll(),
     courseStore.fetchAll()
   ]);
-  await loadTeacherDetail();
-  await loadClasses();
+  loadTeacherDetail();
+  loadClasses();
 });
 </script>

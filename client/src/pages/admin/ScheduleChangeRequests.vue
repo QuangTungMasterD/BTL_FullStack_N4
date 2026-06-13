@@ -1,17 +1,21 @@
 <template>
   <div>
     <h1 class="font-headline-lg text-headline-lg mb-6">Quản lý yêu cầu đổi lịch</h1>
-    
-    <ErrorAlert
-      v-if="scheduleRequestStore.error"
-      :error="scheduleRequestStore.error"
-      :status-code="scheduleRequestStore.errorStatusCode"
-      :validation-errors="scheduleRequestStore.validationErrors"
-      :timestamp="scheduleRequestStore.timestamp"
-      @close="scheduleRequestStore.clearErrors"
-    />
 
-    <LoadingSpinner v-if="scheduleRequestStore.loading" />
+    <div v-if="scheduleRequestStore.loading" class="overflow-x-auto rounded-xl border border-outline-variant bg-surface-container-lowest">
+      <table class="w-full min-w-[640px] border-collapse">
+        <thead class="bg-surface-container-low">
+          <tr class="border-b border-outline-variant">
+            <th v-for="col in columns" :key="col.key" class="px-6 py-4 text-left font-label-md text-on-surface-variant">
+              {{ col.label }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <SkeletonTableRow v-for="i in 5" :key="i" :columns="columns.length" />
+        </tbody>
+      </table>
+    </div>
     
     <DataTable v-else :columns="columns" :data="scheduleRequestStore.pendingRequests">
       <template #actions="{ row }">
@@ -93,8 +97,8 @@ import Modal from '@/components/ui/Modal.vue';
 import Input from '@/components/ui/Input.vue';
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
-import ErrorAlert from '@/components/ui/ErrorAlert.vue';
 import { formatDateTime } from '@/composables/useFormat';
+import SkeletonTableRow from '@/components/skeleton/SkeletonTableRow.vue';
 
 const scheduleRequestStore = useScheduleChangeRequestStore();
 

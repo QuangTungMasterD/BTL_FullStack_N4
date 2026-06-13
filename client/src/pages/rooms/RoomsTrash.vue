@@ -19,15 +19,6 @@
       </div>
     </div>
 
-    <ErrorAlert
-      v-if="roomStore.error"
-      :error="roomStore.error"
-      :status-code="roomStore.errorStatusCode"
-      :validation-errors="roomStore.validationErrors"
-      :timestamp="roomStore.timestamp"
-      @close="roomStore.clearErrors"
-    />
-
     <!-- Filters (đơn giản hơn) -->
     <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 mb-6">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -56,7 +47,20 @@
       </div>
     </div>
 
-    <LoadingSpinner v-if="roomStore.loading" />
+    <div v-if="roomStore.loading" class="overflow-x-auto rounded-xl border border-outline-variant bg-surface-container-lowest">
+      <table class="w-full min-w-[640px] border-collapse">
+        <thead class="bg-surface-container-low">
+          <tr class="border-b border-outline-variant">
+            <th v-for="col in columns" :key="col.key" class="px-6 py-4 text-left font-label-md text-on-surface-variant">
+              {{ col.label }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <SkeletonTableRow v-for="i in 5" :key="i" :columns="columns.length" />
+        </tbody>
+      </table>
+    </div>
 
     <DataTable
       v-else
@@ -158,9 +162,9 @@ import DataTable from '@/components/ui/DataTable.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import EmptyState from '@/components/ui/EmptyState.vue'
 import Pagination from '@/components/ui/Pagination.vue'
-import ErrorAlert from '@/components/ui/ErrorAlert.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import Badge from '@/components/ui/Badge.vue'
+import SkeletonTableRow from '@/components/skeleton/SkeletonTableRow.vue';
 
 const router = useRouter()
 const roomStore = useRoomStore()

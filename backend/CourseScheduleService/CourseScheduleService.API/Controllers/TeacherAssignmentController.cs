@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CourseScheduleService.Application.Common;
 using CourseScheduleService.Application.DTOs.TeacherAssignmentDtos;
 using CourseScheduleService.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseScheduleService.API.Controllers
@@ -28,6 +29,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<TeacherAssignmentResDto?>>> Create(
             [FromBody] TeacherAssignmentReqDto reqDto)
         {
@@ -36,6 +38,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<bool>>> Delete([FromRoute] int id)
         {
             var result = await _assignmentService.DeleteAsync(id);

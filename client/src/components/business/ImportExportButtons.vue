@@ -31,6 +31,9 @@
 <script setup>
 import { ref } from 'vue';
 import Button from '@/components/ui/Button.vue';
+import { useToast } from '@/composables/useToast';
+
+const toast = useToast();
 
 const props = defineProps({
   // Nhận store từ bên ngoài (courseStore, teacherStore, etc.)
@@ -54,10 +57,10 @@ const triggerFileInput = () => {
 const handleExport = async () => {
   try {
     await props.store.exportToExcel(props.exportParams);
-    // Có thể thêm toast thông báo
+    toast.success('Xuất file thành công');
   } catch (err) {
     console.error('Export failed:', err);
-    alert('Xuất file thất bại: ' + err.message);
+    toast.error('Xuất file thất bại: ' + err.message);
   }
 };
 
@@ -70,14 +73,14 @@ const handleFileSelect = async (event) => {
   try {
     const result = await props.store.importFromExcel(file);
     if (result.errors.length === 0) {
-      alert(`Import thành công ${result.success.length} bản ghi`);
+      toast.success(`Import thành công ${result.success.length} bản ghi`);
     } else {
-      alert(`Import hoàn tất: ${result.success.length} thành công, ${result.errors.length} thất bại`);
+      toast.error(`Import hoàn tất: ${result.success.length} thành công, ${result.errors.length} thất bại`, 8000);
       console.log('Import errors:', result.errors);
     }
   } catch (err) {
     console.error('Import failed:', err);
-    alert('Import thất bại: ' + err.message);
+    toast.error('Import thất bại: ' + err.message);
   }
 };
 </script>

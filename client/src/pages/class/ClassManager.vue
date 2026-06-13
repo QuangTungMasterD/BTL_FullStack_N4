@@ -24,16 +24,6 @@
       </div>
     </div>
 
-    <!-- Error Alert -->
-    <ErrorAlert
-      v-if="classStore.error"
-      :error="classStore.error"
-      :status-code="classStore.errorStatusCode"
-      :validation-errors="classStore.validationErrors"
-      :timestamp="classStore.timestamp"
-      @close="classStore.clearErrors"
-    />
-
     <!-- Filters -->
     <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 mb-6">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -75,7 +65,20 @@
     </div>
 
     <!-- Loading -->
-    <LoadingSpinner v-if="classStore.loading" />
+    <div v-if="classStore.loading" class="overflow-x-auto rounded-xl border border-outline-variant bg-surface-container-lowest">
+      <table class="w-full min-w-[640px] border-collapse">
+        <thead class="bg-surface-container-low">
+          <tr class="border-b border-outline-variant">
+            <th v-for="col in columns" :key="col.key" class="px-6 py-4 text-left font-label-md text-on-surface-variant">
+              {{ col.label }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <SkeletonTableRow v-for="i in 5" :key="i" :columns="columns.length" />
+        </tbody>
+      </table>
+    </div>
 
     <!-- Data Table -->
     <DataTable
@@ -283,10 +286,10 @@ import DataTable from '@/components/ui/DataTable.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import EmptyState from '@/components/ui/EmptyState.vue'
 import Pagination from '@/components/ui/Pagination.vue'
-import ErrorAlert from '@/components/ui/ErrorAlert.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import Link from '@/components/ui/Link.vue'
 import ImportExportButtons from '@/components/business/ImportExportButtons.vue'
+import SkeletonTableRow from '@/components/skeleton/SkeletonTableRow.vue';
 
 const classStore = useClassStore()
 const courseStore = useCourseStore()
@@ -588,8 +591,8 @@ watch(() => formData.courseId, (newCourseId) => {
   }
 })
 
-onMounted(async () => {
-  await Promise.all([loadCourses(), loadTeachers()])
-  await loadClasses()
+onMounted(() => {
+  Promise.all([loadCourses(), loadTeachers()])
+  loadClasses()
 })
 </script>

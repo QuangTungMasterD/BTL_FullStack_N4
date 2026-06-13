@@ -23,7 +23,7 @@
     </div>
 
     <!-- Loading -->
-    <LoadingSpinner v-if="courseStore.loading" />
+    <SkeletonDetail v-if="courseStore.loading" />
 
     <div v-else class="space-y-6">
       <!-- Thông tin khóa học -->
@@ -220,6 +220,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import { formatVND, courseLevelText, courseLevelBadgeVariant, classStatusText } from '@/composables/useFormat';
 import { LEVEL_OPTIONS, STATUS_OPTIONS } from '@/constants';
+import SkeletonDetail from '@/components/skeleton/SkeletonDetail.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -331,8 +332,8 @@ const handleUpdate = async () => {
   try {
     await courseStore.update(course.value.id, submitData);
     closeEditModal();
-    await loadCourseDetail();
-    await loadClasses();
+    loadCourseDetail();
+    loadClasses();
   } catch (err) {
     console.error('Update failed:', err);
   }
@@ -354,9 +355,9 @@ const handleDeleteCourse = async () => {
   router.push('/courses');
 };
 
-onMounted(async () => {
-  await specializationStore.fetchAll();
-  await loadCourseDetail();
-  await loadClasses();
+onMounted(() => {
+  specializationStore.fetchAll();
+  loadCourseDetail();
+  loadClasses();
 });
 </script>

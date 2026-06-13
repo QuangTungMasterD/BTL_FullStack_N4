@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CourseScheduleService.Application.Common;
 using CourseScheduleService.Application.DTOs.ClassDtos;
 using CourseScheduleService.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseScheduleService.API.Controllers
@@ -48,6 +49,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpPost]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<ClassResDto?>>> CreateClass([FromBody] ClassReqDto classReqDto)
     {
       var result = await _classService.CreateClassAsync(classReqDto);
@@ -55,6 +57,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<ClassResDto?>>> UpdateClass([FromRoute] int id, [FromBody] ClassReqDto classReqDto)
     {
       var result = await _classService.UpdateClassAsync(id, classReqDto);
@@ -62,6 +65,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteClass([FromRoute] int id)
     {
       var result = await _classService.DeleteClassAsync(id);
@@ -69,6 +73,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpDelete("{id}/permanent")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<bool>>> HardDeleteClass([FromRoute] int id)
     {
       var result = await _classService.HardDeleteClassAsync(id);
@@ -76,6 +81,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpPatch("{id}/restore")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<ClassResDto?>>> RestoreClass([FromRoute] int id)
     {
       var result = await _classService.RestoreClassAsync(id);

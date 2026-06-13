@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CourseScheduleService.Application.Common;
 using CourseScheduleService.Application.DTOs.ClassSessionDtos;
 using CourseScheduleService.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseScheduleService.API.Controllers
@@ -43,6 +44,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<ClassSessionResDto?>>> Create(
             [FromBody] ClassSessionReqDto reqDto)
         {
@@ -51,6 +53,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<ClassSessionResDto?>>> Update(
             [FromRoute] int id, [FromBody] ClassSessionReqDto reqDto)
         {
@@ -59,6 +62,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpPatch("{id}/status")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<ClassSessionResDto?>>> UpdateStatus(
             [FromRoute] int id, [FromBody] int status)
         {
@@ -67,6 +71,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<bool>>> Delete([FromRoute] int id)
         {
             var result = await _sessionService.DeleteAsync(id);

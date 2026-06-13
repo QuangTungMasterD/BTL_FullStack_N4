@@ -24,21 +24,13 @@
       </div>
     </div>
 
-    <!-- Error Alert -->
-    <ErrorAlert
-      v-if="teacherStore.error"
-      :error="teacherStore.error"
-      :status-code="teacherStore.errorStatusCode"
-      :validation-errors="teacherStore.validationErrors"
-      :timestamp="teacherStore.timestamp"
-      @close="teacherStore.clearErrors"
-    />
-
     <!-- Filters -->
     <TeacherFilters @filter-change="handleFilterChange" :specializations="specializationOptions" />
 
     <!-- Loading -->
-    <LoadingSpinner v-if="teacherStore.loading" />
+    <div v-if="teacherStore.loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <SkeletonCard v-for="i in 6" :key="i" />
+    </div>
 
     <!-- Teacher Grid -->
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -159,13 +151,13 @@ import Modal from '@/components/ui/Modal.vue';
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
 import Pagination from '@/components/ui/Pagination.vue';
-import ErrorAlert from '@/components/ui/ErrorAlert.vue';
 import TeacherCard from '@/components/business/TeacherCard.vue';
 import TeacherFilters from '@/components/business/TeacherFilters.vue';
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import Link from '@/components/ui/Link.vue';
 import ImportExportButtons from '@/components/business/ImportExportButtons.vue';
 import SpecializationSelector from '@/components/business/SpecializationSelector.vue';
+import SkeletonCard from '@/components/skeleton/SkeletonCard.vue';
 
 const teacherStore = useTeacherStore();
 const specializationStore = useSpecializationStore();
@@ -309,8 +301,8 @@ const handleSubmit = async () => {
   }
 };
 
-onMounted(async () => {
-  await specializationStore.fetchAll();
-  await loadTeachers();
+onMounted(() => {
+  specializationStore.fetchAll();
+  loadTeachers();
 });
 </script>

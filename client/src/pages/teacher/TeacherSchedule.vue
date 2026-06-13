@@ -109,6 +109,9 @@ import Badge from '@/components/ui/Badge.vue'
 import StatCard from '@/components/ui/StatCard.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import ScheduleCalendar from '@/components/business/ScheduleCalendar.vue'
+import { useToast } from '@/composables/useToast';
+
+const toast = useToast();
 
 const classSessionStore = useClassSessionStore()
 const classStore = useClassStore()
@@ -291,9 +294,10 @@ const submitRequest = async () => {
 });
     showRequestModal.value = false;
     showConfirmDialog.value = true;
+    toast.success('Yêu cầu đã được gửi');
   } catch (err) {
     console.error(err);
-    alert(err.message);
+    toast.error(err.message);
   } finally {
     submitting.value = false;
   }

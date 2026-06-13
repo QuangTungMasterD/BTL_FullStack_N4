@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CourseScheduleService.Application.Common;
 using CourseScheduleService.Application.DTOs.SpecializationDtos;
 using CourseScheduleService.interfaces.services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseScheduleService.API.Controllers
@@ -21,6 +22,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpPost]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<SpecializationResDto?>>> CreateCourse([FromBody] SpecializationReqDto specializationReqDto)
     {
       var result = await _specializationService.CreateSpecializationAsync(specializationReqDto);
@@ -50,6 +52,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpDelete("{id}/permanent")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteSpecialization([FromRoute] int id)
     {
       var result = await this._specializationService.DeteleSpecializationAsync(id);
@@ -57,6 +60,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<SpecializationResDto?>>> UpdateSpecialization([FromRoute] int id, [FromBody] SpecializationReqDto specializationReqDto)
     {
       var result = await this._specializationService.UpdateSpecializationAsync(id, specializationReqDto);

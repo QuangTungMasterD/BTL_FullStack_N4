@@ -24,16 +24,6 @@
       </div>
     </div>
 
-    <!-- Error Alert -->
-    <ErrorAlert
-      v-if="courseStore.error"
-      :error="courseStore.error"
-      :status-code="courseStore.errorStatusCode"
-      :validation-errors="courseStore.validationErrors"
-      :timestamp="courseStore.timestamp"
-      @close="courseStore.clearErrors"
-    />
-
     <!-- Filters (ẩn filter trạng thái vì đã xóa hết rồi) -->
     <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 mb-6">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -75,7 +65,9 @@
     </div>
 
     <!-- Loading -->
-    <LoadingSpinner v-if="courseStore.loading" />
+    <div v-if="courseStore.loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <SkeletonCard v-for="i in 6" :key="i" />
+    </div>
 
     <!-- Course Grid -->
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -147,9 +139,9 @@ import Link from '@/components/ui/Link.vue';
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
 import Pagination from '@/components/ui/Pagination.vue';
-import ErrorAlert from '@/components/ui/ErrorAlert.vue';
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import CourseCard from '@/components/business/CourseCard.vue';
+import SkeletonCard from '@/components/skeleton/SkeletonCard.vue';
 
 const router = useRouter();
 const courseStore = useCourseStore();
@@ -222,25 +214,25 @@ const loadCourses = async () => {
   await courseStore.fetchPaged(params);
 };
 
-const onFilterChange = () => {
+const onFilterChange = async () => {
   if (debounceTimer) clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => {
+  debounceTimer = setTimeout(async () => {
     currentParams.value.page = 1;
-    loadCourses();
+    await loadCourses();
   }, 500);
 };
 
-const resetFilters = () => {
+const resetFilters = async () => {
   filters.search = '';
   filters.level = '';
   filters.specializationId = '';
   currentParams.value.page = 1;
-  loadCourses();
+  await loadCourses();
 };
 
-const handlePageChange = (page) => {
+const handlePageChange = async (page) => {
   currentParams.value.page = page;
-  loadCourses();
+  await loadCourses();
 };
 
 const goBack = () => {
@@ -290,8 +282,8 @@ const handleEmptyTrash = async () => {
   await loadCourses();
 };
 
-onMounted(async () => {
-  await specializationStore.fetchAll();
-  await loadCourses();
+onMounted(() => {
+  specializationStore.fetchAll();
+  loadCourses();
 });
 </script>

@@ -22,18 +22,8 @@
       </div>
     </div>
 
-    <!-- Error Alert -->
-    <ErrorAlert
-      v-if="classStore.error"
-      :error="classStore.error"
-      :status-code="classStore.errorStatusCode"
-      :validation-errors="classStore.validationErrors"
-      :timestamp="classStore.timestamp"
-      @close="classStore.clearErrors"
-    />
-
     <!-- Loading -->
-    <LoadingSpinner v-if="classStore.loading" />
+    <SkeletonDetail v-if="classStore.loading" />
 
     <div v-else class="space-y-6">
       <!-- Thông tin chung -->
@@ -257,7 +247,7 @@ import Badge from '@/components/ui/Badge.vue'
 import Avatar from '@/components/ui/Avatar.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
-import ErrorAlert from '@/components/ui/ErrorAlert.vue'
+import SkeletonDetail from '@/components/skeleton/SkeletonDetail.vue';
 
 const router = useRouter()
 const route = useRoute()
@@ -421,8 +411,8 @@ const manageStudents = () => {
   router.push(`/classes/${classData.value.id}/students`)
 }
 
-onMounted(async () => {
-  await Promise.all([courseStore.fetchAll(), teacherStore.fetchAll()])
-  await loadClassDetail()
+onMounted(() => {
+  Promise.all([courseStore.fetchAll(), teacherStore.fetchAll()])
+  loadClassDetail()
 })
 </script>

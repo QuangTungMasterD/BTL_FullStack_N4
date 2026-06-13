@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CourseScheduleService.Application.Common;
 using CourseScheduleService.Application.DTOs.RoomDtos;
 using CourseScheduleService.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseScheduleService.API.Controllers
@@ -43,6 +44,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<RoomResDto?>>> CreateRoom([FromBody] RoomReqDto roomReqDto)
         {
             var result = await _roomService.CreateRoomAsync(roomReqDto);
@@ -50,6 +52,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<RoomResDto?>>> UpdateRoom(
             [FromRoute] int id, [FromBody] RoomReqDto roomReqDto)
         {
@@ -58,6 +61,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<bool>>> DeleteRoom([FromRoute] int id)
         {
             var result = await _roomService.DeleteRoomAsync(id);
@@ -65,6 +69,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpDelete("{id}/permanent")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<bool>>> HardDeleteRoom([FromRoute] int id)
         {
             var result = await _roomService.HardDeleteRoomAsync(id);
@@ -72,6 +77,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpPatch("{id}/restore")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<RoomResDto?>>> RestoreRoom([FromRoute] int id)
         {
             var result = await _roomService.RestoreRoomAsync(id);

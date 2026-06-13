@@ -33,6 +33,9 @@ var app = builder.Build();
 
 app.UseCors("FrontendPolicy");
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.Use(async (context, next) =>
 {
     if (context.User.Identity?.IsAuthenticated == true)

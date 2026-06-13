@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CourseScheduleService.Application.Common;
 using CourseScheduleService.Application.DTOs.ScheduleChangeRequestDtos;
 using CourseScheduleService.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseScheduleService.API.Controllers
@@ -23,6 +24,7 @@ namespace CourseScheduleService.API.Controllers
 
         // Teacher endpoints
         [HttpPost]
+        [Authorize(Roles = "teacher,admin")]
         public async Task<ActionResult<ApiResponse<ScheduleChangeRequestResDto>>> CreateRequest([FromBody] ScheduleChangeRequestReqDto reqDto)
         {
             // Lấy teacherId từ token (giả sử có claim "TeacherId" hoặc từ HeaderClaimsMiddleware)
@@ -33,6 +35,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpGet("my-requests")]
+        [Authorize(Roles = "teacher,admin")]
         public async Task<ActionResult<ApiResponse<List<ScheduleChangeRequestResDto>>>> GetMyRequests()
         {
             var teacherId = GetCurrentTeacherId();
@@ -43,6 +46,7 @@ namespace CourseScheduleService.API.Controllers
 
         // Admin endpoints (có thể thêm role check)
         [HttpGet("pending")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<List<ScheduleChangeRequestResDto>>>> GetPendingRequests()
         {
             // Kiểm tra role admin
@@ -51,6 +55,7 @@ namespace CourseScheduleService.API.Controllers
         }
 
         [HttpPost("process")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ApiResponse<ScheduleChangeRequestResDto>>> ProcessRequest([FromBody] AdminActionDto actionDto)
         {
             // Lấy adminId từ token
@@ -62,8 +67,6 @@ namespace CourseScheduleService.API.Controllers
 
         private int GetCurrentTeacherId()
         {
-            // Lấy từ claims, mặc định dùng header X-User-Id (từ HeaderClaimsMiddleware)
-            return 1;
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return int.TryParse(userId, out int id) ? id : 0;
         }

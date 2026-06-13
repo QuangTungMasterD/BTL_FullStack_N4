@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CourseScheduleService.Application.Common;
 using CourseScheduleService.Application.DTOs.CourseDtos;
 using CourseScheduleService.interfaces.services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseScheduleService.API.Controllers
@@ -44,6 +45,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpPost]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<CourseResDto?>>> CreateCourse([FromBody] CourseReqDto courseReq)
     {
       var result = await _courseService.CreateCourseAsync(courseReq);
@@ -51,6 +53,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteCourse([FromRoute] int id)
     {
       var result = await this._courseService.DeteleCourseAsync(id);
@@ -58,6 +61,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpDelete("{id}/permanent")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<bool>>> HardDeleteCourse([FromRoute] int id)
     {
       var result = await this._courseService.HardDeleteCourseAsync(id);
@@ -65,6 +69,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpPatch("{id}/restore")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<CourseResDto?>>> RestoreCourseAsync(int id)
     {
       var result = await _courseService.RestoreCourseAsync(id);
@@ -72,6 +77,7 @@ namespace CourseScheduleService.API.Controllers
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<ApiResponse<CourseResDto>>> UpdateCourse([FromRoute] int id, [FromBody] CourseReqDto courseReqDto)
     {
       var result = await _courseService.UpdateCourseAsync(id, courseReqDto);

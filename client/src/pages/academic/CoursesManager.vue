@@ -24,21 +24,13 @@
       </div>
     </div>
 
-    <!-- Error Alert -->
-    <ErrorAlert
-      v-if="courseStore.error"
-      :error="courseStore.error"
-      :status-code="courseStore.errorStatusCode"
-      :validation-errors="courseStore.validationErrors"
-      :timestamp="courseStore.timestamp"
-      @close="courseStore.clearErrors"
-    />
-
     <!-- Filters -->
     <CourseFilters @filter-change="handleFilterChange" />
 
     <!-- Loading -->
-    <LoadingSpinner v-if="courseStore.loading" />
+    <div v-if="courseStore.loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <SkeletonCard v-for="i in 6" :key="i" />
+    </div>
 
     <!-- Course Grid -->
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -151,7 +143,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useCourseStore, useSpecializationStore } from '@/stores';
 import Button from '@/components/ui/Button.vue';
@@ -161,13 +153,13 @@ import Modal from '@/components/ui/Modal.vue';
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
 import Pagination from '@/components/ui/Pagination.vue';
-import ErrorAlert from '@/components/ui/ErrorAlert.vue';
 import CourseCard from '@/components/business/CourseCard.vue';
 import CourseFilters from '@/components/business/CourseFilters.vue';
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import Link from '@/components/ui/Link.vue';
 import { LEVEL_OPTIONS, STATUS_OPTIONS } from '@/constants';
 import ImportExportButtons from '@/components/business/ImportExportButtons.vue';
+import SkeletonCard from '@/components/skeleton/SkeletonCard.vue';
 
 const courseStore = useCourseStore();
 const specializationStore = useSpecializationStore()
@@ -233,14 +225,14 @@ const handleDeleteCourse = async () => {
   }
 };
 
-const handlePageChange = (page) => {
+const handlePageChange = async (page) => {
   currentParams.value.page = page;
-  loadCourses();
+  await loadCourses();
 };
 
-const resetAndRefresh = () => {
+const resetAndRefresh = async () => {
   currentParams.value = { page: 1, pageSize: 12 };
-  loadCourses();
+  await loadCourses();
 };
 
 const openCreateForm = () => {
@@ -307,8 +299,8 @@ const handleSubmit = async () => {
   }
 };
 
-onMounted(async () => {
-  await specializationStore.fetchAll();
-  await loadCourses();
+onMounted(() => {
+  specializationStore.fetchAll();
+  loadCourses();
 });
 </script>

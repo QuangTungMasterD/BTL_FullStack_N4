@@ -1,0 +1,95 @@
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: Shared@Password123
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - microservices-network
+
+  # API Gateway
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "5000:80"
+    environment:
+      - Jwt__Key=VerySecretSharedJwtKey123!
+      - Jwt__Issuer=AttendanceAuth
+    depends_on:
+      - studentattendance
+      - authservice
+    networks:
+      - microservices-network
+
+  # StudentAttendanceService
+  studentattendance:
+    build:
+      context: .
+      dockerfile: backend/StudentAttendanceService/Dockerfile
+    ports:
+      - "5001:80"
+    environment:
+      - ConnectionStrings__StudentAttendanceDb=Server=sqlserver;Database=StudentAttendanceDb;User Id=sa;Password=Shared@Password123;
+      - Jwt__Key=VerySecretSharedJwtKey123!
+      - Jwt__Issuer=AttendanceAuth
+      - CourseScheduleService__BaseUrl=http://courseschedule:80
+    depends_on:
+      - sqlserver
+    networks:
+      - microservices-network
+
+  # Auth Service (stub)
+  authservice:
+    build:
+      context: .
+      dockerfile: backend/AuthService/Dockerfile
+    ports:
+      - "5002:80"
+    environment:
+      - Jwt__Key=VerySecretSharedJwtKey123!
+      - Jwt__Issuer=AttendanceAuth
+      - ConnectionStrings__AuthDb=Server=sqlserver;Database=AuthDb;User Id=sa;Password=Shared@Password123;
+    networks:
+      - microservices-network
+
+  # CourseScheduleService (stub)
+  courseschedule:
+    build:
+      context: ./Services/CourseScheduleService
+      dockerfile: Dockerfile
+    ports:
+      - "5003:80"
+    environment:
+      - ConnectionStrings__CourseScheduleDb=Server=sqlserver;Database=CourseScheduleDb;User Id=sa;Password=Shared@Password123;
+    depends_on:
+      - sqlserver
+    networks:
+      - microservices-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_GATEWAY_URL=http://localhost:5000
+    depends_on:
+      - gateway
+    networks:
+      - microservices-network
+
+volumes:
+  sqlserver_data:
+
+networks:
+  microservices-network:
+    driver: bridge

@@ -90,5 +90,16 @@ namespace CourseScheduleService.Infrastructure.Repositories
             .ThenInclude(ta => ta.Teacher)
             .ToListAsync();
     }
+
+    public async Task<Class?> GetClassWithSessionsAsync(int id)
+    {
+        return await _dbSet
+            .Include(c => c.ClassSessions)
+                .ThenInclude(cs => cs.Room)
+            .Include(c => c.ClassSessions)
+                .ThenInclude(cs => cs.TeacherAssignment)
+                    .ThenInclude(ta => ta.Teacher)
+            .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
+    }
   }
 }

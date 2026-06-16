@@ -32,10 +32,8 @@ namespace CourseScheduleService.Domain.Entities
         public int CourseId { get; set; }
 
         public virtual Course Course { get; set; } = null!;
-        public virtual ICollection<TeacherAssignment> TeacherAssignments { get; set; } 
-            = new List<TeacherAssignment>();
+        public virtual ICollection<TeacherAssignment> TeacherAssignments { get; set; } = null!;
 
-        public virtual ICollection<ClassSession> ClassSessions { get; set; } 
-            = new List<ClassSession>();
+        public virtual ICollection<ClassSession> ClassSessions { get; set; } = null!;
     }
 }

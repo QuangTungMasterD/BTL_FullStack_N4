@@ -19,5 +19,6 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
     );
 
     Task<IEnumerable<Class>> GetClassesByTeacherIdAsync(int teacherId);
+    Task<Class?> GetClassWithSessionsAsync(int id);
   }
 }

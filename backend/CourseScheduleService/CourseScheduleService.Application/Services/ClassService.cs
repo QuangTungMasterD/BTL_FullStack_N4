@@ -83,6 +83,7 @@ namespace CourseScheduleService.Application.Services
           try
           {
               await AutoAssignTeacherAndSchedule(newClass);
+              await PublishClassWithSessionsEventAsync(newClass.Id);
           }
           catch (Exception ex)
           {
@@ -93,7 +94,6 @@ namespace CourseScheduleService.Application.Services
           }
       }
 
-      _ = PublishClassOpenedEventAsync(newClass);
 
       return ApiResponse<ClassResDto?>.SuccessResponse(
           _mapper.Map<ClassResDto>(newClass),
@@ -102,24 +102,40 @@ namespace CourseScheduleService.Application.Services
       );
     }
 
-    private async Task PublishClassOpenedEventAsync(Class newClass)
+    private async Task PublishClassWithSessionsEventAsync(int classId)
     {
         try
         {
-            var classOpenedEvent = new ClassOpenedEvent
+            // Lấy class kèm theo sessions, room, teacher
+            var classWithDetails = await _classRepository.GetClassWithSessionsAsync(classId);
+            if (classWithDetails == null) return;
+
+            var evt = new ClassOpenedEvent
             {
-                ClassId = newClass.Id,
-                ClassName = newClass.ClassName,
-                CourseId = newClass.CourseId,
-                StartDate = newClass.StartDate.ToDateTime(TimeOnly.MinValue),
-                EndDate = newClass.EndDate.ToDateTime(TimeOnly.MinValue),
-                MaxStudent = newClass.MaxStudent
+                ClassId = classWithDetails.Id,
+                ClassName = classWithDetails.ClassName,
+                CourseId = classWithDetails.CourseId,
+                StartDate = classWithDetails.StartDate.ToDateTime(TimeOnly.MinValue),
+                EndDate = classWithDetails.EndDate.ToDateTime(TimeOnly.MaxValue),
+                MaxStudent = classWithDetails.MaxStudent,
+                TotalLessons = classWithDetails.Lesson,
+                Sessions = classWithDetails.ClassSessions.Select(cs => new ClassSessionInfo
+                {
+                    SessionId = cs.Id,
+                    StartTime = cs.StartTime,
+                    EndTime = cs.EndTime,
+                    LessonNumber = cs.Lesson,
+                    RoomId = cs.RoomId,
+                    RoomName = cs.Room?.RoomName ?? "Unknown",
+                    TeacherAssignmentId = cs.TeacherAssignmentId,
+                    TeacherName = cs.TeacherAssignment?.Teacher?.FullName ?? "Unknown"
+                }).ToList()
             };
-            await _eventBus.PublishAsync("class.opened", classOpenedEvent);
+            await _eventBus.PublishAsync("class.opened", evt);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[WARN] Failed to publish event: {ex.Message}");
+            // Log lỗi
         }
     }
 

@@ -5,10 +5,15 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["StudentAttendanceService/StudentAttendanceService.csproj", "StudentAttendanceService/"]
-RUN dotnet restore "StudentAttendanceService/StudentAttendanceService.csproj"
+
+# Copy csproj trực tiếp (vì nó nằm ngay trong context)
+COPY ["StudentAttendanceService.csproj", "."]
+RUN dotnet restore "StudentAttendanceService.csproj"
+
+# Copy toàn bộ source
 COPY . .
-WORKDIR "/src/StudentAttendanceService"
+
+# Build
 RUN dotnet build "StudentAttendanceService.csproj" -c Release -o /app/build
 
 FROM build AS publish

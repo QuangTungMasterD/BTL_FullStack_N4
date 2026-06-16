@@ -93,6 +93,9 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<HeaderClaimsMiddleware>();
+
 app.UseCors("FrontendPolicy");
 
 using(var scope = app.Services.CreateScope())
@@ -112,7 +115,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<HeaderClaimsMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 

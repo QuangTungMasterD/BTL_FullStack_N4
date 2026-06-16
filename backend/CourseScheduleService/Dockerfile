@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy solution và các .csproj (để cache restore)
-COPY *.sln .
+COPY *.slnx .
 COPY CourseScheduleService.Domain/*.csproj ./CourseScheduleService.Domain/
 COPY CourseScheduleService.Application/*.csproj ./CourseScheduleService.Application/
 COPY CourseScheduleService.Infrastructure/*.csproj ./CourseScheduleService.Infrastructure/

@@ -14,25 +14,19 @@ namespace CourseScheduleService.API.Filters
         {
             if (!context.ModelState.IsValid)
             {
+                var errors = context.ModelState
+                    .Where(x => x.Value?.Errors.Count > 0)
+                    .ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).ToArray()
+                    );
 
-                var errors = context.ModelState.Values
-                    .SelectMany(x => x.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-
-                
                 context.Result = new BadRequestObjectResult(
-                    ApiResponse<String>.ErrorResponse(
-                        "Dữ liệu không hợp lệ", 
-                        errors
-                    )
+                    ApiResponse<object>.ErrorResponse("Dữ liệu không hợp lệ", errors, 400)
                 );
             }
         }
 
-        public void OnActionExecuted(ActionExecutedContext context)
-        {
-            // No-op
-        }
+        public void OnActionExecuted(ActionExecutedContext context) { }
     }
 }

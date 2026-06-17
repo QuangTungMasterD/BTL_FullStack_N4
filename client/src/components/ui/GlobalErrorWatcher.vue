@@ -52,7 +52,9 @@ stores.forEach((store) => {
         // Hiển thị toast lỗi, kèm theo validationErrors nếu có
         toast.error(newError, 5000, store.validationErrors);
         // Xóa lỗi trong store để tránh hiển thị lại
-        store.clearErrors();
+        store.error = null;
+        store.errorStatusCode = null;
+        store.timestamp = null;
       }
     }
   );

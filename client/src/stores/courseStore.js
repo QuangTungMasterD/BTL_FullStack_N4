@@ -69,7 +69,7 @@ export const useCourseStore = defineStore('course', {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
       } finally {
         this.loading = false;
@@ -85,7 +85,7 @@ export const useCourseStore = defineStore('course', {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
       } finally {
         this.loading = false;
@@ -102,7 +102,7 @@ export const useCourseStore = defineStore('course', {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
         throw err;
       } finally {
@@ -120,7 +120,7 @@ export const useCourseStore = defineStore('course', {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
         throw err;
       } finally {
@@ -140,7 +140,7 @@ export const useCourseStore = defineStore('course', {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
         throw err;
       } finally {
@@ -162,7 +162,7 @@ export const useCourseStore = defineStore('course', {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
         throw err;
       } finally {
@@ -183,7 +183,7 @@ export const useCourseStore = defineStore('course', {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
         throw err;
       } finally {

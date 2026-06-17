@@ -51,7 +51,7 @@ export const useClassStore = defineStore("class", {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
       } finally {
         this.loading = false;
@@ -75,7 +75,7 @@ export const useClassStore = defineStore("class", {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
       } finally {
         this.loading = false;
@@ -92,7 +92,7 @@ export const useClassStore = defineStore("class", {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
         throw err;
       } finally {
@@ -110,7 +110,7 @@ export const useClassStore = defineStore("class", {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
         throw err;
       } finally {
@@ -130,7 +130,7 @@ export const useClassStore = defineStore("class", {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
         throw err;
       } finally {
@@ -156,7 +156,7 @@ export const useClassStore = defineStore("class", {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
         throw err;
       } finally {
@@ -177,7 +177,7 @@ export const useClassStore = defineStore("class", {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
         throw err;
       } finally {
@@ -195,7 +195,7 @@ export const useClassStore = defineStore("class", {
       } catch (err) {
         this.error = err.message;
         this.errorStatusCode = err.statusCode;
-        this.validationErrors = err.errors;
+        this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
         throw err;
       } finally {

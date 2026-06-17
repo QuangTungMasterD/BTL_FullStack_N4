@@ -133,7 +133,7 @@
           v-model="editForm.courseName"
           label="Tên khóa học"
           required
-          :error="validationErrors?.courseName?.join(', ')"
+          :error="validationErrors?.CourseName?.join(', ')"
         />
         
         <Input

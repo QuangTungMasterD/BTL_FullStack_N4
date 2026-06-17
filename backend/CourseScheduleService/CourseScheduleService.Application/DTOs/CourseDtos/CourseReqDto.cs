@@ -15,7 +15,7 @@ namespace CourseScheduleService.Application.DTOs.CourseDtos
         public required String CourseName { get; set; }
 
         [MaxLength(500, ErrorMessage = "Mô tả không được vượt quá 500 ký tự")]
-        public required String Desct { get; set; }
+        public String? Desct { get; set; }
 
         [Required(ErrorMessage = "Học phí không được để trống")]
         [Range(0, double.MaxValue, ErrorMessage = "Học phí phải lớn hơn hoặc bằng 0")]

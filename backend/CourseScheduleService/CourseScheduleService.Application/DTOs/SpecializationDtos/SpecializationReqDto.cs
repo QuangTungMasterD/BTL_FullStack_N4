@@ -10,7 +10,7 @@ namespace CourseScheduleService.Application.DTOs.SpecializationDtos
     {
         [Required(ErrorMessage = "Tên chuyên môn không được để  trống.")]
         public required String SpecializationName { get; set; }
-        public String Descrt { get; set; } = String.Empty;
+        public String? Descrt { get; set; }
         public bool IsActive { get; set; } = true;
     }
 }

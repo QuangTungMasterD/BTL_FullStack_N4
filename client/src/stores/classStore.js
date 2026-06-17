@@ -49,7 +49,7 @@ export const useClassStore = defineStore("class", {
         const data = await classService.getAllClasses();
         this.classes = Array.isArray(data) ? data : [];
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -73,7 +73,7 @@ export const useClassStore = defineStore("class", {
           hasPrev: data?.hasPrev || false,
         };
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -90,7 +90,7 @@ export const useClassStore = defineStore("class", {
         this.currentClass = data;
         return data;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -108,7 +108,7 @@ export const useClassStore = defineStore("class", {
         this.classes.push(newClass);
         return newClass;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -128,7 +128,7 @@ export const useClassStore = defineStore("class", {
         if (this.currentClass?.id === id) this.currentClass = updated;
         return updated;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -154,7 +154,7 @@ export const useClassStore = defineStore("class", {
           pageSize: this.pagedData.pageSize,
         });
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -175,7 +175,7 @@ export const useClassStore = defineStore("class", {
         });
         return restored;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -193,7 +193,7 @@ export const useClassStore = defineStore("class", {
         this.classes = Array.isArray(data) ? data : [];
         return this.classes;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -210,7 +210,7 @@ export const useClassStore = defineStore("class", {
         const result = await classService.exportToExcel(params);
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isExporting = false;
@@ -249,7 +249,7 @@ export const useClassStore = defineStore("class", {
         });
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isImporting = false;

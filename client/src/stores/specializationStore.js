@@ -48,7 +48,7 @@ export const useSpecializationStore = defineStore('specialization', {
         const data = await specializationService.getAllSpecializations();
         this.specializations = Array.isArray(data) ? data : [];
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -72,7 +72,7 @@ export const useSpecializationStore = defineStore('specialization', {
           hasPrev: data?.hasPrev || false,
         };
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -89,7 +89,7 @@ export const useSpecializationStore = defineStore('specialization', {
         this.currentSpecialization = data;
         return data;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -107,7 +107,7 @@ export const useSpecializationStore = defineStore('specialization', {
         this.specializations.push(newSpec);
         return newSpec;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -127,7 +127,7 @@ export const useSpecializationStore = defineStore('specialization', {
         if (this.currentSpecialization?.id === id) this.currentSpecialization = updated;
         return updated;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -149,7 +149,7 @@ export const useSpecializationStore = defineStore('specialization', {
           pageSize: this.pagedData.pageSize 
         });
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -166,7 +166,7 @@ export const useSpecializationStore = defineStore('specialization', {
         const result = await specializationService.exportToExcel(params);
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isExporting = false;
@@ -192,7 +192,7 @@ export const useSpecializationStore = defineStore('specialization', {
         });
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isImporting = false;

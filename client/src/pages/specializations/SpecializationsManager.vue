@@ -112,8 +112,19 @@
     <!-- Modal -->
     <Modal v-model="showModal" :title="isEditing ? 'Sửa chuyên ngành' : 'Thêm chuyên ngành'">
       <form @submit.prevent="handleSubmit" class="space-y-4">
-        <Input v-model="formData.specializationName" label="Tên chuyên ngành" required />
-        <Input v-model="formData.descrt" label="Mô tả" type="textarea" rows="3" />
+        <Input 
+          v-model="formData.specializationName" 
+          label="Tên chuyên ngành" 
+          required 
+          :error="validationErrors?.SpecializationName?.[0]"
+        />
+        <Input 
+          v-model="formData.descrt" 
+          label="Mô tả" 
+          type="textarea" 
+          rows="3" 
+          :error="validationErrors?.Descrt?.[0]"
+        />
         <Select v-model="formData.isActive" label="Trạng thái" :options="statusOptionsForForm" required />
         <div class="flex justify-end gap-3">
           <Button variant="outline" @click="closeModal">Hủy</Button>

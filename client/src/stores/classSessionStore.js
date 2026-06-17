@@ -48,7 +48,7 @@ export const useClassSessionStore = defineStore('classSession', {
         const data = await classSessionService.getAllClassSessions();
         this.sessions = Array.isArray(data) ? data : [];
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -72,7 +72,7 @@ export const useClassSessionStore = defineStore('classSession', {
           hasPrev: data?.hasPrev || false,
         };
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -89,7 +89,7 @@ export const useClassSessionStore = defineStore('classSession', {
         this.currentSession = data;
         return data;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -107,7 +107,7 @@ export const useClassSessionStore = defineStore('classSession', {
         this.sessions.push(newSession);
         return newSession;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -127,7 +127,7 @@ export const useClassSessionStore = defineStore('classSession', {
         if (this.currentSession?.id === id) this.currentSession = updated;
         return updated;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -149,7 +149,7 @@ export const useClassSessionStore = defineStore('classSession', {
           pageSize: this.pagedData.pageSize 
         });
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -169,7 +169,7 @@ export const useClassSessionStore = defineStore('classSession', {
         if (this.currentSession?.id === id) this.currentSession = updated;
         return updated;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -186,7 +186,7 @@ export const useClassSessionStore = defineStore('classSession', {
         const result = await classSessionService.exportToExcel(params);
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isExporting = false;
@@ -212,7 +212,7 @@ export const useClassSessionStore = defineStore('classSession', {
         });
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isImporting = false;

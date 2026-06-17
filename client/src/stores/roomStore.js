@@ -48,7 +48,7 @@ export const useRoomStore = defineStore('room', {
         const data = await roomService.getAllRooms();
         this.rooms = Array.isArray(data) ? data : [];
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -72,7 +72,7 @@ export const useRoomStore = defineStore('room', {
           hasPrev: data?.hasPrev || false,
         };
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -89,7 +89,7 @@ export const useRoomStore = defineStore('room', {
         this.currentRoom = data;
         return data;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -107,7 +107,7 @@ export const useRoomStore = defineStore('room', {
         this.rooms.push(newRoom);
         return newRoom;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -127,7 +127,7 @@ export const useRoomStore = defineStore('room', {
         if (this.currentRoom?.id === id) this.currentRoom = updated;
         return updated;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -151,7 +151,7 @@ export const useRoomStore = defineStore('room', {
           pageSize: this.pagedData.pageSize,
         });
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -174,7 +174,7 @@ export const useRoomStore = defineStore('room', {
           pageSize: this.pagedData.pageSize,
         });
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -195,7 +195,7 @@ export const useRoomStore = defineStore('room', {
         });
         return restored;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -212,7 +212,7 @@ export const useRoomStore = defineStore('room', {
         const result = await roomService.exportToExcel(params);
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isExporting = false;
@@ -237,7 +237,7 @@ export const useRoomStore = defineStore('room', {
         });
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isImporting = false;

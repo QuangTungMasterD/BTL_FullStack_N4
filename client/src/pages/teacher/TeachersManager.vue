@@ -71,7 +71,7 @@
           v-model="formData.fullName"
           label="Họ tên"
           required
-          :error="validationErrors?.FullName?.join(', ')"
+          :error="validationErrors?.FullName?.[0]"
         />
         
         <div class="grid grid-cols-2 gap-4">
@@ -79,12 +79,12 @@
             v-model="formData.email"
             type="email"
             label="Email"
-            :error="validationErrors?.Email?.join(', ')"
+            :error="validationErrors?.Email?.[0]"
           />
           <Input
             v-model="formData.phone"
             label="Số điện thoại"
-            :error="validationErrors?.Phone?.join(', ')"
+            :error="validationErrors?.Phone?.[0]"
           />
         </div>
 
@@ -93,13 +93,13 @@
             v-model="formData.yoB"
             type="date"
             label="Năm sinh"
-            :error="validationErrors?.YoB?.join(', ')"
+            :error="validationErrors?.YoB?.[0]"
           />
           <Select
             v-model="formData.gender"
             label="Giới tính"
             :options="genderOptions"
-            :error="validationErrors?.Gender?.join(', ')"
+            :error="validationErrors?.Gender?.[0]"
           />
         </div>
 
@@ -118,7 +118,7 @@
           v-model="formData.specializationIds"
           :options="specializationOptions"
           label="Chuyên ngành"
-          :error="validationErrors?.SpecializationIds?.join(', ')"
+          :error="validationErrors?.SpecializationIds?.[0]"
         />
 
         <div class="flex justify-end gap-3 pt-4">

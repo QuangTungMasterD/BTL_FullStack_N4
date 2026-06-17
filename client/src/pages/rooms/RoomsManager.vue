@@ -155,28 +155,28 @@
           v-model="formData.roomName"
           label="Tên phòng"
           required
-          :error="validationErrors?.RoomName?.join(', ')"
+          :error="validationErrors?.RoomName?.[0]"
         />
         <Select
           v-model="formData.roomType"
           label="Loại phòng"
           :options="roomTypeOptionsForForm"
           required
-          :error="validationErrors?.RoomType?.join(', ')"
+          :error="validationErrors?.RoomType?.[0]"
         />
         <Select
           v-model="formData.status"
           label="Trạng thái"
           :options="roomStatusOptionsForForm"
           required
-          :error="validationErrors?.Status?.join(', ')"
+          :error="validationErrors?.Status?.[0]"
         />
         <Input
           v-model="formData.descrt"
           label="Mô tả"
           type="textarea"
           rows="3"
-          :error="validationErrors?.Descrt?.join(', ')"
+          :error="validationErrors?.Descrt?.[0]"
         />
         <div class="flex justify-end gap-3 pt-4">
           <Button variant="outline" @click="closeModal">Hủy</Button>

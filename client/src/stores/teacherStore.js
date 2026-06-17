@@ -48,7 +48,7 @@ export const useTeacherStore = defineStore('teacher', {
         const data = await teacherService.getAllTeachers();
         this.teachers = Array.isArray(data) ? data : [];
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -72,7 +72,7 @@ export const useTeacherStore = defineStore('teacher', {
           hasPrev: data?.hasPrev || false,
         };
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -89,7 +89,7 @@ export const useTeacherStore = defineStore('teacher', {
         this.currentTeacher = data;
         return data;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -107,7 +107,7 @@ export const useTeacherStore = defineStore('teacher', {
         this.teachers.push(newTeacher);
         return newTeacher;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -127,7 +127,7 @@ export const useTeacherStore = defineStore('teacher', {
         if (this.currentTeacher?.id === id) this.currentTeacher = updated;
         return updated;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -149,7 +149,7 @@ export const useTeacherStore = defineStore('teacher', {
           pageSize: this.pagedData.pageSize 
         });
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -171,7 +171,7 @@ export const useTeacherStore = defineStore('teacher', {
           pageSize: this.pagedData.pageSize 
         });
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -192,7 +192,7 @@ export const useTeacherStore = defineStore('teacher', {
         });
         return restored;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -208,7 +208,7 @@ export const useTeacherStore = defineStore('teacher', {
         const data = await teacherService.getTeacherClasses(teacherId);
         return Array.isArray(data) ? data : [];
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -225,7 +225,7 @@ export const useTeacherStore = defineStore('teacher', {
         const result = await teacherService.exportToExcel(params);
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isExporting = false;
@@ -251,7 +251,7 @@ export const useTeacherStore = defineStore('teacher', {
         });
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isImporting = false;

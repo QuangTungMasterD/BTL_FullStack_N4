@@ -28,7 +28,7 @@ export const useScheduleChangeRequestStore = defineStore('scheduleChangeRequest'
         await this.fetchMyRequests(); // reload danh sách của tôi
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -45,7 +45,7 @@ export const useScheduleChangeRequestStore = defineStore('scheduleChangeRequest'
         const data = await scheduleChangeRequestService.getMyRequests();
         this.myRequests = data;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -61,7 +61,7 @@ export const useScheduleChangeRequestStore = defineStore('scheduleChangeRequest'
         const data = await scheduleChangeRequestService.getPendingRequests();
         this.pendingRequests = data;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -82,7 +82,7 @@ export const useScheduleChangeRequestStore = defineStore('scheduleChangeRequest'
         await this.fetchPendingRequests(); // reload danh sách pending
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;

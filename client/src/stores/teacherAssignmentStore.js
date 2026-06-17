@@ -26,7 +26,7 @@ export const useTeacherAssignmentStore = defineStore('teacherAssignment', {
         const data = await teacherAssignmentService.getAllTeacherAssignments();
         this.assignments = data;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -43,7 +43,7 @@ export const useTeacherAssignmentStore = defineStore('teacherAssignment', {
         this.assignments.push(newAssignment);
         return newAssignment;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -60,7 +60,7 @@ export const useTeacherAssignmentStore = defineStore('teacherAssignment', {
         await teacherAssignmentService.deleteTeacherAssignment(id);
         this.assignments = this.assignments.filter(a => a.id !== id);
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;

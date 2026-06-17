@@ -67,7 +67,7 @@ export const useCourseStore = defineStore('course', {
         this.pagedData = data;
         console.log('Fetched paged courses:', this.pagedData);
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -83,7 +83,7 @@ export const useCourseStore = defineStore('course', {
         const data = await courseService.getAllCourses();
         this.courses = data;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -100,7 +100,7 @@ export const useCourseStore = defineStore('course', {
         this.currentCourse = data;
         return data;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -118,7 +118,7 @@ export const useCourseStore = defineStore('course', {
         this.courses.push(newCourse);
         return newCourse;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -138,7 +138,7 @@ export const useCourseStore = defineStore('course', {
         if (this.currentCourse?.id === id) this.currentCourse = updated;
         return updated;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -160,7 +160,7 @@ export const useCourseStore = defineStore('course', {
         this.courses = this.courses.filter(c => c.id !== id);
         if (this.currentCourse?.id === id) this.currentCourse = null;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -181,7 +181,7 @@ export const useCourseStore = defineStore('course', {
         });
         return restored;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -199,7 +199,7 @@ export const useCourseStore = defineStore('course', {
         const result = await courseService.exportToExcel(params);
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isExporting = false;
@@ -229,7 +229,7 @@ export const useCourseStore = defineStore('course', {
         
         return result;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isImporting = false;

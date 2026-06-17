@@ -71,14 +71,14 @@
           v-model="formData.courseName"
           label="Tên khóa học"
           required
-          :error="validationErrors?.CourseName?.join(', ')"
+          :error="validationErrors?.CourseName?.[0]"
         />
         
         <Input
           v-model="formData.desct"
           label="Mô tả"
           type="textarea"
-          :error="validationErrors?.Desct?.join(', ')"
+          :error="validationErrors?.Desct?.[0]"
         />
         
         <div class="grid grid-cols-2 gap-4">
@@ -87,7 +87,7 @@
             type="number"
             label="Học phí"
             required
-            :error="validationErrors?.TuitionFee?.join(', ')"
+            :error="validationErrors?.TuitionFee?.[0]"
           />
           
           <Input
@@ -95,7 +95,7 @@
             type="number"
             label="số tiết"
             required
-            :error="validationErrors?.Lesson?.join(', ')"
+            :error="validationErrors?.Lesson?.[0]"
           />
         </div>
 
@@ -105,7 +105,7 @@
             label="Trình độ"
             :options="levelOptions"
             required
-            :error="validationErrors?.Level?.join(', ')"
+            :error="validationErrors?.Level?.[0]"
           />
           
           <Select
@@ -121,7 +121,7 @@
           label="Chuyên ngành"
           :options="specializationOptions"
           required
-          :error="validationErrors?.SpecializationId?.join(', ')"
+          :error="validationErrors?.SpecializationId?.[0]"
         />
 
         <div class="flex justify-end gap-3 pt-4">

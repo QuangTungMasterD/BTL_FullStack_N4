@@ -26,7 +26,7 @@ export const useTeacherSpecializationStore = defineStore('teacherSpecialization'
         const data = await teacherSpecializationService.getAllTeacherSpecializations();
         this.teacherSpecs = data;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -43,7 +43,7 @@ export const useTeacherSpecializationStore = defineStore('teacherSpecialization'
         this.teacherSpecs.push(newItem);
         return newItem;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;
@@ -60,7 +60,7 @@ export const useTeacherSpecializationStore = defineStore('teacherSpecialization'
         await teacherSpecializationService.deleteTeacherSpecialization(id);
         this.teacherSpecs = this.teacherSpecs.filter(item => item.id !== id);
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
         this.validationErrors = err.response.data.errors;
         this.timestamp = err.timestamp;

@@ -152,7 +152,7 @@
           v-model="editForm.className"
           label="Tên lớp"
           required
-          :error="validationErrors?.ClassName?.join(', ')"
+          :error="validationErrors?.ClassName?.[0]"
         />
         <div class="grid grid-cols-2 gap-4">
           <Input
@@ -161,14 +161,14 @@
             label="Sĩ số tối đa"
             required
             :min="1"
-            :error="validationErrors?.MaxStudent?.join(', ')"
+            :error="validationErrors?.MaxStudent?.[0]"
           />
           <Select
             v-model="editForm.status"
             label="Trạng thái"
             :options="classStatusOptions"
             required
-            :error="validationErrors?.Status?.join(', ')"
+            :error="validationErrors?.Status?.[0]"
           />
         </div>
         <div class="grid grid-cols-2 gap-4">
@@ -177,14 +177,14 @@
             type="date"
             label="Ngày bắt đầu"
             required
-            :error="validationErrors?.StartDate?.join(', ')"
+            :error="validationErrors?.StartDate?.[0]"
           />
           <Input
             v-model="editForm.endDate"
             type="date"
             label="Ngày kết thúc"
             required
-            :error="validationErrors?.EndDate?.join(', ')"
+            :error="validationErrors?.EndDate?.[0]"
           />
         </div>
         <div class="grid grid-cols-2 gap-4">
@@ -194,14 +194,14 @@
             label="số tiết"
             required
             :min="1"
-            :error="validationErrors?.Lesson?.join(', ')"
+            :error="validationErrors?.Lesson?.[0]"
           />
           <Select
             v-model="editForm.courseId"
             label="Khóa học"
             :options="courseOptions"
             required
-            :error="validationErrors?.CourseId?.join(', ')"
+            :error="validationErrors?.CourseId?.[0]"
           />
         </div>
         <Select
@@ -209,7 +209,7 @@
           label="Giáo viên phụ trách"
           :options="teacherOptions"
           multiple
-          :error="validationErrors?.TeacherIds?.join(', ')"
+          :error="validationErrors?.TeacherIds?.[0]"
         />
         <div class="flex justify-end gap-3 pt-4">
           <Button variant="outline" @click="closeEditModal">Hủy</Button>

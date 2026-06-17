@@ -128,19 +128,19 @@
           v-model="editForm.fullName"
           label="Họ tên"
           required
-          :error="validationErrors?.FullName?.join(', ')"
+          :error="validationErrors?.FullName?.[0]"
         />
         <div class="grid grid-cols-2 gap-4">
           <Input
             v-model="editForm.email"
             type="email"
             label="Email"
-            :error="validationErrors?.Email?.join(', ')"
+            :error="validationErrors?.Email?.[0]"
           />
           <Input
             v-model="editForm.phone"
             label="Số điện thoại"
-            :error="validationErrors?.Phone?.join(', ')"
+            :error="validationErrors?.Phone?.[0]"
           />
         </div>
         <div class="grid grid-cols-2 gap-4">
@@ -148,13 +148,13 @@
             v-model="editForm.yoB"
             type="date"
             label="Năm sinh"
-            :error="validationErrors?.YoB?.join(', ')"
+            :error="validationErrors?.YoB?.[0]"
           />
           <Select
             v-model="editForm.gender"
             label="Giới tính"
             :options="genderOptions"
-            :error="validationErrors?.Gender?.join(', ')"
+            :error="validationErrors?.Gender?.[0]"
           />
         </div>
         <Select
@@ -168,7 +168,7 @@
           :options="specializationOptions"
           label="Chuyên ngành"
           :modelValue="editForm.specializationIds"
-          :error="validationErrors?.SpecializationIds?.join(', ')"
+          :error="validationErrors?.SpecializationIds?.[0]"
         />
 
         <div class="flex justify-end gap-3 pt-4">

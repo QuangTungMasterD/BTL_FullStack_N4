@@ -744,6 +744,9 @@
     }
   ],
   "GlobalConfiguration": {
-    "RouteCaseSensitivity": false
+    "RouteCaseSensitivity": false,
+    "DownstreamHeaderTransform": {
+      "Authorization": "{Authorization}"
+    }
   }
 }

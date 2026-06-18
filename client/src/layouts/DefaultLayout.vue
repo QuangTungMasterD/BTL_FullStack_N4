@@ -16,9 +16,9 @@
 
 <script setup>
 import ToastContainer from '@/components/ui/ToastContainer.vue';
+import GlobalErrorWatcher from '@/components/ui/GlobalErrorWatcher.vue'
 import Sidebar from './SideBar/SideBar.vue'
 import Header from './Header/Header.vue'
-import GlobalErrorWatcher from '@/components/ui/GlobalErrorWatcher.vue'
 
 const menuItems = [
   { label: 'Dashboard', icon: 'dashboard', path: '/' },

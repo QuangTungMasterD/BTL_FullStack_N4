@@ -115,6 +115,8 @@
         </div>
       </div>
     </transition>
+    <ToastContainer />
+    <GlobalErrorWatcher />
   </div>
 </template>
 
@@ -123,6 +125,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import NotificationPanel from '@/components/NotificationPanel.vue'
+import ToastContainer from '@/components/ui/ToastContainer.vue';
+import GlobalErrorWatcher from '@/components/ui/GlobalErrorWatcher.vue'
 
 const router = useRouter()
 const route = useRoute()

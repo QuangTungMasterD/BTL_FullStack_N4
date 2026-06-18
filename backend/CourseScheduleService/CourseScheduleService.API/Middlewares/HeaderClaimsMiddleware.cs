@@ -17,8 +17,11 @@ namespace CourseScheduleService.API.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var userId = context.Request.Headers["X-User-Id"].FirstOrDefault().ToLower();
-            var rolesHeader = context.Request.Headers["X-Roles"].FirstOrDefault().ToLower();
+            var userId = context.Request.Headers["X-User-Id"].FirstOrDefault();
+            var rolesHeader = context.Request.Headers["X-Roles"].FirstOrDefault();
+
+            userId = userId?.ToLower();
+            rolesHeader = rolesHeader?.ToLower();
 
             Console.WriteLine("======================");
             Console.WriteLine("======================");

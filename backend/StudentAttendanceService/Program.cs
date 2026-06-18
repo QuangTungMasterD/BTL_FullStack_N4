@@ -39,14 +39,14 @@ builder.Services.AddSwaggerGen(c =>
 // Connection string
 var studentAttendanceConnection = Environment.GetEnvironmentVariable("CONNECTION_STRING_ATTENDANCE")
     ?? builder.Configuration.GetConnectionString("StudentAttendanceDb")
-    ?? "Server=LAPTOP-M5K0D1B8\\MSSQLSERVER02;Database=StudentAttendanceDb;Integrated Security=True;TrustServerCertificate=True;";
+    ?? "Server=sqlserver;Database=StudentAttendanceDb;User Id=sa;Password=Tung@2005;TrustServerCertificate=True;";
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(studentAttendanceConnection));
 
 // JWT Authentication
-var jwtKey = builder.Configuration["Jwt:Key"] ?? "VerySecretSharedJwtKey123!VerySecretKey4567";
-var issuer = builder.Configuration["Jwt:Issuer"] ?? "AttendanceAuth";
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "YourSuperSecretKeyThatIsAtLeast32CharactersLong";
+var issuer = builder.Configuration["Jwt:Issuer"] ?? "PaymentAndReportService";
 
 builder.Services.AddAuthentication(options =>
 {
@@ -97,6 +97,18 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
+
+app.Use(async (context, next) =>
+{
+    Console.WriteLine("===== HEADERS =====");
+
+    foreach (var h in context.Request.Headers)
+    {
+        Console.WriteLine($"{h.Key}: {h.Value}");
+    }
+
+    await next();
+});
 
 if (app.Environment.IsDevelopment())
 {

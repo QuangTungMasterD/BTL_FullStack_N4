@@ -241,9 +241,9 @@ const specializationName = ref('');
 const editForm = reactive({
   courseName: '',
   desct: '',
-  tuitionFee: null,
-  lesson: null,
-  level: null,
+  tuitionFee: 0,
+  lesson: 1,
+  level: 1,
   isActive: true,
   specializationId: null,
 });

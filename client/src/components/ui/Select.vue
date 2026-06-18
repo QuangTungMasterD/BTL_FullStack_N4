@@ -11,7 +11,7 @@
         @change="$emit('update:modelValue', $event.target.value)"
       >
         <option v-if="placeholder" value="">{{ placeholder }}</option>
-        <option v-for="opt in options" :key="opt.value" :value="opt.value">
+        <option v-for="(opt) in options" :key="opt.value" :value="opt.value">
           {{ opt.label }}
         </option>
       </select>
@@ -26,10 +26,10 @@
 defineProps({
   id: String,
   label: String,
-  modelValue: [String, Number],
+  modelValue: [String, Number, Boolean],
   options: { type: Array, default: () => [] },
   placeholder: String,
-  defaultValue: [String, Number],
+  defaultValue: [String, Number, Boolean],
 });
 defineEmits(['update:modelValue']);
 </script>

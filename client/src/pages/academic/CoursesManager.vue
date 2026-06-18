@@ -177,9 +177,9 @@ const selectedCourse = ref(null);
 const formData = reactive({
   courseName: '',
   desct: '',
-  tuitionFee: null,
-  lesson: null,
-  level: null,
+  tuitionFee: 0,
+  lesson: 1,
+  level: 1,
   isActive: true,
   specializationId: null,
 });
@@ -265,9 +265,9 @@ const openEditModal = async (id) => {
 const resetForm = () => {
   formData.courseName = '';
   formData.desct = '';
-  formData.tuitionFee = null;
-  formData.lesson = null;
-  formData.level = null;
+  formData.tuitionFee = 0;
+  formData.lesson = 1;
+  formData.level = 1;
   formData.isActive = true;
 };
 

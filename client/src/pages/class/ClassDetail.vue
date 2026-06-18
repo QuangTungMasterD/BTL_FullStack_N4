@@ -282,11 +282,11 @@ const currentSlots = computed(() => {
 const showEditModal = ref(false)
 const editForm = reactive({
   className: '',
-  maxStudent: null,
-  status: null,
+  maxStudent: 1,
+  status: 1,
   startDate: '',
   endDate: '',
-  lesson: null,
+  lesson: 1,
   courseId: null,
   teacherIds: []
 })

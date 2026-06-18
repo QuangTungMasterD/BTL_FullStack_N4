@@ -176,14 +176,13 @@ const formData = reactive({
   email: '',
   phone: '',
   yoB: '',
-  gender: null,
+  gender: true,
   isActive: true,
   specializationIds: [],
 });
 
 // Options
 const genderOptions = [
-  { value: null, label: '-- Chọn giới tính --' },
   { value: true, label: 'Nam' },
   { value: false, label: 'Nữ' },
 ];
@@ -267,7 +266,7 @@ const resetForm = () => {
   formData.email = '';
   formData.phone = '';
   formData.yoB = '';
-  formData.gender = null;
+  formData.gender = true;
   formData.isActive = true;
   formData.specializationIds = [];
 };

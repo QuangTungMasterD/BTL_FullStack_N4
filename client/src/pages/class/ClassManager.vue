@@ -183,7 +183,7 @@
           v-model="formData.className"
           label="Tên lớp"
           required
-          :error="validationErrors?.className?.[0]"
+          :error="validationErrors?.ClassName?.[0]"
         />
         <div class="grid grid-cols-2 gap-4">
           <Input
@@ -192,14 +192,14 @@
             label="Sĩ số tối đa"
             required
             :min="1"
-            :error="validationErrors?.maxStudent?.[0]"
+            :error="validationErrors?.MaxStudent?.[0]"
           />
           <Select
             v-model="formData.status"
             label="Trạng thái"
             :options="classStatusOptionsForForm"
             required
-            :error="validationErrors?.status?.[0]"
+            :error="validationErrors?.Status?.[0]"
           />
         </div>
         <div class="grid grid-cols-2 gap-4">
@@ -208,14 +208,14 @@
             type="date"
             label="Ngày bắt đầu"
             required
-            :error="validationErrors?.startDate?.[0]"
+            :error="validationErrors?.StartDate?.[0]"
           />
           <Input
             v-model="formData.endDate"
             type="date"
             label="Ngày kết thúc"
             required
-            :error="validationErrors?.endDate?.[0]"
+            :error="validationErrors?.EndDate?.[0]"
           />
         </div>
         <div class="grid grid-cols-2 gap-4">
@@ -226,21 +226,21 @@
             required
             :min="1"
             :disabled="!isEditing"
-            :error="validationErrors?.lesson?.[0]"
+            :error="validationErrors?.Lesson?.[0]"
           />
           <Select
             v-model="formData.courseId"
             label="Khóa học"
             :options="courseOptionsForForm"
             required
-            :error="validationErrors?.courseId?.[0]"
+            :error="validationErrors?.CourseId?.[0]"
           />
         </div>
         <Select
           v-model="formData.teacherId"
           label="Giáo viên phụ trách"
           :options="teacherOptionsForForm"
-          :error="validationErrors?.teacherId?.[0]"
+          :error="validationErrors?.TeacherId?.[0]"
         />
 
         <div class="mt-4" v-if="!isEditing">

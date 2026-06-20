@@ -2,27 +2,49 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref(localStorage.getItem('authToken') || null)
-  const user = ref(JSON.parse(localStorage.getItem('user') || 'null'))
-  const isAuthenticated = ref(!!token.value)
+
+  const token = ref(
+    localStorage.getItem('authToken') || null
+  )
+
+  const user = ref(
+    JSON.parse(
+      localStorage.getItem('user') || 'null'
+    )
+  )
+
+  const isAuthenticated = computed(
+    () => !!token.value
+  )
 
   const setToken = (newToken, userData) => {
+
     token.value = newToken
     user.value = userData
-    isAuthenticated.value = true
-    localStorage.setItem('authToken', newToken)
-    localStorage.setItem('user', JSON.stringify(userData))
+
+    localStorage.setItem(
+      'authToken',
+      newToken
+    )
+
+    localStorage.setItem(
+      'user',
+      JSON.stringify(userData)
+    )
   }
 
   const logout = () => {
+
     token.value = null
     user.value = null
-    isAuthenticated.value = false
-    localStorage.removeItem('token')
+
+    localStorage.removeItem('authToken')
     localStorage.removeItem('user')
   }
 
-  const userRole = computed(() => user.value?.role || null)
+  const userRole = computed(
+    () => user.value?.role || null
+  )
 
   return {
     token,
@@ -30,6 +52,6 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     userRole,
     setToken,
-    logout,
+    logout
   }
 })

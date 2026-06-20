@@ -112,9 +112,8 @@
                     <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2"/>
                   </svg>
                   <input 
-                    v-model="loginForm.email" 
-                    type="email" 
-                    placeholder="example@email.com"
+                    v-model="loginForm.username" 
+                    label="Tên đăng nhập"
                     required
                   >
                 </div>
@@ -195,6 +194,7 @@
                     placeholder="Nguyễn Văn A"
                     required
                   >
+                    
                 </div>
               </div>
 
@@ -206,10 +206,9 @@
                     <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2"/>
                   </svg>
                   <input 
-                    v-model="registerForm.email" 
-                    type="email" 
-                    placeholder="example@email.com"
-                    required
+                    v-model="registerForm.username"
+                    label="Tên đăng nhập"
+                    prepend-inner-icon="mdi-account"
                   >
                 </div>
               </div>
@@ -246,6 +245,15 @@
                     placeholder="••••••••"
                     required
                   >
+                  <v-select
+                      v-model="registerForm.role"
+                      label="Vai trò"
+                      :items="[
+                        'Student',
+                        'Teacher'
+                      ]"
+                    />
+                    
                   <button type="button" class="toggle-password" @click="showConfirmPassword = !showConfirmPassword">
                     {{ showConfirmPassword ? '🙈' : '👁️' }}
                   </button>
@@ -292,19 +300,26 @@ const authStore = useAuthStore()
 const activeTab = ref('login')
 
 // Login form
-const loginForm = ref({ email: '', password: '' })
+const loginForm = ref({
+  username: '',
+  password: ''
+})
+
 const showPassword = ref(false)
 const rememberMe = ref(false)
 const loading = ref(false)
 const loginError = ref('')
 
 // Register form
-const registerForm = ref({ 
-  fullName: '', 
-  email: '', 
-  password: '', 
-  confirmPassword: '' 
+const registerForm = ref({
+  username: '',
+  fullName: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+  role: 'HocVien'
 })
+
 const showRegisterPassword = ref(false)
 const showConfirmPassword = ref(false)
 const registerLoading = ref(false)
@@ -312,131 +327,140 @@ const registerError = ref('')
 const agreeTerms = ref(false)
 
 // Quick login for demo
-const quickLogin = (email, password) => {
-  loginForm.value.email = email
+const quickLogin = (username, password) => {
+  loginForm.value.username = username
   loginForm.value.password = password
   handleLogin()
 }
 
 // LOGIN WITH REAL API
 const handleLogin = async () => {
+
   loginError.value = ''
   loading.value = true
-  
+
   try {
-    // Gọi API đăng nhập qua gateway
+
     const response = await api.post('/auth/login', {
-      email: loginForm.value.email,
-      password: loginForm.value.password,
+      username: loginForm.value.username,
+      password: loginForm.value.password
     })
-    
+
     console.log('Login response:', response.data)
-    
-    // Lấy dữ liệu từ response
-    const { token, userId, fullName, role, email } = response.data
-    
-    // Lưu vào store
-    authStore.setToken(token, { 
-      userId, 
-      email: email || loginForm.value.email, 
-      fullName, 
-      role 
-    })
-    
-    // Nếu có rememberMe, lưu thêm (đã có trong store)
+
+    const loginData = response.data.data
+
+    authStore.setToken(
+      loginData.token,
+      {
+        username: loginData.username,
+        fullName: loginData.fullName,
+        role: loginData.role
+      }
+    )
+
     if (rememberMe.value) {
       localStorage.setItem('rememberMe', 'true')
     }
-    
-    // Chuyển hướng dựa trên role
-    if (role === 'ADMIN') {
+
+    if (loginData.role === 'Admin') {
       router.push('/')
-    } else if (role === 'LECTURER') {
-      router.push('/lecturer-dashboard')
-    } else {
+    }
+    else if (loginData.role === 'GiaoVien') {
+      router.push('/teacher-dashboard')
+    }
+    else {
       router.push('/student-dashboard')
     }
-    
-  } catch (err) {
+
+  }
+  catch (err) {
+
     console.error('Login error:', err)
+
     if (err.response) {
-      // Server trả về lỗi
-      loginError.value = err.response.data?.message || 'Đăng nhập thất bại'
-    } else if (err.request) {
-      // Không kết nối được server
-      loginError.value = 'Không thể kết nối đến server. Vui lòng kiểm tra kết nối.'
-    } else {
-      loginError.value = 'Đăng nhập thất bại. Vui lòng thử lại.'
+      loginError.value =
+        err.response.data?.message ||
+        'Đăng nhập thất bại'
     }
-  } finally {
+    else {
+      loginError.value =
+        'Không thể kết nối tới server'
+    }
+  }
+  finally {
     loading.value = false
   }
 }
 
 // REGISTER WITH REAL API
 const handleRegister = async () => {
+
   registerError.value = ''
-  
-  // Validate form
+
+  if (!registerForm.value.username.trim()) {
+    registerError.value = 'Vui lòng nhập username'
+    return
+  }
+
   if (!registerForm.value.fullName.trim()) {
     registerError.value = 'Vui lòng nhập họ tên'
     return
   }
-  
-  if (!registerForm.value.email.trim()) {
-    registerError.value = 'Vui lòng nhập email'
-    return
-  }
-  
+
   if (!registerForm.value.password) {
     registerError.value = 'Vui lòng nhập mật khẩu'
     return
   }
-  
-  if (registerForm.value.password !== registerForm.value.confirmPassword) {
-    registerError.value = 'Mật khẩu xác nhận không khớp'
+
+  if (
+    registerForm.value.password !==
+    registerForm.value.confirmPassword
+  ) {
+    registerError.value =
+      'Mật khẩu xác nhận không khớp'
     return
   }
-  
-  if (registerForm.value.password.length < 6) {
-    registerError.value = 'Mật khẩu phải có ít nhất 6 ký tự'
-    return
-  }
-  
+
   registerLoading.value = true
-  
+
   try {
-    // Gọi API đăng ký
-    const response = await api.post('/auth/register', {
+
+    await api.post('/auth/register', {
+      username: registerForm.value.username,
+      password: registerForm.value.password,
       fullName: registerForm.value.fullName,
       email: registerForm.value.email,
-      password: registerForm.value.password,
+      role: registerForm.value.role
     })
-    
-    console.log('Register response:', response.data)
-    
-    // Đăng ký thành công, chuyển sang tab login
-    loginForm.value = { 
-      email: registerForm.value.email, 
-      password: registerForm.value.password 
-    }
+
     activeTab.value = 'login'
-    registerError.value = 'Đăng ký thành công! Vui lòng đăng nhập.'
-    
-    // Clear register form
-    registerForm.value = { fullName: '', email: '', password: '', confirmPassword: '' }
-    agreeTerms.value = false
-    
-  } catch (err) {
-    console.error('Register error:', err)
-    if (err.response) {
-      registerError.value = err.response.data?.message || 'Đăng ký thất bại'
-    } else if (err.request) {
-      registerError.value = 'Không thể kết nối đến server. Vui lòng kiểm tra kết nối.'
-    } else {
-      registerError.value = 'Đăng ký thất bại. Vui lòng thử lại.'
+
+    loginForm.value.username =
+      registerForm.value.username
+
+    loginForm.value.password =
+      registerForm.value.password
+
+    registerForm.value = {
+      username: '',
+      fullName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      role: 'HocVien'
     }
-  } finally {
+
+  }
+  catch (err) {
+
+    console.error(err)
+
+    registerError.value =
+      err.response?.data?.message ||
+      'Đăng ký thất bại'
+  }
+  finally {
     registerLoading.value = false
   }
 }

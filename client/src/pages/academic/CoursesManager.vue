@@ -24,6 +24,15 @@
       </div>
     </div>
 
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <StatCardModern 
+        icon="mdi-book-open-variant" 
+        label="Tổng khóa học" 
+        :value="courseStore.pagedData.totalRecords" 
+        variant="total" 
+      />
+    </div>
+
     <!-- Filters -->
     <CourseFilters @filter-change="handleFilterChange" />
 
@@ -161,6 +170,7 @@ import Link from '@/components/ui/Link.vue';
 import { LEVEL_OPTIONS, STATUS_OPTIONS } from '@/constants';
 import ImportExportButtons from '@/components/business/ImportExportButtons.vue';
 import SkeletonCard from '@/components/skeleton/SkeletonCard.vue';
+import StatCardModern from '@/components/ui/StatCardModern.vue'
 
 const courseStore = useCourseStore();
 const specializationStore = useSpecializationStore()

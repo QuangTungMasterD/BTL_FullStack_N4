@@ -9,7 +9,7 @@
         </p>
       </div>
       <div class="flex gap-3">
-        <Link to="/courses" variant="outline" class="px-4 py-2 rounded-lg border">
+        <Link to="/admin-courses" variant="outline" class="px-4 py-2 rounded-lg border">
           <span class="material-symbols-outlined">arrow_back</span>
           Quay lại
         </Link>
@@ -236,7 +236,7 @@ const handlePageChange = async (page) => {
 };
 
 const goBack = () => {
-  router.push('/courses');
+  router.push('/admin-courses');
 };
 
 // Restore handlers

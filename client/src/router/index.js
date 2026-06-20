@@ -108,12 +108,12 @@ const routes = [
         component: LecturerManagement,
         meta: { roles: ["ADMIN"] },
       },
-      {
-        path: "admin-courses",
-        name: "AdminCourseManagement",
-        component: AdminCourseManagement,
-        meta: { roles: ["ADMIN"] },
-      },
+      // {
+      //   path: "admin-courses",
+      //   name: "AdminCourseManagement",
+      //   component: AdminCourseManagement,
+      //   meta: { roles: ["ADMIN"] },
+      // },
       {
         path: "admin-attendance",
         name: "AdminAttendanceManagement",
@@ -197,7 +197,7 @@ const routes = [
       // Các route này được thêm vào, có thể gán role ADMIN hoặc cho phép tất cả
       // Tùy chỉnh meta roles phù hợp
       {
-        path: "courses",
+        path: "admin-courses",
         name: "Courses",
         component: CoursesManager,
         meta: { roles: ["ADMIN"] },
@@ -295,63 +295,61 @@ const router = createRouter({
   routes,
 });
 
-/////////////////////////////////////// ĐỪNG SỬA ĐÂY VỘI CỨ LÀM ĐĂNG NHẬP ĐI ///////////////////////////////////////////
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
 
-// router.beforeEach((to, from, next) => {
-//   const authStore = useAuthStore();
+  // Kiểm tra xem route có yêu cầu đăng nhập không
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
-//   // Kiểm tra xem route có yêu cầu đăng nhập không
-//   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  // Nếu chưa đăng nhập và cần đăng nhập -> chuyển đến login
+  if (requiresAuth && !authStore.isAuthenticated) {
+    next("/login");
+    return;
+  }
 
-//   // Nếu chưa đăng nhập và cần đăng nhập -> chuyển đến login
-//   if (requiresAuth && !authStore.isAuthenticated) {
-//     next("/login");
-//     return;
-//   }
+  // Nếu đã đăng nhập và đang ở trang login -> chuyển đến dashboard theo role
+  if (to.path === "/login" && authStore.isAuthenticated) {
+    const userRole = authStore.user?.role;
+    if (userRole === "ADMIN") {
+      next("/");
+    } else if (userRole === "LECTURER") {
+      next("/lecturer-dashboard");
+    } else if (userRole === "STUDENT") {
+      next("/student-dashboard");
+    } else {
+      next("/");
+    }
+    return;
+  }
 
-//   // Nếu đã đăng nhập và đang ở trang login -> chuyển đến dashboard theo role
-//   if (to.path === "/login" && authStore.isAuthenticated) {
-//     const userRole = authStore.user?.role;
-//     if (userRole === "ADMIN") {
-//       next("/");
-//     } else if (userRole === "LECTURER") {
-//       next("/lecturer-dashboard");
-//     } else if (userRole === "STUDENT") {
-//       next("/student-dashboard");
-//     } else {
-//       next("/");
-//     }
-//     return;
-//   }
+  // Kiểm tra role-based access control
+  const requiredRoles = to.matched.flatMap((record) => record.meta.roles || []);
 
-//   // Kiểm tra role-based access control
-//   const requiredRoles = to.matched.flatMap((record) => record.meta.roles || []);
+  if (requiredRoles.length > 0) {
+    const userRole = authStore.user?.role;
+    if (!userRole || !requiredRoles.includes(userRole)) {
+      // Nếu không có quyền, chuyển đến unauthorized
+      if (to.path !== "/unauthorized") {
+        next("/unauthorized");
+        return;
+      }
+    }
+  }
 
-//   if (requiredRoles.length > 0) {
-//     const userRole = authStore.user?.role;
-//     if (!userRole || !requiredRoles.includes(userRole)) {
-//       // Nếu không có quyền, chuyển đến unauthorized
-//       if (to.path !== "/unauthorized") {
-//         next("/unauthorized");
-//         return;
-//       }
-//     }
-//   }
+  // Xử lý redirect khi vào root path với role khác nhau
+  if (to.path === "/") {
+    const userRole = authStore.user?.role;
+    if (userRole === "LECTURER" && from.path !== "/lecturer-dashboard") {
+      next("/lecturer-dashboard");
+      return;
+    } else if (userRole === "STUDENT" && from.path !== "/student-dashboard") {
+      next("/student-dashboard");
+      return;
+    }
+  }
 
-//   // Xử lý redirect khi vào root path với role khác nhau
-//   if (to.path === "/") {
-//     const userRole = authStore.user?.role;
-//     if (userRole === "LECTURER" && from.path !== "/lecturer-dashboard") {
-//       next("/lecturer-dashboard");
-//       return;
-//     } else if (userRole === "STUDENT" && from.path !== "/student-dashboard") {
-//       next("/student-dashboard");
-//       return;
-//     }
-//   }
-
-//   // Mặc định cho phép đi tiếp
-//   next();
-// });
+  // Mặc định cho phép đi tiếp
+  next();
+});
 
 export default router;

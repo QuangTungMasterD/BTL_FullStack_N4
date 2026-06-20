@@ -153,8 +153,9 @@ const menuItems = computed(() => {
     return [
       { title: 'Dashboard', path: '/', icon: 'mdi-view-dashboard' },
       { title: 'Quản lý sinh viên', path: '/students', icon: 'mdi-account-group' },
-      { title: 'Quản lý giảng viên', path: '/lecturers', icon: 'mdi-school' },
+      { title: 'Quản lý giảng viên', path: '/teachers', icon: 'mdi-school' },
       { title: 'Quản lý khóa học', path: '/admin-courses', icon: 'mdi-book-open-variant' },
+      { title: 'Quản lý lớp học', path: '/classes', icon: 'mdi-book-open-variant' },
       { title: 'Quản lý điểm danh', path: '/admin-attendance', icon: 'mdi-calendar-check' },
       { title: 'Quản lý điểm số', path: '/admin-grades', icon: 'mdi-chart-line' },
       { title: 'Báo cáo thống kê', path: '/reports', icon: 'mdi-file-chart' },
@@ -167,11 +168,13 @@ const menuItems = computed(() => {
       { title: 'Điểm danh', path: '/lecturer-attendance', icon: 'mdi-calendar-check' },
       { title: 'Điểm số', path: '/lecturer-grades', icon: 'mdi-chart-line' },
       { title: 'Thông tin cá nhân', path: '/profile', icon: 'mdi-account' },
+      { title: 'Lịch trình', path: '/teachers/schedule', icon: 'mdi-schedule' },
     ]
   } else {
     return [
       { title: 'Dashboard', path: '/student-dashboard', icon: 'mdi-view-dashboard' },
       { title: 'Thông tin cá nhân', path: '/profile', icon: 'mdi-account' },
+      { title: 'Lịch học', path: 'student/schedule', icon: 'mdi-account' },
       { title: 'Điểm danh', path: '/student-attendance', icon: 'mdi-calendar-check' },
       { title: 'Điểm số', path: '/student-grades', icon: 'mdi-chart-line' },
       { title: 'Đăng ký khóa học', path: '/enrollments', icon: 'mdi-book-open-variant' },

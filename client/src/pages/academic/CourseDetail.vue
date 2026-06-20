@@ -4,7 +4,7 @@
     <div class="flex justify-between items-center mb-6">
       <div class="text-left">
         <div class="flex items-center gap-3">
-          <Link to="/courses" variant="muted" icon-left="arrow_back">
+          <Link to="/admin-courses" variant="muted" icon-left="arrow_back">
             Quay lại
           </Link>
           <h1 class="font-headline-lg text-headline-lg">Chi tiết khóa học</h1>
@@ -273,7 +273,7 @@ const getClassStatusVariant = (status) => {
 const loadCourseDetail = async () => {
   const id = route.params.id;
   if (!id) {
-    router.push('/courses');
+    router.push('/admin-courses');
     return;
   }
   
@@ -283,7 +283,7 @@ const loadCourseDetail = async () => {
     specializationName.value = getSpecializationName(course.value.specializationId);
   } catch (err) {
     console.error('Failed to load course:', err);
-    router.push('/courses');
+    router.push('/admin-courses');
   }
 };
 
@@ -352,7 +352,7 @@ const confirmDelete = () => {
 const handleDeleteCourse = async () => {
   await courseStore.delete(course.value.id);
   showDeleteConfirm.value = false;
-  router.push('/courses');
+  router.push('/admin-courses');
 };
 
 onMounted(() => {

@@ -1,0 +1,752 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/v1/courses",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/courses",
+      "UpstreamHttpMethod": ["GET", "POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/courses/paged",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/courses/paged",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/courses/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/courses/{id}",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/courses/{id}/permanent",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/courses/{id}/permanent",
+      "UpstreamHttpMethod": ["DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/courses/{id}/restore",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/courses/{id}/restore",
+      "UpstreamHttpMethod": ["PATCH"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/classes",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classes",
+      "UpstreamHttpMethod": ["GET", "POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/classes/paged",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classes/paged",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/classes/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classes/{id}",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/classes/{id}/permanent",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classes/{id}/permanent",
+      "UpstreamHttpMethod": ["DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/classes/{id}/restore",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classes/{id}/restore",
+      "UpstreamHttpMethod": ["PATCH"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/classes/course/{courseId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classes/course/{courseId}",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/classsessions",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classsessions",
+      "UpstreamHttpMethod": ["GET", "POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/classsessions/paged",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classsessions/paged",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/classsessions/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classsessions/{id}",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/classsessions/{id}/status",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/classsessions/{id}/status",
+      "UpstreamHttpMethod": ["PATCH"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/rooms",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/rooms",
+      "UpstreamHttpMethod": ["GET", "POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/rooms/paged",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/rooms/paged",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/rooms/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/rooms/{id}",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/rooms/{id}/permanent",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/rooms/{id}/permanent",
+      "UpstreamHttpMethod": ["DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/rooms/{id}/restore",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/rooms/{id}/restore",
+      "UpstreamHttpMethod": ["PATCH"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/specializations",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/specializations",
+      "UpstreamHttpMethod": ["GET", "POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/specializations/paged",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/specializations/paged",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/specializations/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/specializations/{id}",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/specializations/{id}/permanent",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/specializations/{id}/permanent",
+      "UpstreamHttpMethod": ["DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/teachers",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teachers",
+      "UpstreamHttpMethod": ["GET", "POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/teachers/paged",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teachers/paged",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/teachers/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teachers/{id}",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/teachers/{id}/restore",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teachers/{id}/restore",
+      "UpstreamHttpMethod": ["PATCH"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/teacherassignments",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teacherassignments",
+      "UpstreamHttpMethod": ["GET", "POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/teacherassignments/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teacherassignments/{id}",
+      "UpstreamHttpMethod": ["DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/teacherspecializations",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teacherspecializations",
+      "UpstreamHttpMethod": ["GET", "POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/teacherspecializations/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/teacherspecializations/{id}",
+      "UpstreamHttpMethod": ["DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/schedule-change-requests",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/schedule-change-requests",
+      "UpstreamHttpMethod": ["POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/schedule-change-requests/my-requests",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/schedule-change-requests/my-requests",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/schedule-change-requests/pending",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/schedule-change-requests/pending",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/schedule-change-requests/process",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/schedule-change-requests/process",
+      "UpstreamHttpMethod": ["POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/statistics",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/statistics",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/enrollment-trend",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/enrollment-trend",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/department-stats",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/department-stats",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/recent-activities",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/recent-activities",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/students",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/students",
+      "UpstreamHttpMethod": ["GET", "POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/students/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/students/{id}",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/lecturers",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/lecturers",
+      "UpstreamHttpMethod": ["GET", "POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/lecturers/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/lecturers/{id}",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/lecturers/{id}/courses",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/lecturers/{id}/courses",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/courses",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/courses",
+      "UpstreamHttpMethod": ["GET", "POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/courses/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/courses/{id}",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/attendance/overall",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/attendance/overall",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/attendance/by-faculty",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/attendance/by-faculty",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/profile",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/profile",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/attendance/by-course",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/attendance/by-course",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/grades/overall",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/grades/overall",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/grades/distribution",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/grades/distribution",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/grades/by-faculty",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/grades/by-faculty",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/grades/students",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/grades/students",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/grades/students/{id}/details",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/grades/students/{id}/details",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/reports/academic",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/reports/academic",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/reports/attendance",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/reports/attendance",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/reports/enrollment",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/reports/enrollment",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/courses/stats",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/courses/stats",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/courses/enrollment-stats",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/courses/enrollment-stats",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/semesters",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/semesters",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/semesters/current",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/semesters/current",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/grades/course-stats",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/grades/course-stats",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/grades/student-rankings",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/grades/student-rankings",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/dashboard/enrollment-by-course",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/dashboard/enrollment-by-course",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/dashboard/attendance-trend",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/dashboard/attendance-trend",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/dashboard/enrollment-by-semester",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/dashboard/enrollment-by-semester",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/dashboard/enrollment-by-month-year",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/dashboard/enrollment-by-month-year",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/dashboard/student-distribution",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/dashboard/student-distribution",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/dashboard/statistics-overview",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/admin/dashboard/statistics-overview",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/courses",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/courses",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/today-schedule",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/today-schedule",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/recent-attendance",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/recent-attendance",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/average-grade",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/average-grade",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/top-students",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/top-students",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/students",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/students",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/students/{id}/grades",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/students/{id}/grades",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/attendance/students",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/attendance/students",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/attendance/history",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/attendance/history",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/attendance/save",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/attendance/save",
+      "UpstreamHttpMethod": ["POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/grades/students",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/grades/students",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/grades",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/grades",
+      "UpstreamHttpMethod": ["GET", "POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/grades/save",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/grades/save",
+      "UpstreamHttpMethod": ["POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/grades/export",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/grades/export",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/students/export",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/students/export",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/lecturer/profile",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/lecturer/profile",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/stats",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/stats",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/courses",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/courses",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/upcoming-classes",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/upcoming-classes",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/recent-grades",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/recent-grades",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/announcements",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/announcements",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/profile",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/profile",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/enrolled-courses",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/enrolled-courses",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/attendance/overall",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/attendance/overall",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/attendance/summary",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/attendance/summary",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/attendance/records",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/attendance/records",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/gpa/summary",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/gpa/summary",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/gpa/history",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/gpa/history",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/grades/courses",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/grades/courses",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/grades/details",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/grades/details",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/courses/available",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/courses/available",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/courses/registered",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/courses/registered",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/courses/register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/courses/register",
+      "UpstreamHttpMethod": ["POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/courses/register/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/courses/register/{id}",
+      "UpstreamHttpMethod": ["DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/student/timetable",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "student_attendance_service", "Port": 80 }],
+      "UpstreamPathTemplate": "/studentattendance/api/student/timetable",
+      "UpstreamHttpMethod": ["GET"]
+    }
+  ],
+  "GlobalConfiguration": {
+    "RouteCaseSensitivity": false,
+    "DownstreamHeaderTransform": {
+      "Authorization": "{Authorization}"
+    }
+  }
+}

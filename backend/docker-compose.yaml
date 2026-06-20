@@ -1,0 +1,167 @@
+version: '3.8'
+
+networks:
+  course_network:
+    driver: bridge
+
+volumes:
+  course_schedule_db:
+    name: course_schedule_db
+  student_attendance_db:
+    name: student_attendance_db
+  kafka_data:
+  zookeeper_data:
+
+services:
+  # ========== SQL Server for CourseSchedule ==========
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: course_schedule_db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Tung@2005"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - course_schedule_db:/var/opt/mssql
+    networks:
+      - course_network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Tung@2005' -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  # ========== SQL Server for StudentAttendance ==========
+  student_sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: student_attendance_db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Tung@2005"
+      MSSQL_PID: "Express"
+    ports:
+      - "1434:1433"   # cổng ngoài 1434 để tránh xung đột
+    volumes:
+      - student_attendance_db:/var/opt/mssql
+    networks:
+      - course_network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Tung@2005' -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  # ========== Zookeeper (cho Kafka) ==========
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: course_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+    networks:
+      - course_network
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
+  # ========== Kafka ==========
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: course_kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - course_network
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  # ========== CourseScheduleService API ==========
+  api:
+    build:
+      context: ./CourseScheduleService
+      dockerfile: Dockerfile
+    image: course-schedule-service:v2
+    container_name: course_schedule_service
+    ports:
+      - "8080"   # nội bộ
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=course_schedule_db;User Id=sa;Password=Tung@2005;TrustServerCertificate=True;Encrypt=False
+      - Kafka__BootstrapServers=kafka:9092
+    networks:
+      - course_network
+    restart: unless-stopped
+
+  # ========== StudentAttendanceService API ==========
+  student_attendance_api:
+    build:
+      context: ./StudentAttendanceService
+      dockerfile: Dockerfile
+    container_name: student_attendance_service
+    ports:
+      - "8081"   # nội bộ
+    depends_on:
+      student_sqlserver:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - CONNECTION_STRING_ATTENDANCE=Server=student_sqlserver;Database=StudentAttendanceDb;User Id=sa;Password=Tung@2005;TrustServerCertificate=True;
+    networks:
+      - course_network
+    restart: unless-stopped
+
+  # ========== API Gateway (Ocelot) ==========
+  gateway:
+    build:
+      context: ./GateWay
+      dockerfile: Dockerfile
+    container_name: apigateway
+    ports:
+      - "5000:8080"
+    depends_on:
+      - api
+      - student_attendance_api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+    networks:
+      - course_network
+    restart: unless-stopped

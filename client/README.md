@@ -1,4 +1,5 @@
 # Client - Course Management System
+<!--  -->
 
 Frontend application for the Course Management System built with:
 

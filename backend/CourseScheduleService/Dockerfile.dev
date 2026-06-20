@@ -1,0 +1,24 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+WORKDIR /app
+
+# Copy csproj files để cache restore
+COPY *.sln .
+COPY CourseScheduleService.Domain/*.csproj ./CourseScheduleService.Domain/
+COPY CourseScheduleService.Application/*.csproj ./CourseScheduleService.Application/
+COPY CourseScheduleService.Infrastructure/*.csproj ./CourseScheduleService.Infrastructure/
+COPY CourseScheduleService.API/*.csproj ./CourseScheduleService.API/
+
+# Restore packages
+RUN dotnet restore
+
+# Copy source code (sau restore để cache)
+COPY . .
+
+EXPOSE 5000
+
+# Docker Desktop on Windows does not propagate inotify events into mounted volumes.
+ENV DOTNET_USE_POLLING_FILE_WATCHER=1
+
+# Build once from mounted source before watch starts to avoid stale Windows bin/obj artifacts.
+CMD ["sh", "-c", "dotnet build CourseScheduleService.API/CourseScheduleService.API.csproj -c Debug && exec dotnet watch run --project CourseScheduleService.API/CourseScheduleService.API.csproj --urls http://0.0.0.0:5000"]

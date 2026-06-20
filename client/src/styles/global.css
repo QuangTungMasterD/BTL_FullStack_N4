@@ -1,0 +1,698 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+/* ============================================ */
+/* MODERN SELECT & DROPDOWN STYLES */
+/* ============================================ */
+
+/* Vuetify Select - Style cho box chọn */
+.v-select {
+  font-size: 14px;
+}
+
+.v-select .v-field {
+  border-radius: 14px !important;
+  transition: all 0.2s ease;
+  background: white !important;
+  min-height: 48px;
+}
+
+.v-select .v-field:hover {
+  border-color: #3b82f6 !important;
+}
+
+.v-select .v-field--focused {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Text trong select */
+.v-select .v-field__input {
+  font-size: 14px !important;
+  color: #1e293b !important;
+  padding: 12px 16px !important;
+  line-height: 1.4 !important;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+/* Label trong select */
+.v-select .v-field-label {
+  color: #64748b !important;
+  font-size: 14px !important;
+  left: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+/* Dropdown menu container */
+.v-menu .v-list {
+  border-radius: 16px !important;
+  padding: 8px !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+  background: white !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
+}
+
+/* Mỗi item trong dropdown */
+.v-list-item {
+  border-radius: 10px !important;
+  margin: 2px 0 !important;
+  transition: all 0.2s ease !important;
+  padding: 10px 16px !important;
+  min-height: 44px !important;
+}
+
+/* Text trong dropdown item */
+.v-list-item-title {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #1e293b !important;
+  line-height: 1.4 !important;
+}
+
+/* Hover effect cho dropdown item */
+.v-list-item:hover {
+  background: #f1f5f9 !important;
+}
+
+.v-list-item:hover .v-list-item-title {
+  color: #3b82f6 !important;
+}
+
+/* Active/Selected item */
+.v-list-item--active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)) !important;
+}
+
+.v-list-item--active .v-list-item-title {
+  color: #3b82f6 !important;
+  font-weight: 600 !important;
+}
+
+/* ============================================ */
+/* MODERN TABLE STYLES - FIXED HEADER */
+/* ============================================ */
+
+/* Data table container */
+.v-data-table {
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  background: white !important;
+  width: 100% !important;
+}
+
+.v-data-table__wrapper {
+  border-radius: 24px !important;
+  overflow-x: auto !important;
+}
+
+/* Table Header - STRONG SELECTOR */
+.v-data-table__wrapper .v-data-table-header__th,
+.v-data-table__wrapper th,
+.v-data-table thead th,
+.v-data-table .v-data-table-header th,
+.v-data-table__wrapper > table > thead > tr > th {
+  background: #f1f5f9 !important;
+  background-color: #f1f5f9 !important;
+  color: #1e293b !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  padding: 18px 16px !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+  position: relative !important;
+}
+
+/* First th - rounded corner */
+.v-data-table__wrapper > table > thead > tr > th:first-child {
+  border-top-left-radius: 12px !important;
+}
+
+/* Last th - rounded corner */
+.v-data-table__wrapper > table > thead > tr > th:last-child {
+  border-top-right-radius: 12px !important;
+}
+
+/* Sort icon styling */
+.v-data-table__wrapper th .v-icon {
+  opacity: 0.6 !important;
+  margin-left: 8px !important;
+}
+
+.v-data-table__wrapper th:hover .v-icon {
+  opacity: 1 !important;
+  color: #3b82f6 !important;
+}
+
+/* Table Cells */
+.v-data-table__wrapper td,
+.v-data-table__wrapper > table > tbody > tr > td {
+  padding: 16px !important;
+  font-size: 14px !important;
+  color: #334155 !important;
+  border-bottom: 1px solid #eef2f6 !important;
+  background: white !important;
+  text-align: left !important;
+}
+
+/* Center align for specific columns */
+.v-data-table__wrapper td:has(.status-badge),
+.v-data-table__wrapper td:has(.rank-badge),
+.v-data-table__wrapper td:has(.attendance-badge),
+.v-data-table__wrapper td:has(.action-group) {
+  text-align: center !important;
+}
+
+/* ZEBRA STRIPING - Màu nền xen kẽ */
+.v-data-table__wrapper > table > tbody > tr:nth-child(even) > td {
+  background-color: #ffffff !important;
+}
+
+.v-data-table__wrapper > table > tbody > tr:nth-child(odd) > td {
+  background-color: #fafcff !important;
+}
+
+/* Hover effect */
+.v-data-table__wrapper > table > tbody > tr:hover > td {
+  background: linear-gradient(90deg, #f0f9ff, #f8fafc) !important;
+}
+
+/* ============================================ */
+/* MODERN PAGINATION STYLES - FIXED */
+/* ============================================ */
+
+/* Footer container */
+.v-data-table-footer {
+  padding: 16px 20px !important;
+  background: #f8fafc !important;
+  border-top: 1px solid #e2e8f0 !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+}
+
+/* Items per page selector - FIXED CENTER */
+.v-data-table-footer .v-select {
+  width: 120px !important;
+}
+
+.v-data-table-footer .v-select .v-field {
+  background: white !important;
+  border-radius: 12px !important;
+  min-height: 40px !important;
+}
+
+.v-data-table-footer .v-select .v-field__input {
+  padding: 8px 12px !important;
+  min-height: 40px !important;
+  text-align: center !important;
+  justify-content: center !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.v-data-table-footer .v-select .v-field__input input {
+  text-align: center !important;
+}
+
+/* Items per page label */
+.v-data-table-footer .v-select .v-field-label {
+  display: none !important;
+}
+
+/* Pagination info text */
+.v-data-table-footer__info {
+  font-size: 13px !important;
+  color: #64748b !important;
+}
+
+/* Pagination container */
+.v-pagination {
+  margin: 0 !important;
+}
+
+.v-pagination__list {
+  gap: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Pagination buttons */
+.v-pagination .v-btn {
+  min-width: 38px !important;
+  height: 38px !important;
+  border-radius: 12px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+  color: #64748b !important;
+  font-size: 14px !important;
+}
+
+/* Pagination hover */
+.v-pagination .v-btn:hover {
+  background: #e2e8f0 !important;
+  color: #3b82f6 !important;
+}
+
+/* Active pagination item */
+.v-pagination .v-btn--active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Disabled pagination item */
+.v-pagination .v-btn--disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* ============================================ */
+/* STATUS BADGE STYLES */
+/* ============================================ */
+
+.status-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 4px 12px !important;
+  border-radius: 30px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  width: fit-content !important;
+  margin: 0 auto !important;
+}
+
+.status-badge.active {
+  background: #dcfce7 !important;
+  color: #10b981 !important;
+}
+
+.status-badge.inactive {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+}
+
+/* ============================================ */
+/* ACTION GROUP STYLES */
+/* ============================================ */
+
+.action-group {
+  display: flex !important;
+  gap: 4px !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.action-btn {
+  transition: all 0.2s ease !important;
+}
+
+.action-btn.view:hover { 
+  background: #dbeafe !important; 
+  color: #3b82f6 !important; 
+}
+
+.action-btn.edit:hover { 
+  background: #fef3c7 !important; 
+  color: #f59e0b !important; 
+}
+
+.action-btn.delete:hover { 
+  background: #fee2e2 !important; 
+  color: #ef4444 !important; 
+}
+
+/* ============================================ */
+/* MODERN PAGINATION STYLES */
+/* ============================================ */
+
+/* Footer container */
+.v-data-table-footer {
+  padding: 16px 20px !important;
+  background: #f8fafc !important;
+  border-top: 1px solid #e2e8f0 !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+}
+
+/* Items per page selector - FIXED CENTER */
+.v-data-table-footer .v-select {
+  width: 120px !important;
+}
+
+.v-data-table-footer .v-select .v-field {
+  background: white !important;
+  border-radius: 12px !important;
+  min-height: 40px !important;
+}
+
+.v-data-table-footer .v-select .v-field__input {
+  padding: 8px 12px !important;
+  min-height: 40px !important;
+  text-align: center !important;
+  justify-content: center !important;
+}
+
+.v-data-table-footer .v-select .v-field__input input {
+  text-align: center !important;
+}
+
+/* Pagination info text */
+.v-data-table-footer__info {
+  font-size: 13px !important;
+  color: #64748b !important;
+}
+
+/* Pagination container */
+.v-pagination {
+  margin: 0 !important;
+}
+
+.v-pagination__list {
+  gap: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Pagination buttons */
+.v-pagination .v-btn {
+  min-width: 38px !important;
+  height: 38px !important;
+  border-radius: 12px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+  color: #64748b !important;
+  font-size: 14px !important;
+}
+
+/* Pagination hover */
+.v-pagination .v-btn:hover {
+  background: #e2e8f0 !important;
+  color: #3b82f6 !important;
+}
+
+/* Active pagination item */
+.v-pagination .v-btn--active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Disabled pagination item */
+.v-pagination .v-btn--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================ */
+/* MODERN DIALOG STYLES */
+/* ============================================ */
+
+.v-dialog .v-card {
+  border-radius: 28px !important;
+  overflow: hidden;
+}
+
+/* ============================================ */
+/* MODERN CHIP STYLES */
+/* ============================================ */
+
+.v-chip {
+  border-radius: 30px !important;
+  font-weight: 500 !important;
+  padding: 6px 12px !important;
+}
+
+/* Status chip variants */
+.v-chip.status-success {
+  background: #dcfce7 !important;
+  color: #10b981 !important;
+}
+
+.v-chip.status-warning {
+  background: #fef3c7 !important;
+  color: #f59e0b !important;
+}
+
+.v-chip.status-error {
+  background: #fee2e2 !important;
+  color: #ef4444 !important;
+}
+
+.v-chip.status-info {
+  background: #dbeafe !important;
+  color: #3b82f6 !important;
+}
+
+/* ============================================ */
+/* MODERN BUTTON STYLES */
+/* ============================================ */
+
+.v-btn {
+  text-transform: none !important;
+  font-weight: 500 !important;
+  letter-spacing: normal !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+.v-btn--variant-tonal {
+  background: #f1f5f9 !important;
+}
+
+.v-btn--variant-tonal:hover {
+  background: #e2e8f0 !important;
+}
+
+/* Primary button */
+.v-btn--primary {
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+}
+
+.v-btn--primary:hover {
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* ============================================ */
+/* CARD & CONTAINER STYLES */
+/* ============================================ */
+
+.v-card {
+  border-radius: 24px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+  transition: all 0.3s ease !important;
+}
+
+.v-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ============================================ */
+/* INPUT FIELD STYLES */
+/* ============================================ */
+
+.v-field {
+  border-radius: 14px !important;
+  transition: all 0.2s ease !important;
+}
+
+.v-field--focused {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.v-field:hover {
+  border-color: #cbd5e1;
+}
+
+/* ============================================ */
+/* TEXT FIELD STYLES */
+/* ============================================ */
+
+.v-text-field .v-field__input {
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+}
+
+/* ============================================ */
+/* SMOOTH TRANSITIONS */
+/* ============================================ */
+
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Loading animation */
+.v-progress-circular {
+  color: #3b82f6;
+}
+
+/* ============================================ */
+/* EMPTY STATE STYLES */
+/* ============================================ */
+
+.v-data-table__empty-wrapper td {
+  text-align: center !important;
+  padding: 48px !important;
+  color: #94a3b8 !important;
+  font-size: 14px !important;
+}
+
+/* ============================================ */
+/* LOADING STATE STYLES */
+/* ============================================ */
+
+.v-data-table__progress th {
+  padding: 8px !important;
+}
+
+/* ============================================ */
+/* RESPONSIVE ADJUSTMENTS */
+/* ============================================ */
+
+@media (max-width: 768px) {
+  .v-data-table td,
+  .v-data-table-header th {
+    padding: 12px !important;
+  }
+  
+  .v-data-table-footer {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+  
+  .v-pagination .v-btn {
+    min-width: 32px !important;
+    height: 32px !important;
+  }
+  
+  .v-select .v-field__input {
+    padding: 10px 12px !important;
+  }
+}
+
+/* ============================================ */
+/* FIX FOR SELECT OPTION TEXT ALIGNMENT */
+/* ============================================ */
+
+/* Đảm bảo text trong select được căn giữa */
+.v-select .v-field .v-field__input {
+  display: flex;
+  align-items: center;
+}
+
+/* Đảm bảo icon trong select không bị lệch */
+.v-select .v-field .v-field__append-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+/* Fix cho select khi có value */
+.v-select.v-select--selected .v-field__input {
+  color: #1e293b;
+  font-weight: 500;
+}
+
+/* ============================================ */
+/* FIX FOR FILTER SELECT - ẨN LABEL KHI ĐÃ CHỌN */
+/* ============================================ */
+
+/* Khi select đã có giá trị, ẩn label đi */
+.v-select.v-select--selected .v-field-label {
+  display: none !important;
+}
+
+/* Hoặc dùng cách này nếu cách trên không hoạt động */
+.v-field--active .v-field-label {
+  display: none !important;
+}
+
+/* Chỉ hiển thị label khi field trống và không focus */
+.v-field:not(.v-field--active) .v-field-label {
+  display: block !important;
+}
+
+/* Đảm bảo giá trị đã chọn hiển thị đúng */
+.v-select .v-field__input {
+  position: relative;
+}
+
+/* ============================================ */
+/* FIX FOR ACTION BUTTONS CENTER */
+/* ============================================ */
+
+/* Đảm bảo action group được căn giữa */
+.action-group {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Đảm bảo cell chứa action buttons được căn giữa */
+td:has(.action-group) {
+  text-align: center !important;
+} 

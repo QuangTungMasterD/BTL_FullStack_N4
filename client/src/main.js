@@ -1,12 +1,39 @@
 import { createApp } from 'vue'
-import './style.css'
+import { createPinia } from 'pinia'
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+import '@mdi/font/css/materialdesignicons.css'
+import './styles/global.css'
 import App from './App.vue'
-
-import { createPinia } from 'pinia';
-import { registerPlugins } from './plugins';
+import router from './router'
+import './style.css'
 
 const app = createApp(App)
 
-registerPlugins(app)
+const vuetify = createVuetify({
+  components,
+  directives,
+  theme: {
+    themes: {
+      light: {
+        colors: {
+          primary: '#1976D2',
+          secondary: '#424242',
+          accent: '#82B1FF',
+          error: '#FF5252',
+          warning: '#FFC107',
+          info: '#2196F3',
+          success: '#4CAF50',
+        },
+      },
+    },
+  },
+})
+
+app.use(createPinia())
+app.use(router)
+app.use(vuetify)
 
 app.mount('#app')

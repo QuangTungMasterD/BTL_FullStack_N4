@@ -1,0 +1,31 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace AuthService.DTOs
+{
+    public class RegisterRequestDto
+    {
+        [Required]
+        public string FullName { get; set; } = string.Empty;
+        
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+        
+        [Required]
+        [MinLength(6)]
+        public string Password { get; set; } = string.Empty;
+        
+        [Required]
+        [Compare("Password")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+        
+        public string? Role { get; set; } = "STUDENT"; // Default to STUDENT
+        
+        // Student fields (for registration)
+        public string? StudentId { get; set; }
+        public string? Phone { get; set; }
+        public string? Faculty { get; set; }
+        public string? Major { get; set; }
+        public string? Class { get; set; }
+    }
+}

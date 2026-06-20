@@ -19,5 +19,6 @@ namespace CourseScheduleService.Application.Interfaces.Services
         Task<ApiResponse<bool>> DeteleTeacherAsync(int id);
         Task<ApiResponse<PagedResponse<TeacherResDto>>> GetPagedTeachersAsync(TeacherFilterRequest req);
         Task<ApiResponse<IEnumerable<ClassResDto>>> GetClassesByTeacherAsync(int teacherId);
+        Task<ApiResponse<TeacherResDto?>> GetTeacherByUserId(int userId);
     }
 }

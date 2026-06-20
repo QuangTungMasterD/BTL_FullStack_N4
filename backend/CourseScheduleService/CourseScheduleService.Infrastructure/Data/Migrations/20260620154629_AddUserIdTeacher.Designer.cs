@@ -4,6 +4,7 @@ using CourseScheduleService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseScheduleService.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CourseScheduleDbContext))]
-    partial class CourseScheduleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260620154629_AddUserIdTeacher")]
+    partial class AddUserIdTeacher
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -413,7 +416,7 @@ namespace CourseScheduleService.Infrastructure.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("user_id");
 

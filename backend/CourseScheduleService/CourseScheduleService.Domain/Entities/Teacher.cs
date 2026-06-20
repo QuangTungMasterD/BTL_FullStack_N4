@@ -10,6 +10,9 @@ namespace CourseScheduleService.Domain.Entities
     [Table("teachers")]
     public class Teacher : BaseModel
     {
+        [Column("user_id")]
+        public int? UserId { get; set; }
+
         [Column("fullname")]
         public required String FullName { get; set; }
 

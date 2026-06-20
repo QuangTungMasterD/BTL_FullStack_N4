@@ -8,6 +8,7 @@ namespace CourseScheduleService.Application.DTOs.TeacherDtos
     public class TeacherResDto
     {
         public int Id { get; set; }
+        public int? UserId { get; set; }
         public required String FullName { get; set; }
         public required String Email { get; set; }
         public required String Phone { get; set; }

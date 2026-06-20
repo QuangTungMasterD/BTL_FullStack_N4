@@ -10,6 +10,8 @@ namespace CourseScheduleService.Application.DTOs.TeacherDtos
 {
     public class TeacherReqDto
     {
+        public int? UserId { get; set; }
+        
         [Required(ErrorMessage = "Tên giáo viên không được để trống")]
         public required String FullName { get; set; }
 

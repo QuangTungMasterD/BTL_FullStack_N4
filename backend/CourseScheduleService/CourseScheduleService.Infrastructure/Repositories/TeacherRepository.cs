@@ -97,5 +97,15 @@ namespace CourseScheduleService.Infrastructure.Repositories
                         t.TeacherSpecializations.Any(ts => ts.SpecializationId == specializationId && !ts.IsDeleted));
         return await query.ToListAsync();
     }
+
+    public async Task<Teacher?> GetTeacherByUserIdAsync(int userId)
+    {
+      return await _dbSet
+                .Include(t => t.TeacherSpecializations)
+                .ThenInclude(ts => ts.Specialization)
+                .FirstOrDefaultAsync(x =>
+                  EF.Property<int>(x, "UserId") == userId &&
+                  !EF.Property<bool>(x, "IsDeleted"));
+    }
   }
 }

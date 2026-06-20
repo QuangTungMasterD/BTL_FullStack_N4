@@ -25,7 +25,7 @@ public class PaymentController : ControllerBase
     /// Lấy tất cả phiếu thu. Admin và GiaoVien.
     /// </summary>
     [HttpGet("invoices")]
-    [Authorize(Roles = "Admin,GiaoVien")]
+    [Authorize(Roles = "Admin,Lecturer")]
     public async Task<IActionResult> GetAllInvoices()
     {
         var invoices = await _paymentService.GetAllInvoicesAsync();
@@ -70,7 +70,7 @@ public class PaymentController : ControllerBase
     /// Lọc phiếu thu theo ngày, khóa học, trạng thái
     /// </summary>
     [HttpGet("invoices/filter")]
-    [Authorize(Roles = "Admin,GiaoVien")]
+    [Authorize(Roles = "Admin,Lecturer")]
     public async Task<IActionResult> GetFilteredInvoices(
         [FromQuery] DateTime? fromDate,
         [FromQuery] DateTime? toDate,
@@ -134,7 +134,7 @@ public class PaymentController : ControllerBase
     /// Lấy tất cả công nợ. Admin và GiaoVien.
     /// </summary>
     [HttpGet("debts")]
-    [Authorize(Roles = "Admin,GiaoVien")]
+    [Authorize(Roles = "Admin,Lecturer")]
     public async Task<IActionResult> GetAllDebts()
     {
         var debts = await _paymentService.GetAllDebtsAsync();

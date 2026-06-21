@@ -7,13 +7,13 @@
           <v-icon icon="mdi-account-group" size="32" color="white" />
         </div>
         <div>
-          <h1 class="hero-title">Quản lý sinh viên</h1>
-          <p class="hero-subtitle">Quản lý thông tin, hồ sơ và tài khoản sinh viên toàn trường</p>
+          <h1 class="hero-title">Quản lý học viên</h1>
+          <p class="hero-subtitle">Quản lý thông tin, hồ sơ và tài khoản học viên trung tâm</p>
         </div>
       </div>
       <v-btn color="primary" class="hero-btn" @click="openAddDialog">
         <v-icon icon="mdi-plus" class="mr-2" />
-        Thêm sinh viên
+        Thêm học viên
       </v-btn>
     </div>
 
@@ -25,8 +25,8 @@
         </div>
         <div class="stat-info-modern">
           <div class="stat-value">{{ totalStudents }}</div>
-          <div class="stat-label">Tổng sinh viên</div>
-          <div class="stat-trend positive">+12% so với kỳ trước</div>
+          <div class="stat-label">Tổng học viên</div>
+          <div class="stat-trend positive">+12% so với tháng trước</div>
         </div>
       </div>
       <div class="stat-card-modern">
@@ -39,12 +39,12 @@
         </div>
       </div>
       <div class="stat-card-modern">
-        <div class="stat-icon-wrapper inactive">
-          <v-icon icon="mdi-close-circle" size="24" />
+        <div class="stat-icon-wrapper completed">
+          <v-icon icon="mdi-flag-checkered" size="24" />
         </div>
         <div class="stat-info-modern">
-          <div class="stat-value">{{ inactiveStudents }}</div>
-          <div class="stat-label">Đã tốt nghiệp</div>
+          <div class="stat-value">{{ completedStudents }}</div>
+          <div class="stat-label">Đã hoàn thành</div>
         </div>
       </div>
       <div class="stat-card-modern">
@@ -52,7 +52,7 @@
           <v-icon icon="mdi-account-plus" size="24" />
         </div>
         <div class="stat-info-modern">
-          <div class="stat-value">24</div>
+          <div class="stat-value">{{ newStudentsThisMonth }}</div>
           <div class="stat-label">Mới trong tháng</div>
         </div>
       </div>
@@ -67,7 +67,7 @@
             <input 
               v-model="searchQuery" 
               type="text" 
-              placeholder="Tìm kiếm sinh viên..." 
+              placeholder="Tìm kiếm học viên..." 
               class="search-input-modern"
               @input="loadStudents"
             >
@@ -76,7 +76,7 @@
             <v-select
               v-model="selectedFaculty"
               :items="facultyOptions"
-              label="Khoa"
+              label="Khóa học"
               variant="plain"
               density="comfortable"
               class="filter-select-modern"
@@ -84,7 +84,7 @@
               @update:model-value="loadStudents"
             >
               <template v-slot:selection="{ item }">
-                <span class="filter-selected">{{ item?.title || 'Tất cả khoa' }}</span>
+                <span class="filter-selected">{{ item?.title || 'Tất cả khóa học' }}</span>
               </template>
             </v-select>
             <v-select
@@ -125,9 +125,9 @@
           class="modern-table"
         >
           <template v-slot:item.status="{ item }">
-            <div class="status-badge" :class="item.status === 'Active' ? 'active' : 'inactive'">
+            <div class="status-badge" :class="getStatusClass(item.status)">
               <span class="status-dot"></span>
-              {{ item.status === 'Active' ? 'Đang học' : 'Đã tốt nghiệp' }}
+              {{ getStatusText(item.status) }}
             </div>
           </template>
           <template v-slot:item.actions="{ item }">
@@ -146,10 +146,10 @@
           <template v-slot:no-data>
             <div class="empty-state">
               <v-icon icon="mdi-account-off" size="56" color="#cbd5e1" />
-              <p>Không có dữ liệu sinh viên</p>
+              <p>Không có dữ liệu học viên</p>
               <v-btn color="primary" variant="tonal" @click="openAddDialog" class="mt-3">
                 <v-icon icon="mdi-plus" class="mr-2" />
-                Thêm sinh viên mới
+                Thêm học viên mới
               </v-btn>
             </div>
           </template>
@@ -165,8 +165,8 @@
             <v-icon :icon="isEditing ? 'mdi-pencil' : 'mdi-account-plus'" size="28" />
           </div>
           <div>
-            <h2 class="dialog-title">{{ isEditing ? 'Chỉnh sửa sinh viên' : 'Thêm sinh viên mới' }}</h2>
-            <p class="dialog-subtitle">{{ isEditing ? 'Cập nhật thông tin sinh viên' : 'Nhập thông tin để tạo tài khoản sinh viên' }}</p>
+            <h2 class="dialog-title">{{ isEditing ? 'Chỉnh sửa học viên' : 'Thêm học viên mới' }}</h2>
+            <p class="dialog-subtitle">{{ isEditing ? 'Cập nhật thông tin học viên' : 'Nhập thông tin để tạo tài khoản học viên' }}</p>
           </div>
         </div>
         <v-divider />
@@ -175,7 +175,7 @@
             <div class="form-grid">
               <v-text-field
                 v-model="formData.studentId"
-                label="Mã sinh viên"
+                label="Mã học viên"
                 variant="outlined"
                 density="comfortable"
                 :disabled="isEditing"
@@ -206,7 +206,7 @@
               <v-select
                 v-model="formData.faculty"
                 :items="facultyList"
-                label="Khoa"
+                label="Khóa học"
                 variant="outlined"
                 density="comfortable"
                 prepend-inner-icon="mdi-school"
@@ -257,8 +257,8 @@
             <h3>{{ selectedStudent.fullName }}</h3>
             <p>{{ selectedStudent.studentId }}</p>
           </div>
-          <v-chip :color="selectedStudent.status === 'Active' ? 'success' : 'default'" size="small" class="view-chip">
-            {{ selectedStudent.status === 'Active' ? 'Đang học' : 'Đã tốt nghiệp' }}
+          <v-chip :color="selectedStudent.status === 'Active' ? 'success' : selectedStudent.status === 'Completed' ? 'primary' : 'default'" size="small" class="view-chip">
+            {{ getStatusText(selectedStudent.status) }}
           </v-chip>
         </div>
         <v-divider />
@@ -281,22 +281,22 @@
             <div class="info-item">
               <div class="info-icon"><v-icon icon="mdi-school" size="18" color="#64748b" /></div>
               <div>
-                <div class="info-label">Khoa</div>
-                <div class="info-value">{{ selectedStudent.faculty }}</div>
+                <div class="info-label">Khóa học</div>
+                <div class="info-value">{{ selectedStudent.faculty || 'Chưa phân loại' }}</div>
               </div>
             </div>
             <div class="info-item">
               <div class="info-icon"><v-icon icon="mdi-book-open" size="18" color="#64748b" /></div>
               <div>
                 <div class="info-label">Chuyên ngành</div>
-                <div class="info-value">{{ selectedStudent.major }}</div>
+                <div class="info-value">{{ selectedStudent.major || 'Chưa cập nhật' }}</div>
               </div>
             </div>
             <div class="info-item">
               <div class="info-icon"><v-icon icon="mdi-account-group" size="18" color="#64748b" /></div>
               <div>
                 <div class="info-label">Lớp</div>
-                <div class="info-value">{{ selectedStudent.class }}</div>
+                <div class="info-value">{{ selectedStudent.class || 'Chưa phân lớp' }}</div>
               </div>
             </div>
           </div>
@@ -325,48 +325,92 @@ const isEditing = ref(false)
 const loading = ref(false)
 const saving = ref(false)
 const selectedStudent = ref(null)
+const formValid = ref(false)
 
+// Options cho filter
 const facultyOptions = [
-  { title: 'Tất cả khoa', value: 'all' },
-  { title: 'Công nghệ thông tin', value: 'CNTT' },
-  { title: 'Quản trị kinh doanh', value: 'QTKD' },
-  { title: 'Ngôn ngữ Anh', value: 'NNKT' },
+  { title: 'Tất cả khóa học', value: 'all' },
+  { title: 'Lập trình Python', value: 'Python' },
+  { title: 'Lập trình Java', value: 'Java' },
+  { title: 'Tiếng Anh giao tiếp', value: 'English' },
+  { title: 'Toán cao cấp', value: 'Math' },
+  { title: 'Kỹ năng mềm', value: 'SoftSkills' },
 ]
 
-const facultyList = ['Công nghệ thông tin', 'Quản trị kinh doanh', 'Ngôn ngữ Anh']
-const statusOptions = [{ title: 'Tất cả', value: 'all' }, { title: 'Đang học', value: 'Active' }, { title: 'Đã tốt nghiệp', value: 'Inactive' }]
-const statusSelectOptions = [{ title: 'Đang học', value: 'Active' }, { title: 'Đã tốt nghiệp', value: 'Inactive' }]
+const facultyList = ['Python', 'Java', 'English', 'Math', 'SoftSkills', 'Data Science', 'AI/ML']
 
+const statusOptions = [
+  { title: 'Tất cả', value: 'all' },
+  { title: 'Đang học', value: 'Active' },
+  { title: 'Đã hoàn thành', value: 'Completed' },
+  { title: 'Tạm nghỉ', value: 'Inactive' },
+]
+
+const statusSelectOptions = [
+  { title: 'Đang học', value: 'Active' },
+  { title: 'Đã hoàn thành', value: 'Completed' },
+  { title: 'Tạm nghỉ', value: 'Inactive' },
+]
+
+// Headers cho bảng
 const headers = [
-  { title: 'Mã SV', key: 'studentId', sortable: true, align: 'start' },
+  { title: 'Mã HV', key: 'studentId', sortable: true, align: 'start' },
   { title: 'Họ tên', key: 'fullName', sortable: true, align: 'start' },
   { title: 'Email', key: 'email', align: 'start' },
-  { title: 'Khoa', key: 'faculty', align: 'start' },
+  { title: 'Khóa học', key: 'faculty', align: 'start' },
   { title: 'Chuyên ngành', key: 'major', align: 'start' },
   { title: 'Lớp', key: 'class', align: 'start' },
   { title: 'Trạng thái', key: 'status', sortable: true, align: 'center' },
   { title: 'Thao tác', key: 'actions', sortable: false, align: 'center', width: 120 },
 ]
 
-// Mock data fallback
+// Mock data
 const mockStudents = [
-  { id: 1, studentId: '2021001234', fullName: 'Nguyễn Văn An', email: 'nguyenvanan.2021@gmail.com', phone: '0352123456', faculty: 'CNTT', major: 'Khoa học máy tính', class: 'K63-CLC', status: 'Active' },
-  { id: 2, studentId: '2021001235', fullName: 'Trần Thị Ngọc Bích', email: 'tranthibich.2021@gmail.com', phone: '0363234567', faculty: 'CNTT', major: 'Kỹ thuật phần mềm', class: 'K63-CLC', status: 'Active' },
-  { id: 3, studentId: '2021001236', fullName: 'Lê Văn Cường', email: 'levancuong.2021@gmail.com', phone: '0374345678', faculty: 'QTKD', major: 'Quản trị kinh doanh', class: 'K63-QTKD', status: 'Active' },
-  { id: 4, studentId: '2021001237', fullName: 'Phạm Thị Phương Dung', email: 'phamthidung.2021@gmail.com', phone: '0385456789', faculty: 'NNKT', major: 'Ngôn ngữ Anh', class: 'K63-NNA', status: 'Active' },
-  { id: 5, studentId: '2021001238', fullName: 'Hoàng Văn Minh Em', email: 'hoangvanem.2021@gmail.com', phone: '0396567890', faculty: 'CNTT', major: 'Khoa học máy tính', class: 'K63-CLC', status: 'Active' },
+  { id: 1, studentId: 'HV001', fullName: 'Nguyễn Văn An', email: 'nguyenvanan@gmail.com', phone: '0352123456', faculty: 'Python', major: 'Lập trình Python', class: 'PY2024-A', status: 'Active' },
+  { id: 2, studentId: 'HV002', fullName: 'Trần Thị Ngọc Bích', email: 'tranthibich@gmail.com', phone: '0363234567', faculty: 'Java', major: 'Lập trình Java', class: 'JA2024-A', status: 'Active' },
+  { id: 3, studentId: 'HV003', fullName: 'Lê Văn Cường', email: 'levancuong@gmail.com', phone: '0374345678', faculty: 'English', major: 'Tiếng Anh giao tiếp', class: 'EN2024-A', status: 'Completed' },
+  { id: 4, studentId: 'HV004', fullName: 'Phạm Thị Phương Dung', email: 'phamthidung@gmail.com', phone: '0385456789', faculty: 'Math', major: 'Toán cao cấp', class: 'MA2024-A', status: 'Active' },
+  { id: 5, studentId: 'HV005', fullName: 'Hoàng Văn Minh Em', email: 'hoangvanem@gmail.com', phone: '0396567890', faculty: 'Python', major: 'Lập trình Python', class: 'PY2024-B', status: 'Active' },
+  { id: 6, studentId: 'HV006', fullName: 'Đỗ Thị Thu Hà', email: 'dothuha@gmail.com', phone: '0367678901', faculty: 'SoftSkills', major: 'Kỹ năng mềm', class: 'SK2024-A', status: 'Inactive' },
 ]
 
 const studentsData = ref([])
 const totalStudents = ref(0)
 const activeStudents = ref(0)
-const inactiveStudents = ref(0)
+const completedStudents = ref(0)
+const newStudentsThisMonth = ref(0)
 
 const formData = ref({
-  studentId: '', fullName: '', email: '', phone: '', faculty: '', major: '', class: '', status: 'Active'
+  studentId: '',
+  fullName: '',
+  email: '',
+  phone: '',
+  faculty: '',
+  major: '',
+  class: '',
+  status: 'Active'
 })
 
-// Load students - API first, fallback to mock
+// Helper methods
+const getStatusClass = (status) => {
+  switch(status) {
+    case 'Active': return 'active'
+    case 'Completed': return 'completed'
+    case 'Inactive': return 'inactive'
+    default: return 'inactive'
+  }
+}
+
+const getStatusText = (status) => {
+  switch(status) {
+    case 'Active': return 'Đang học'
+    case 'Completed': return 'Đã hoàn thành'
+    case 'Inactive': return 'Tạm nghỉ'
+    default: return 'Không xác định'
+  }
+}
+
+// Load students
 const loadStudents = async () => {
   loading.value = true
   try {
@@ -375,28 +419,30 @@ const loadStudents = async () => {
     if (selectedFaculty.value !== 'all') params.faculty = selectedFaculty.value
     if (selectedStatus.value !== 'all') params.status = selectedStatus.value
     
-    const response = await api.get('/studentattendance/api/admin/students', { params })
+    const response = await api.get('/api/admin/students', { params })
     const data = response.data.items || response.data || []
     
     if (data && data.length > 0) {
       studentsData.value = data
     } else {
-      // Fallback to mock data if API returns empty
       studentsData.value = [...mockStudents]
     }
-    totalStudents.value = studentsData.value.length
-    activeStudents.value = studentsData.value.filter(s => s.status === 'Active').length
-    inactiveStudents.value = studentsData.value.filter(s => s.status === 'Inactive').length
+    updateStatistics()
   } catch (error) {
-    console.error('API failed, using mock data:', error)
-    // Fallback to mock data
+    console.error('❌ API failed, using mock data:', error)
     studentsData.value = [...mockStudents]
-    totalStudents.value = studentsData.value.length
-    activeStudents.value = studentsData.value.filter(s => s.status === 'Active').length
-    inactiveStudents.value = studentsData.value.filter(s => s.status === 'Inactive').length
+    updateStatistics()
   } finally {
     loading.value = false
   }
+}
+
+const updateStatistics = () => {
+  totalStudents.value = studentsData.value.length
+  activeStudents.value = studentsData.value.filter(s => s.status === 'Active').length
+  completedStudents.value = studentsData.value.filter(s => s.status === 'Completed').length
+  // Tính số học viên mới trong tháng (mock)
+  newStudentsThisMonth.value = Math.floor(Math.random() * 30) + 5
 }
 
 const resetFilters = () => {
@@ -424,17 +470,15 @@ const viewStudent = (student) => {
 }
 
 const deleteStudent = async (student) => {
-  if (confirm(`Bạn có chắc muốn xóa sinh viên ${student.fullName}?`)) {
+  if (confirm(`Bạn có chắc muốn xóa học viên ${student.fullName}?`)) {
     try {
-      await api.delete(`/studentattendance/api/admin/students/${student.id}`)
+      await api.delete(`/api/admin/students/${student.id}`)
       await loadStudents()
     } catch (error) {
-      console.error('Delete failed, removing from local list:', error)
+      console.error('❌ Delete failed, removing from local list:', error)
       const index = studentsData.value.findIndex(s => s.id === student.id)
       if (index > -1) studentsData.value.splice(index, 1)
-      totalStudents.value = studentsData.value.length
-      activeStudents.value = studentsData.value.filter(s => s.status === 'Active').length
-      inactiveStudents.value = studentsData.value.filter(s => s.status === 'Inactive').length
+      updateStatistics()
     }
   }
 }
@@ -443,14 +487,14 @@ const saveStudent = async () => {
   saving.value = true
   try {
     if (isEditing.value) {
-      await api.put(`/studentattendance/api/admin/students/${formData.value.id}`, formData.value)
+      await api.put(`/api/admin/students/${formData.value.id}`, formData.value)
     } else {
-      await api.post('/studentattendance/api/admin/students', formData.value)
+      await api.post('/api/admin/students', formData.value)
     }
     await loadStudents()
     dialogVisible.value = false
   } catch (error) {
-    console.error('Save failed, using local:', error)
+    console.error('❌ Save failed, using local:', error)
     if (isEditing.value) {
       const index = studentsData.value.findIndex(s => s.id === formData.value.id)
       if (index > -1) studentsData.value[index] = { ...formData.value }
@@ -458,30 +502,33 @@ const saveStudent = async () => {
       const newId = Math.max(...studentsData.value.map(s => s.id), 0) + 1
       studentsData.value.push({ ...formData.value, id: newId })
     }
+    updateStatistics()
     dialogVisible.value = false
-    loadStudents()
   } finally {
     saving.value = false
   }
 }
 
 const exportData = () => {
-  console.log('Export data')
+  console.log('📊 Export data...')
+  alert('Chức năng xuất Excel đang được phát triển')
 }
 
 onMounted(() => {
+  console.log('🚀 Khởi tạo trang Quản lý học viên...')
   loadStudents()
+  console.log('✅ Trang Quản lý học viên đã sẵn sàng')
 })
 </script>
 
 <style scoped>
-/* Giữ nguyên style cũ */
 .student-management {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 4px;
 }
 
+/* Hero Header */
 .hero-header {
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   border-radius: 28px;
@@ -531,6 +578,7 @@ onMounted(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Stats Grid */
 .stats-grid-modern {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -565,7 +613,7 @@ onMounted(() => {
 
 .stat-icon-wrapper.total { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #3b82f6; }
 .stat-icon-wrapper.active { background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #10b981; }
-.stat-icon-wrapper.inactive { background: linear-gradient(135deg, #fee2e2, #fecaca); color: #ef4444; }
+.stat-icon-wrapper.completed { background: linear-gradient(135deg, #e9d5ff, #d8b4fe); color: #8b5cf6; }
 .stat-icon-wrapper.new { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #f59e0b; }
 
 .stat-info-modern .stat-value {
@@ -588,6 +636,7 @@ onMounted(() => {
 
 .stat-trend.positive { color: #10b981; }
 
+/* Workspace Card */
 .workspace-card {
   background: white;
   border-radius: 28px;
@@ -676,7 +725,7 @@ onMounted(() => {
   font-weight: 500;
 }
 
-/* Table Styles - Improved Header */
+/* Table Styles */
 .table-container {
   overflow-x: auto;
 }
@@ -710,7 +759,6 @@ onMounted(() => {
   border-bottom: 1px solid #f1f5f9;
 }
 
-/* Items per page select - Center text */
 .modern-table :deep(.v-data-table-footer) {
   padding: 16px 24px;
   background: white;
@@ -734,7 +782,6 @@ onMounted(() => {
   justify-content: center;
 }
 
-/* Pagination text center */
 .modern-table :deep(.v-data-table-footer .v-pagination) {
   justify-content: flex-end;
 }
@@ -744,6 +791,7 @@ onMounted(() => {
   color: #64748b;
 }
 
+/* Status Badge */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -759,6 +807,11 @@ onMounted(() => {
   color: #10b981;
 }
 
+.status-badge.completed {
+  background: #e9d5ff;
+  color: #8b5cf6;
+}
+
 .status-badge.inactive {
   background: #f1f5f9;
   color: #64748b;
@@ -771,6 +824,7 @@ onMounted(() => {
   background: currentColor;
 }
 
+/* Action Buttons */
 .action-group {
   display: flex;
   gap: 4px;
@@ -781,6 +835,7 @@ onMounted(() => {
 .action-btn.edit:hover { background: #fef3c7; color: #f59e0b; }
 .action-btn.delete:hover { background: #fee2e2; color: #ef4444; }
 
+/* Dialog Styles */
 .modern-dialog {
   border-radius: 28px !important;
   overflow: hidden;
@@ -850,6 +905,7 @@ onMounted(() => {
   font-weight: 600;
 }
 
+/* View Dialog */
 .view-header {
   padding: 28px;
   display: flex;
@@ -933,6 +989,7 @@ onMounted(() => {
   font-size: 14px;
 }
 
+/* Responsive */
 @media (max-width: 1200px) {
   .stats-grid-modern { grid-template-columns: repeat(2, 1fr); }
 }

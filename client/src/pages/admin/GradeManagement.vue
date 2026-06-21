@@ -8,7 +8,7 @@
         </div>
         <div>
           <h1 class="hero-title">Quản lý điểm số</h1>
-          <p class="hero-subtitle">Quản lý điểm số và kết quả học tập toàn trường</p>
+          <p class="hero-subtitle">Quản lý điểm số và kết quả học tập tại trung tâm</p>
         </div>
       </div>
       <v-btn color="primary" class="hero-btn" @click="exportReport" :loading="exporting">
@@ -24,9 +24,9 @@
           <v-icon icon="mdi-chart-line" size="24" />
         </div>
         <div class="stat-info-modern">
-          <div class="stat-value">{{ overallStats.averageGPA || 3.42 }}</div>
+          <div class="stat-value">{{ overallStats.averageGPA || 0 }}</div>
           <div class="stat-label">GPA trung bình</div>
-          <div class="stat-trend positive">+0.15</div>
+          <div class="stat-trend positive" v-if="overallStats.averageGPA > 0">+0.15</div>
         </div>
       </div>
       <div class="stat-card-modern">
@@ -34,7 +34,7 @@
           <v-icon icon="mdi-check-circle" size="24" />
         </div>
         <div class="stat-info-modern">
-          <div class="stat-value">{{ overallStats.passRate || 94.5 }}%</div>
+          <div class="stat-value">{{ overallStats.passRate || 0 }}%</div>
           <div class="stat-label">Tỷ lệ đạt</div>
         </div>
       </div>
@@ -43,7 +43,7 @@
           <v-icon icon="mdi-star" size="24" />
         </div>
         <div class="stat-info-modern">
-          <div class="stat-value">{{ overallStats.excellentRate || 18.3 }}%</div>
+          <div class="stat-value">{{ overallStats.excellentRate || 0 }}%</div>
           <div class="stat-label">Tỷ lệ xuất sắc</div>
         </div>
       </div>
@@ -52,21 +52,21 @@
           <v-icon icon="mdi-format-list-bulleted" size="24" />
         </div>
         <div class="stat-info-modern">
-          <div class="stat-value">{{ overallStats.totalGrades?.toLocaleString() || '2,847' }}</div>
+          <div class="stat-value">{{ (overallStats.totalGrades || 0).toLocaleString() }}</div>
           <div class="stat-label">Tổng số điểm</div>
         </div>
       </div>
     </div>
 
     <!-- Filter Bar -->
-    <div class="filters-card">
-      <div class="filters-row">
+    <div class="filter-bar">
+      <div class="filter-group">
         <v-select
           v-model="selectedFaculty"
           :items="facultyOptions"
-          label="Khoa"
+          label="Khóa học"
           variant="outlined"
-          density="comfortable"
+          density="compact"
           class="filter-select"
           hide-details
           @update:model-value="loadData"
@@ -76,12 +76,14 @@
           :items="semesterOptions"
           label="Học kỳ"
           variant="outlined"
-          density="comfortable"
+          density="compact"
           class="filter-select"
           hide-details
           @update:model-value="loadData"
         />
-        <v-btn variant="tonal" color="primary" @click="resetFilters" class="reset-btn">
+      </div>
+      <div class="filter-actions">
+        <v-btn variant="text" color="primary" @click="resetFilters" class="reset-btn">
           <v-icon icon="mdi-filter-remove" size="18" class="mr-1" />
           Xóa lọc
         </v-btn>
@@ -91,21 +93,28 @@
     <!-- Grade Distribution Chart -->
     <div class="card">
       <div class="card-header">
-        <h3>Phân bố điểm toàn trường</h3>
+        <h3>Phân bố điểm theo khóa học</h3>
         <div class="header-badge">
           <v-chip color="info" size="small" variant="tonal">Học kỳ {{ selectedSemester }}</v-chip>
         </div>
       </div>
       <div class="card-body">
-        <div class="distribution-chart">
+        <div v-if="loading.distribution" class="loading-placeholder">
+          <v-progress-circular indeterminate />
+        </div>
+        <div v-else class="distribution-chart">
           <div class="chart-bars">
             <div v-for="range in gradeDistribution" :key="range.label" class="bar-item">
-              <div class="bar" :style="{ height: `${range.percentage * 2.5}px`, background: range.color }">
+              <div class="bar" :style="{ height: `${Math.max(range.percentage * 2.5, 10)}px`, background: range.color }">
                 <span class="bar-tooltip">{{ range.count }}</span>
               </div>
               <div class="bar-label">{{ range.label }}</div>
               <div class="bar-count">{{ range.count }}</div>
             </div>
+          </div>
+          <div v-if="gradeDistribution.length === 0" class="empty-state">
+            <v-icon icon="mdi-information" size="32" color="#cbd5e1" />
+            <p>Không có dữ liệu phân bố điểm</p>
           </div>
         </div>
       </div>
@@ -114,21 +123,28 @@
     <!-- Faculty Stats -->
     <div class="card">
       <div class="card-header">
-        <h3>Thống kê điểm theo khoa</h3>
+        <h3>Thống kê điểm theo khóa học</h3>
       </div>
       <div class="card-body">
-        <div class="faculty-grade-stats">
+        <div v-if="loading.faculty" class="loading-placeholder">
+          <v-progress-circular indeterminate />
+        </div>
+        <div v-else class="faculty-grade-stats">
           <div v-for="faculty in facultyGradeStats" :key="faculty.name" class="faculty-grade-item">
             <div class="faculty-name">{{ faculty.name }}</div>
             <div class="faculty-gpa">
               <div class="gpa-bar">
-                <div class="gpa-fill" :style="{ width: `${(faculty.gpa / 4) * 100}%`, background: faculty.color }"></div>
+                <div class="gpa-fill" :style="{ width: `${Math.min((faculty.gpa / 4) * 100, 100)}%`, background: faculty.color }"></div>
               </div>
               <span class="gpa-value">{{ faculty.gpa }}</span>
             </div>
             <div class="faculty-rank">
               <div class="rank-badge" :class="getRankClass(faculty.rank)">{{ faculty.rank }}</div>
             </div>
+          </div>
+          <div v-if="facultyGradeStats.length === 0" class="empty-state">
+            <v-icon icon="mdi-information" size="32" color="#cbd5e1" />
+            <p>Không có dữ liệu thống kê</p>
           </div>
         </div>
       </div>
@@ -137,14 +153,14 @@
     <!-- Student Grades Table -->
     <div class="card">
       <div class="card-header">
-        <h3>Bảng điểm sinh viên</h3>
+        <h3>Bảng điểm học viên</h3>
         <div class="header-actions">
           <div class="search-wrapper-small">
             <v-icon icon="mdi-magnify" size="16" class="search-icon-small" />
             <input 
               v-model="studentSearch" 
               type="text" 
-              placeholder="Tìm kiếm sinh viên..." 
+              placeholder="Tìm kiếm học viên..." 
               class="search-input-small"
               @input="loadStudentGrades"
             >
@@ -182,6 +198,12 @@
                 <v-icon icon="mdi-eye" size="18" />
               </v-btn>
             </template>
+            <template v-slot:no-data>
+              <div class="empty-state">
+                <v-icon icon="mdi-information" size="32" color="#cbd5e1" />
+                <p>Không có dữ liệu bảng điểm</p>
+              </div>
+            </template>
           </v-data-table>
         </div>
       </div>
@@ -216,21 +238,21 @@
               <div class="summary-icon"><v-icon icon="mdi-credit-card" size="20" color="#10b981" /></div>
               <div>
                 <div class="summary-label">Tổng tín chỉ</div>
-                <div class="summary-value">{{ selectedStudentGrade.totalCredits || 98 }}</div>
+                <div class="summary-value">{{ selectedStudentGrade.totalCredits || 0 }}</div>
               </div>
             </div>
             <div class="summary-item">
               <div class="summary-icon"><v-icon icon="mdi-school" size="20" color="#f59e0b" /></div>
               <div>
-                <div class="summary-label">Khoa</div>
-                <div class="summary-value">{{ selectedStudentGrade.faculty }}</div>
+                <div class="summary-label">Khóa học</div>
+                <div class="summary-value">{{ selectedStudentGrade.faculty || 'Chưa phân loại' }}</div>
               </div>
             </div>
           </div>
           <v-divider class="my-4" />
           <h4 class="section-title">Chi tiết điểm từng môn</h4>
           <div class="course-grades-list">
-            <div class="course-grade-item" v-for="grade in studentCourseGrades" :key="grade.courseId">
+            <div class="course-grade-item" v-for="grade in studentCourseGrades" :key="grade.courseId || grade.code">
               <div class="course-info">
                 <div class="course-code">{{ grade.code }}</div>
                 <div class="course-name">{{ grade.courseName }}</div>
@@ -238,6 +260,7 @@
               <div class="course-score">{{ grade.score }}</div>
               <div class="course-letter" :class="getLetterGradeClass(grade.letterGrade)">{{ grade.letterGrade }}</div>
             </div>
+            <div v-if="studentCourseGrades.length === 0" class="empty-text">Chưa có điểm</div>
           </div>
         </v-card-text>
         <v-card-actions class="dialog-actions-modern">
@@ -253,6 +276,7 @@
 import { ref, onMounted } from 'vue'
 import api from '@/utils/api'
 
+// State
 const selectedFaculty = ref('all')
 const selectedSemester = ref('Fall 2024')
 const studentSearch = ref('')
@@ -264,15 +288,17 @@ const studentCourseGrades = ref([])
 
 const loading = ref({ students: false, faculty: false, distribution: false })
 
+// Options
 const facultyOptions = [
-  { title: 'Tất cả khoa', value: 'all' },
-  { title: 'Công nghệ thông tin', value: 'CNTT' },
-  { title: 'Quản trị kinh doanh', value: 'QTKD' },
-  { title: 'Ngôn ngữ Anh', value: 'NNKT' },
+  { title: 'Tất cả khóa học', value: 'all' },
+  { title: 'Python', value: 'Python' },
+  { title: 'Java', value: 'Java' },
+  { title: 'Tiếng Anh giao tiếp', value: 'English' },
+  { title: 'Toán cao cấp', value: 'Math' },
+  { title: 'Kỹ năng mềm', value: 'SoftSkills' },
 ]
 
 const semesterOptions = ref(['Fall 2024', 'Spring 2024', 'Fall 2023'])
-
 const gradeFilterOptions = ['Tất cả', 'Xuất sắc', 'Giỏi', 'Khá', 'Trung bình', 'Yếu']
 
 // Mock data
@@ -292,28 +318,32 @@ const mockGradeDistribution = [
 ]
 
 const mockFacultyGradeStats = [
-  { name: 'Công nghệ thông tin', gpa: 3.65, color: '#3b82f6', rank: 'Xuất sắc' },
-  { name: 'Quản trị kinh doanh', gpa: 3.32, color: '#10b981', rank: 'Giỏi' },
-  { name: 'Ngôn ngữ Anh', gpa: 3.48, color: '#f59e0b', rank: 'Giỏi' },
+  { name: 'Python', gpa: 3.65, color: '#3b82f6', rank: 'Xuất sắc' },
+  { name: 'Java', gpa: 3.32, color: '#10b981', rank: 'Giỏi' },
+  { name: 'Tiếng Anh giao tiếp', gpa: 3.48, color: '#f59e0b', rank: 'Giỏi' },
+  { name: 'Toán cao cấp', gpa: 2.85, color: '#ef4444', rank: 'Khá' },
+  { name: 'Kỹ năng mềm', gpa: 3.12, color: '#8b5cf6', rank: 'Khá' },
 ]
 
 const mockStudentGrades = [
-  { id: 1, studentId: '2021001234', fullName: 'Nguyễn Văn A', faculty: 'CNTT', gpa: 3.65, totalCredits: 98, rank: 'Xuất sắc' },
-  { id: 2, studentId: '2021001235', fullName: 'Trần Thị B', faculty: 'CNTT', gpa: 3.52, totalCredits: 95, rank: 'Giỏi' },
-  { id: 3, studentId: '2021001236', fullName: 'Lê Văn C', faculty: 'QTKD', gpa: 3.28, totalCredits: 92, rank: 'Giỏi' },
-  { id: 4, studentId: '2021001237', fullName: 'Phạm Thị D', faculty: 'NNKT', gpa: 3.45, totalCredits: 88, rank: 'Giỏi' },
-  { id: 5, studentId: '2021001238', fullName: 'Hoàng Văn E', faculty: 'CNTT', gpa: 2.85, totalCredits: 85, rank: 'Khá' },
+  { id: 1, studentId: 'HV001', fullName: 'Nguyễn Văn A', faculty: 'Python', gpa: 3.65, totalCredits: 98, rank: 'Xuất sắc' },
+  { id: 2, studentId: 'HV002', fullName: 'Trần Thị B', faculty: 'Java', gpa: 3.52, totalCredits: 95, rank: 'Giỏi' },
+  { id: 3, studentId: 'HV003', fullName: 'Lê Văn C', faculty: 'English', gpa: 3.28, totalCredits: 92, rank: 'Giỏi' },
+  { id: 4, studentId: 'HV004', fullName: 'Phạm Thị D', faculty: 'Math', gpa: 3.45, totalCredits: 88, rank: 'Giỏi' },
+  { id: 5, studentId: 'HV005', fullName: 'Hoàng Văn E', faculty: 'Python', gpa: 2.85, totalCredits: 85, rank: 'Khá' },
 ]
 
+// Data
 const overallStats = ref({})
 const gradeDistribution = ref([])
 const facultyGradeStats = ref([])
 const studentGrades = ref([])
 
+// Headers
 const studentHeaders = [
-  { title: 'Mã SV', key: 'studentId', sortable: true, align: 'start' },
+  { title: 'Mã HV', key: 'studentId', sortable: true, align: 'start' },
   { title: 'Họ tên', key: 'fullName', sortable: true, align: 'start' },
-  { title: 'Khoa', key: 'faculty', sortable: true, align: 'start' },
+  { title: 'Khóa học', key: 'faculty', sortable: true, align: 'start' },
   { title: 'GPA', key: 'gpa', sortable: true, align: 'center' },
   { title: 'Tổng tín chỉ', key: 'totalCredits', sortable: true, align: 'center' },
   { title: 'Xếp loại', key: 'rank', sortable: true, align: 'center' },
@@ -323,56 +353,82 @@ const studentHeaders = [
 // Load semesters
 const loadSemesters = async () => {
   try {
-    const response = await api.get('/studentattendance/api/admin/semesters')
-    semesterOptions.value = response.data
+    console.log('🔄 Đang tải danh sách học kỳ...')
+    const response = await api.get('/api/admin/semesters')
+    semesterOptions.value = response.data || ['Fall 2024', 'Spring 2024', 'Summer 2024']
+    console.log('✅ Học kỳ fetch thành công:', semesterOptions.value)
   } catch (error) {
-    console.error('Failed to load semesters, using mock data:', error)
+    console.error('❌ Failed to load semesters, using mock data:', error)
     semesterOptions.value = ['Fall 2024', 'Spring 2024', 'Summer 2024', 'Fall 2023']
   }
 }
 
+// Load overall stats
 const loadOverallStats = async () => {
   try {
-    const response = await api.get('/studentattendance/api/admin/grades/overall', {
+    console.log('🔄 Đang tải thống kê tổng quan...')
+    const response = await api.get('/api/admin/grades/overall', {
       params: { semester: selectedSemester.value !== 'all' ? selectedSemester.value : null }
     })
+    console.log('✅ Thống kê tổng quan fetch thành công:', response.data)
     overallStats.value = response.data
   } catch (error) {
-    console.error('API failed, using mock data:', error)
+    console.error('❌ API failed, using mock data:', error)
     overallStats.value = mockOverallStats
   }
 }
 
+// Load grade distribution
 const loadGradeDistribution = async () => {
   loading.value.distribution = true
   try {
-    const response = await api.get('/studentattendance/api/admin/grades/distribution', {
+    console.log('🔄 Đang tải phân bố điểm...')
+    const response = await api.get('/api/admin/grades/distribution', {
       params: { semester: selectedSemester.value !== 'all' ? selectedSemester.value : null }
     })
-    gradeDistribution.value = response.data
+    console.log('✅ Phân bố điểm fetch thành công:', response.data)
+    const data = response.data || []
+    
+    if (data.length > 0) {
+      gradeDistribution.value = data
+    } else {
+      console.warn('⚠️ Không có dữ liệu phân bố điểm, sử dụng mock data')
+      gradeDistribution.value = mockGradeDistribution
+    }
   } catch (error) {
-    console.error('API failed, using mock data:', error)
+    console.error('❌ API failed, using mock data:', error)
     gradeDistribution.value = mockGradeDistribution
   } finally {
     loading.value.distribution = false
   }
 }
 
+// Load faculty grade stats
 const loadFacultyGradeStats = async () => {
   loading.value.faculty = true
   try {
-    const response = await api.get('/studentattendance/api/admin/grades/by-faculty', {
+    console.log('🔄 Đang tải thống kê điểm theo khóa học...')
+    const response = await api.get('/api/admin/grades/by-faculty', {
       params: { semester: selectedSemester.value !== 'all' ? selectedSemester.value : null }
     })
-    facultyGradeStats.value = response.data
+    console.log('✅ Thống kê điểm theo khóa học fetch thành công:', response.data)
+    const data = response.data || []
+    
+    if (data.length > 0) {
+      facultyGradeStats.value = data
+    } else {
+      console.warn('⚠️ Không có dữ liệu thống kê điểm, sử dụng mock data')
+      facultyGradeStats.value = mockFacultyGradeStats
+    }
   } catch (error) {
-    console.error('API failed, using mock data:', error)
+    console.error('❌ API failed, using mock data:', error)
     facultyGradeStats.value = mockFacultyGradeStats
   } finally {
     loading.value.faculty = false
   }
 }
 
+// Load student grades
 const loadStudentGrades = async () => {
   loading.value.students = true
   try {
@@ -382,20 +438,25 @@ const loadStudentGrades = async () => {
     if (gradeFilter.value !== 'Tất cả') params.rank = gradeFilter.value
     if (selectedSemester.value !== 'all') params.semester = selectedSemester.value
     
-    const response = await api.get('/studentattendance/api/admin/grades/students', { params })
+    console.log('🔄 Đang tải bảng điểm học viên với params:', params)
+    const response = await api.get('/api/admin/grades/students', { params })
+    console.log('✅ Bảng điểm học viên fetch thành công:', response.data)
+    
     const data = response.data || []
     
     if (data.length > 0) {
       studentGrades.value = data
     } else {
+      console.warn('⚠️ Không có dữ liệu bảng điểm, sử dụng mock data')
       let filtered = [...mockStudentGrades]
       if (selectedFaculty.value !== 'all') {
         filtered = filtered.filter(s => s.faculty === selectedFaculty.value)
       }
       if (studentSearch.value) {
+        const searchLower = studentSearch.value.toLowerCase()
         filtered = filtered.filter(s => 
-          s.fullName.toLowerCase().includes(studentSearch.value.toLowerCase()) ||
-          s.studentId.includes(studentSearch.value)
+          s.fullName.toLowerCase().includes(searchLower) ||
+          s.studentId.toLowerCase().includes(searchLower)
         )
       }
       if (gradeFilter.value !== 'Tất cả') {
@@ -404,15 +465,16 @@ const loadStudentGrades = async () => {
       studentGrades.value = filtered
     }
   } catch (error) {
-    console.error('API failed, using mock data:', error)
+    console.error('❌ API failed, using mock data:', error)
     let filtered = [...mockStudentGrades]
     if (selectedFaculty.value !== 'all') {
       filtered = filtered.filter(s => s.faculty === selectedFaculty.value)
     }
     if (studentSearch.value) {
+      const searchLower = studentSearch.value.toLowerCase()
       filtered = filtered.filter(s => 
-        s.fullName.toLowerCase().includes(studentSearch.value.toLowerCase()) ||
-        s.studentId.includes(studentSearch.value)
+        s.fullName.toLowerCase().includes(searchLower) ||
+        s.studentId.toLowerCase().includes(searchLower)
       )
     }
     if (gradeFilter.value !== 'Tất cả') {
@@ -424,22 +486,26 @@ const loadStudentGrades = async () => {
   }
 }
 
+// View student grades detail
 const viewStudentGrades = async (student) => {
   selectedStudentGrade.value = student
   try {
-    const response = await api.get(`/studentattendance/api/admin/grades/students/${student.id}/details`)
-    studentCourseGrades.value = response.data
+    console.log(`🔄 Đang tải chi tiết điểm của học viên ID ${student.id}...`)
+    const response = await api.get(`/api/admin/grades/students/${student.id}/details`)
+    console.log('✅ Chi tiết điểm fetch thành công:', response.data)
+    studentCourseGrades.value = response.data || []
   } catch (error) {
-    console.error('API failed, using mock data:', error)
+    console.error('❌ API failed, using mock data:', error)
     studentCourseGrades.value = [
-      { courseId: 1, code: 'CS101', courseName: 'Nhập môn lập trình', score: 8.5, letterGrade: 'B+' },
-      { courseId: 2, code: 'CS201', courseName: 'Cấu trúc dữ liệu', score: 8.0, letterGrade: 'B' },
-      { courseId: 3, code: 'CS301', courseName: 'Cơ sở dữ liệu', score: 9.0, letterGrade: 'A' },
+      { courseId: 1, code: 'PY101', courseName: 'Lập trình Python cơ bản', score: 8.5, letterGrade: 'B+' },
+      { courseId: 2, code: 'JA101', courseName: 'Lập trình Java cơ bản', score: 8.0, letterGrade: 'B' },
+      { courseId: 3, code: 'MA101', courseName: 'Toán cao cấp', score: 9.0, letterGrade: 'A' },
     ]
   }
   detailDialogVisible.value = true
 }
 
+// Load all data
 const loadData = async () => {
   await Promise.all([
     loadOverallStats(), 
@@ -449,7 +515,9 @@ const loadData = async () => {
   ])
 }
 
+// Reset filters
 const resetFilters = () => {
+  console.log('🔄 Đang reset filters...')
   selectedFaculty.value = 'all'
   selectedSemester.value = 'Fall 2024'
   studentSearch.value = ''
@@ -457,6 +525,7 @@ const resetFilters = () => {
   loadData()
 }
 
+// Helper methods
 const getGpaClass = (gpa) => {
   if (gpa >= 3.6) return 'excellent'
   if (gpa >= 3.2) return 'good'
@@ -474,10 +543,16 @@ const getLetterGradeClass = (grade) => {
   return classes[grade] || 'default'
 }
 
+// Export report
 const exportReport = async () => {
   exporting.value = true
   try {
-    const response = await api.get('/studentattendance/api/admin/reports/academic/export', { responseType: 'blob' })
+    console.log('📊 Đang xuất báo cáo điểm...')
+    const response = await api.get('/api/admin/reports/academic/export', { 
+      params: { semester: selectedSemester.value !== 'all' ? selectedSemester.value : null },
+      responseType: 'blob' 
+    })
+    
     const url = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement('a')
     link.href = url
@@ -485,29 +560,33 @@ const exportReport = async () => {
     document.body.appendChild(link)
     link.click()
     link.remove()
+    console.log('✅ Xuất báo cáo thành công!')
     alert('Xuất báo cáo thành công!')
   } catch (error) {
-    console.error('Export failed:', error)
+    console.error('❌ Export failed:', error)
     alert('Xuất báo cáo thành công! (Mock)')
   } finally {
     exporting.value = false
   }
 }
 
+// Lifecycle
 onMounted(() => {
+  console.log('🚀 Khởi tạo trang Quản lý điểm số...')
   loadSemesters()
   loadData()
+  console.log('✅ Trang Quản lý điểm số đã sẵn sàng')
 })
 </script>
 
 <style scoped>
+/* Giữ nguyên style từ file trước với một số chỉnh sửa */
 .admin-grade-management {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 4px;
 }
 
-/* Hero Header */
 .hero-header {
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   border-radius: 28px;
@@ -557,7 +636,6 @@ onMounted(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Stats Cards */
 .stats-grid-modern {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -599,6 +677,7 @@ onMounted(() => {
   font-size: 32px;
   font-weight: 700;
   color: #1e293b;
+  line-height: 1.2;
 }
 
 .stat-info-modern .stat-label {
@@ -614,24 +693,39 @@ onMounted(() => {
 
 .stat-trend.positive { color: #10b981; }
 
-/* Filter Card */
-.filters-card {
+.filter-bar {
   background: white;
-  border-radius: 24px;
-  padding: 20px 24px;
+  border-radius: 20px;
+  padding: 16px 24px;
   margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
-.filters-row {
+.filter-group {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
-  align-items: center;
+  flex: 1;
 }
 
 .filter-select {
-  width: 200px;
+  min-width: 180px;
+}
+
+.filter-select :deep(.v-field) {
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .reset-btn {
@@ -640,7 +734,6 @@ onMounted(() => {
   font-weight: 500;
 }
 
-/* Card */
 .card {
   background: white;
   border-radius: 24px;
@@ -675,7 +768,23 @@ onMounted(() => {
   padding: 24px;
 }
 
-/* Distribution Chart */
+.loading-placeholder {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #94a3b8;
+}
+
+.empty-state p {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
 .distribution-chart {
   padding: 20px;
   overflow-x: auto;
@@ -737,7 +846,6 @@ onMounted(() => {
   color: #1e293b;
 }
 
-/* Faculty Stats */
 .faculty-grade-stats {
   display: flex;
   flex-direction: column;
@@ -754,6 +862,7 @@ onMounted(() => {
   width: 180px;
   font-weight: 600;
   color: #1e293b;
+  flex-shrink: 0;
 }
 
 .faculty-gpa {
@@ -783,7 +892,32 @@ onMounted(() => {
   color: #1e293b;
 }
 
-/* Search Small */
+.rank-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.rank-badge.excellent { background: #dcfce7; color: #10b981; }
+.rank-badge.good { background: #dbeafe; color: #3b82f6; }
+.rank-badge.average { background: #fef3c7; color: #f59e0b; }
+.rank-badge.poor { background: #fee2e2; color: #ef4444; }
+.rank-badge.fail { background: #f1f5f9; color: #64748b; }
+
+.rank-badge-small {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.rank-badge-small.excellent { background: #dcfce7; color: #10b981; }
+.rank-badge-small.good { background: #dbeafe; color: #3b82f6; }
+.rank-badge-small.average { background: #fef3c7; color: #f59e0b; }
+
 .search-wrapper-small {
   position: relative;
   width: 220px;
@@ -817,34 +951,6 @@ onMounted(() => {
   width: 140px;
 }
 
-/* Badges */
-.rank-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 30px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.rank-badge.excellent { background: #dcfce7; color: #10b981; }
-.rank-badge.good { background: #dbeafe; color: #3b82f6; }
-.rank-badge.average { background: #fef3c7; color: #f59e0b; }
-.rank-badge.poor { background: #fee2e2; color: #ef4444; }
-.rank-badge.fail { background: #f1f5f9; color: #64748b; }
-
-.rank-badge-small {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 30px;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.rank-badge-small.excellent { background: #dcfce7; color: #10b981; }
-.rank-badge-small.good { background: #dbeafe; color: #3b82f6; }
-.rank-badge-small.average { background: #fef3c7; color: #f59e0b; }
-
-/* Table */
 .modern-table :deep(.v-data-table-header th) {
   background: #f8fafc;
   font-weight: 600;
@@ -853,10 +959,12 @@ onMounted(() => {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 14px 16px;
+  border-bottom: 2px solid #e2e8f0;
 }
 
 .modern-table :deep(td) {
   padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .gpa-value-cell {
@@ -874,7 +982,6 @@ onMounted(() => {
 
 .action-btn:hover { background: #dbeafe; color: #3b82f6; }
 
-/* Dialog */
 .modern-dialog {
   border-radius: 28px !important;
   overflow: hidden;
@@ -925,6 +1032,7 @@ onMounted(() => {
   display: flex;
   gap: 32px;
   margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 
 .summary-item {
@@ -1012,6 +1120,12 @@ onMounted(() => {
 .course-letter.poor { color: #ef4444; }
 .course-letter.fail { color: #64748b; }
 
+.empty-text {
+  text-align: center;
+  padding: 20px;
+  color: #94a3b8;
+}
+
 .dialog-actions-modern {
   padding: 16px 24px 24px !important;
 }
@@ -1024,7 +1138,8 @@ onMounted(() => {
 
 @media (max-width: 768px) {
   .hero-header { flex-direction: column; align-items: flex-start; }
-  .filters-row { flex-direction: column; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
+  .filter-group { flex-direction: column; }
   .filter-select { width: 100%; }
   .faculty-grade-item { flex-direction: column; align-items: flex-start; }
   .faculty-gpa { width: 100%; }
@@ -1033,5 +1148,9 @@ onMounted(() => {
   .grade-filter { width: 100%; }
   .grade-summary { flex-direction: column; gap: 16px; }
   .course-grade-item { flex-wrap: wrap; gap: 12px; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid-modern { grid-template-columns: 1fr; }
 }
 </style>

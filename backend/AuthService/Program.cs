@@ -7,7 +7,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add CORS
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -58,7 +58,7 @@ var connection = Environment.GetEnvironmentVariable("CONNECTION_STRING_AUTH")
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connection));
 
-// JWT Authentication
+// JWT Authentication - SỬA: Key và Issuer
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "VerySecretSharedJwtKey123!VerySecretKey4567";
 var issuer = builder.Configuration["Jwt:Issuer"] ?? "AttendanceAuth";
 
@@ -91,7 +91,6 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
-    // Data is already seeded via OnModelCreating
 }
 
 if (app.Environment.IsDevelopment())
@@ -101,7 +100,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontend");
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

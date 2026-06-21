@@ -8,7 +8,7 @@
         </div>
         <div>
           <h1 class="hero-title">Quản lý điểm danh</h1>
-          <p class="hero-subtitle">Theo dõi và quản lý điểm danh toàn trường</p>
+          <p class="hero-subtitle">Theo dõi và quản lý điểm danh tại trung tâm</p>
         </div>
       </div>
       <v-btn color="primary" class="hero-btn" @click="exportReport" :loading="exporting">
@@ -24,8 +24,8 @@
           <v-icon icon="mdi-account-group" size="24" />
         </div>
         <div class="stat-info-modern">
-          <div class="stat-value">{{ overallStats.totalStudents?.toLocaleString() || '1,248' }}</div>
-          <div class="stat-label">Tổng sinh viên</div>
+          <div class="stat-value">{{ overallStats.totalStudents?.toLocaleString() || '0' }}</div>
+          <div class="stat-label">Tổng học viên</div>
         </div>
       </div>
       <div class="stat-card-modern">
@@ -33,7 +33,7 @@
           <v-icon icon="mdi-check-circle" size="24" />
         </div>
         <div class="stat-info-modern">
-          <div class="stat-value">{{ overallStats.presentRate || 87 }}%</div>
+          <div class="stat-value">{{ overallStats.presentRate || 0 }}%</div>
           <div class="stat-label">Tỷ lệ điểm danh</div>
           <div class="stat-trend positive">+5% so với kỳ trước</div>
         </div>
@@ -43,7 +43,7 @@
           <v-icon icon="mdi-close-circle" size="24" />
         </div>
         <div class="stat-info-modern">
-          <div class="stat-value">{{ overallStats.absentRate || 8 }}%</div>
+          <div class="stat-value">{{ overallStats.absentRate || 0 }}%</div>
           <div class="stat-label">Vắng mặt</div>
         </div>
       </div>
@@ -52,21 +52,21 @@
           <v-icon icon="mdi-clock-alert" size="24" />
         </div>
         <div class="stat-info-modern">
-          <div class="stat-value">{{ overallStats.lateRate || 5 }}%</div>
+          <div class="stat-value">{{ overallStats.lateRate || 0 }}%</div>
           <div class="stat-label">Đi muộn</div>
         </div>
       </div>
     </div>
 
     <!-- Filter Bar -->
-    <div class="filters-card">
-      <div class="filters-row">
+    <div class="filter-bar">
+      <div class="filter-group">
         <v-select
           v-model="selectedFaculty"
           :items="facultyOptions"
-          label="Khoa"
+          label="Khóa học"
           variant="outlined"
-          density="comfortable"
+          density="compact"
           class="filter-select"
           hide-details
           @update:model-value="loadData"
@@ -76,12 +76,14 @@
           :items="semesterOptions"
           label="Học kỳ"
           variant="outlined"
-          density="comfortable"
+          density="compact"
           class="filter-select"
           hide-details
           @update:model-value="loadData"
         />
-        <v-btn variant="tonal" color="primary" @click="resetFilters" class="reset-btn">
+      </div>
+      <div class="filter-actions">
+        <v-btn variant="text" color="primary" @click="resetFilters" class="reset-btn">
           <v-icon icon="mdi-filter-remove" size="18" class="mr-1" />
           Xóa lọc
         </v-btn>
@@ -91,7 +93,7 @@
     <!-- Faculty Statistics Card -->
     <div class="card">
       <div class="card-header">
-        <h3>Thống kê điểm danh theo khoa</h3>
+        <h3>Thống kê điểm danh theo khóa học</h3>
         <div class="header-badge">
           <v-chip color="success" size="small" variant="tonal">Tỷ lệ chuyên cần</v-chip>
         </div>
@@ -115,6 +117,10 @@
               </div>
             </div>
           </div>
+          <div v-if="facultyStats.length === 0" class="empty-state">
+            <v-icon icon="mdi-information" size="32" color="#cbd5e1" />
+            <p>Không có dữ liệu thống kê</p>
+          </div>
         </div>
       </div>
     </div>
@@ -122,14 +128,14 @@
     <!-- Course Statistics Table -->
     <div class="card">
       <div class="card-header">
-        <h3>Thống kê điểm danh theo môn học</h3>
+        <h3>Thống kê điểm danh theo khóa học</h3>
         <div class="header-actions">
           <div class="search-wrapper-small">
             <v-icon icon="mdi-magnify" size="16" class="search-icon-small" />
             <input 
               v-model="courseSearch" 
               type="text" 
-              placeholder="Tìm kiếm môn học..." 
+              placeholder="Tìm kiếm khóa học..." 
               class="search-input-small"
               @input="loadCourseStats"
             >
@@ -149,7 +155,7 @@
             <template v-slot:item.present="{ item }">
               <div class="rate-cell">
                 <div class="rate-bar">
-                  <div class="rate-fill present" :style="{ width: `${item.present}%` }"></div>
+                  <div class="rate-fill present" :style="{ width: `${Math.min(item.present, 100)}%` }"></div>
                 </div>
                 <span class="rate-value">{{ item.present }}%</span>
               </div>
@@ -157,7 +163,7 @@
             <template v-slot:item.late="{ item }">
               <div class="rate-cell">
                 <div class="rate-bar">
-                  <div class="rate-fill late" :style="{ width: `${item.late}%` }"></div>
+                  <div class="rate-fill late" :style="{ width: `${Math.min(item.late, 100)}%` }"></div>
                 </div>
                 <span class="rate-value">{{ item.late }}%</span>
               </div>
@@ -165,7 +171,7 @@
             <template v-slot:item.absent="{ item }">
               <div class="rate-cell">
                 <div class="rate-bar">
-                  <div class="rate-fill absent" :style="{ width: `${item.absent}%` }"></div>
+                  <div class="rate-fill absent" :style="{ width: `${Math.min(item.absent, 100)}%` }"></div>
                 </div>
                 <span class="rate-value">{{ item.absent }}%</span>
               </div>
@@ -173,6 +179,12 @@
             <template v-slot:item.attendance="{ item }">
               <div class="attendance-badge" :class="getAttendanceClass(item.attendance)">
                 {{ item.attendance }}%
+              </div>
+            </template>
+            <template v-slot:no-data>
+              <div class="empty-state">
+                <v-icon icon="mdi-information" size="32" color="#cbd5e1" />
+                <p>Không có dữ liệu điểm danh</p>
               </div>
             </template>
           </v-data-table>
@@ -186,6 +198,7 @@
 import { ref, onMounted } from 'vue'
 import api from '@/utils/api'
 
+// State
 const selectedFaculty = ref('all')
 const selectedSemester = ref('Fall 2024')
 const courseSearch = ref('')
@@ -193,11 +206,14 @@ const exporting = ref(false)
 
 const loading = ref({ faculty: false, courses: false })
 
+// Options - Đổi thành khóa học
 const facultyOptions = [
-  { title: 'Tất cả khoa', value: 'all' },
-  { title: 'Công nghệ thông tin', value: 'CNTT' },
-  { title: 'Quản trị kinh doanh', value: 'QTKD' },
-  { title: 'Ngôn ngữ Anh', value: 'NNKT' },
+  { title: 'Tất cả khóa học', value: 'all' },
+  { title: 'Python', value: 'Python' },
+  { title: 'Java', value: 'Java' },
+  { title: 'Tiếng Anh giao tiếp', value: 'English' },
+  { title: 'Toán cao cấp', value: 'Math' },
+  { title: 'Kỹ năng mềm', value: 'SoftSkills' },
 ]
 
 const semesterOptions = ref(['Fall 2024', 'Spring 2024', 'Fall 2023'])
@@ -211,27 +227,32 @@ const mockOverallStats = {
 }
 
 const mockFacultyStats = [
-  { name: 'Công nghệ thông tin', present: 89, late: 4, absent: 7 },
-  { name: 'Quản trị kinh doanh', present: 85, late: 6, absent: 9 },
-  { name: 'Ngôn ngữ Anh', present: 88, late: 3, absent: 9 },
+  { name: 'Python', present: 89, late: 4, absent: 7 },
+  { name: 'Java', present: 85, late: 6, absent: 9 },
+  { name: 'Tiếng Anh giao tiếp', present: 88, late: 3, absent: 9 },
+  { name: 'Toán cao cấp', present: 92, late: 3, absent: 5 },
+  { name: 'Kỹ năng mềm', present: 78, late: 8, absent: 14 },
 ]
 
 const mockCourseStats = [
-  { id: 1, code: 'CS101', name: 'Nhập môn lập trình', faculty: 'CNTT', present: 85, late: 5, absent: 10, attendance: 85 },
-  { id: 2, code: 'CS201', name: 'Cấu trúc dữ liệu', faculty: 'CNTT', present: 82, late: 6, absent: 12, attendance: 82 },
-  { id: 3, code: 'CS301', name: 'Cơ sở dữ liệu', faculty: 'CNTT', present: 94, late: 3, absent: 3, attendance: 94 },
-  { id: 4, code: 'BA101', name: 'Nguyên lý kế toán', faculty: 'QTKD', present: 76, late: 8, absent: 16, attendance: 76 },
-  { id: 5, code: 'ENG201', name: 'Tiếng Anh chuyên ngành', faculty: 'NNKT', present: 88, late: 4, absent: 8, attendance: 88 },
+  { id: 1, code: 'PY101', name: 'Lập trình Python cơ bản', faculty: 'Python', present: 85, late: 5, absent: 10, attendance: 85 },
+  { id: 2, code: 'PY201', name: 'Lập trình Python nâng cao', faculty: 'Python', present: 82, late: 6, absent: 12, attendance: 82 },
+  { id: 3, code: 'JA101', name: 'Lập trình Java cơ bản', faculty: 'Java', present: 94, late: 3, absent: 3, attendance: 94 },
+  { id: 4, code: 'EN101', name: 'Tiếng Anh giao tiếp', faculty: 'English', present: 76, late: 8, absent: 16, attendance: 76 },
+  { id: 5, code: 'MA101', name: 'Toán cao cấp', faculty: 'Math', present: 88, late: 4, absent: 8, attendance: 88 },
+  { id: 6, code: 'SK101', name: 'Kỹ năng mềm', faculty: 'SoftSkills', present: 70, late: 10, absent: 20, attendance: 70 },
 ]
 
+// Data
 const overallStats = ref({})
 const facultyStats = ref([])
 const courseStats = ref([])
 
+// Headers
 const courseHeaders = [
-  { title: 'Mã môn', key: 'code', sortable: true, align: 'start' },
-  { title: 'Tên môn học', key: 'name', sortable: true, align: 'start' },
-  { title: 'Khoa', key: 'faculty', sortable: true, align: 'start' },
+  { title: 'Mã KH', key: 'code', sortable: true, align: 'start' },
+  { title: 'Tên khóa học', key: 'name', sortable: true, align: 'start' },
+  { title: 'Khóa học', key: 'faculty', sortable: true, align: 'start' },
   { title: 'Có mặt', key: 'present', sortable: true, align: 'center' },
   { title: 'Đi muộn', key: 'late', sortable: true, align: 'center' },
   { title: 'Vắng mặt', key: 'absent', sortable: true, align: 'center' },
@@ -241,41 +262,57 @@ const courseHeaders = [
 // Load semesters
 const loadSemesters = async () => {
   try {
-    const response = await api.get('/studentattendance/api/admin/semesters')
-    semesterOptions.value = response.data
+    console.log('🔄 Đang tải danh sách học kỳ...')
+    const response = await api.get('/api/admin/semesters')
+    semesterOptions.value = response.data || ['Fall 2024', 'Spring 2024', 'Summer 2024']
+    console.log('✅ Học kỳ fetch thành công:', semesterOptions.value)
   } catch (error) {
-    console.error('Failed to load semesters, using mock data:', error)
+    console.error('❌ Failed to load semesters, using mock data:', error)
     semesterOptions.value = ['Fall 2024', 'Spring 2024', 'Summer 2024', 'Fall 2023']
   }
 }
 
+// Load overall stats
 const loadOverallStats = async () => {
   try {
-    const response = await api.get('/studentattendance/api/admin/attendance/overall', {
+    console.log('🔄 Đang tải thống kê tổng quan...')
+    const response = await api.get('/api/admin/attendance/overall', {
       params: { semester: selectedSemester.value !== 'all' ? selectedSemester.value : null }
     })
+    console.log('✅ Thống kê tổng quan fetch thành công:', response.data)
     overallStats.value = response.data
   } catch (error) {
-    console.error('API failed, using mock data:', error)
+    console.error('❌ API failed, using mock data:', error)
     overallStats.value = mockOverallStats
   }
 }
 
+// Load faculty stats
 const loadFacultyStats = async () => {
   loading.value.faculty = true
   try {
-    const response = await api.get('/studentattendance/api/admin/attendance/by-faculty', {
+    console.log('🔄 Đang tải thống kê theo khóa học...')
+    const response = await api.get('/api/admin/attendance/by-faculty', {
       params: { semester: selectedSemester.value !== 'all' ? selectedSemester.value : null }
     })
-    facultyStats.value = response.data
+    console.log('✅ Thống kê theo khóa học fetch thành công:', response.data)
+    const data = response.data || []
+    
+    if (data.length > 0) {
+      facultyStats.value = data
+    } else {
+      console.warn('⚠️ Không có dữ liệu thống kê theo khóa học, sử dụng mock data')
+      facultyStats.value = mockFacultyStats
+    }
   } catch (error) {
-    console.error('API failed, using mock data:', error)
+    console.error('❌ API failed, using mock data:', error)
     facultyStats.value = mockFacultyStats
   } finally {
     loading.value.faculty = false
   }
 }
 
+// Load course stats
 const loadCourseStats = async () => {
   loading.value.courses = true
   try {
@@ -284,7 +321,10 @@ const loadCourseStats = async () => {
     if (courseSearch.value) params.search = courseSearch.value
     if (selectedSemester.value !== 'all') params.semester = selectedSemester.value
     
-    const response = await api.get('/studentattendance/api/admin/attendance/by-course', { params })
+    console.log('🔄 Đang tải thống kê theo khóa học với params:', params)
+    const response = await api.get('/api/admin/attendance/by-course', { params })
+    console.log('✅ Thống kê theo khóa học fetch thành công:', response.data)
+    
     const courses = response.data || []
     
     if (courses.length > 0) {
@@ -294,33 +334,36 @@ const loadCourseStats = async () => {
         name: c.name,
         faculty: c.faculty,
         present: c.attendanceRate || 0,
-        late: 0,
-        absent: 100 - (c.attendanceRate || 0),
+        late: c.lateRate || 0,
+        absent: c.absentRate || (100 - (c.attendanceRate || 0)),
         attendance: c.attendanceRate || 0
       }))
     } else {
+      console.warn('⚠️ Không có dữ liệu thống kê khóa học, sử dụng mock data')
       let filtered = [...mockCourseStats]
       if (selectedFaculty.value !== 'all') {
         filtered = filtered.filter(c => c.faculty === selectedFaculty.value)
       }
       if (courseSearch.value) {
+        const searchLower = courseSearch.value.toLowerCase()
         filtered = filtered.filter(c => 
-          c.name.toLowerCase().includes(courseSearch.value.toLowerCase()) ||
-          c.code.toLowerCase().includes(courseSearch.value.toLowerCase())
+          c.name.toLowerCase().includes(searchLower) ||
+          c.code.toLowerCase().includes(searchLower)
         )
       }
       courseStats.value = filtered
     }
   } catch (error) {
-    console.error('API failed, using mock data:', error)
+    console.error('❌ API failed, using mock data:', error)
     let filtered = [...mockCourseStats]
     if (selectedFaculty.value !== 'all') {
       filtered = filtered.filter(c => c.faculty === selectedFaculty.value)
     }
     if (courseSearch.value) {
+      const searchLower = courseSearch.value.toLowerCase()
       filtered = filtered.filter(c => 
-        c.name.toLowerCase().includes(courseSearch.value.toLowerCase()) ||
-        c.code.toLowerCase().includes(courseSearch.value.toLowerCase())
+        c.name.toLowerCase().includes(searchLower) ||
+        c.code.toLowerCase().includes(searchLower)
       )
     }
     courseStats.value = filtered
@@ -329,17 +372,21 @@ const loadCourseStats = async () => {
   }
 }
 
+// Load all data
 const loadData = async () => {
   await Promise.all([loadOverallStats(), loadFacultyStats(), loadCourseStats()])
 }
 
+// Reset filters
 const resetFilters = () => {
+  console.log('🔄 Đang reset filters...')
   selectedFaculty.value = 'all'
   selectedSemester.value = 'Fall 2024'
   courseSearch.value = ''
   loadData()
 }
 
+// Get attendance class
 const getAttendanceClass = (rate) => {
   if (rate >= 90) return 'excellent'
   if (rate >= 75) return 'good'
@@ -347,10 +394,16 @@ const getAttendanceClass = (rate) => {
   return 'poor'
 }
 
+// Export report
 const exportReport = async () => {
   exporting.value = true
   try {
-    const response = await api.get('/studentattendance/api/admin/reports/attendance/export', { responseType: 'blob' })
+    console.log('📊 Đang xuất báo cáo điểm danh...')
+    const response = await api.get('/api/admin/reports/attendance/export', { 
+      params: { semester: selectedSemester.value !== 'all' ? selectedSemester.value : null },
+      responseType: 'blob' 
+    })
+    
     const url = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement('a')
     link.href = url
@@ -358,23 +411,26 @@ const exportReport = async () => {
     document.body.appendChild(link)
     link.click()
     link.remove()
+    console.log('✅ Xuất báo cáo thành công!')
     alert('Xuất báo cáo thành công!')
   } catch (error) {
-    console.error('Export failed:', error)
+    console.error('❌ Export failed:', error)
     alert('Xuất báo cáo thành công! (Mock)')
   } finally {
     exporting.value = false
   }
 }
 
+// Lifecycle
 onMounted(() => { 
+  console.log('🚀 Khởi tạo trang Quản lý điểm danh...')
   loadSemesters()
-  loadData() 
+  loadData()
+  console.log('✅ Trang Quản lý điểm danh đã sẵn sàng')
 })
 </script>
 
 <style scoped>
-/* Giữ nguyên style từ file gốc */
 .admin-attendance {
   max-width: 1400px;
   margin: 0 auto;
@@ -471,6 +527,7 @@ onMounted(() => {
   font-size: 32px;
   font-weight: 700;
   color: #1e293b;
+  line-height: 1.2;
 }
 
 .stat-info-modern .stat-label {
@@ -486,23 +543,39 @@ onMounted(() => {
 
 .stat-trend.positive { color: #10b981; }
 
-.filters-card {
+.filter-bar {
   background: white;
-  border-radius: 24px;
-  padding: 20px 24px;
+  border-radius: 20px;
+  padding: 16px 24px;
   margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
-.filters-row {
+.filter-group {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
-  align-items: center;
+  flex: 1;
 }
 
 .filter-select {
-  width: 200px;
+  min-width: 180px;
+}
+
+.filter-select :deep(.v-field) {
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .reset-btn {
@@ -563,6 +636,7 @@ onMounted(() => {
   width: 180px;
   font-weight: 600;
   color: #1e293b;
+  flex-shrink: 0;
 }
 
 .faculty-bars {
@@ -580,6 +654,8 @@ onMounted(() => {
   color: white;
   font-size: 11px;
   font-weight: 500;
+  min-width: 30px;
+  transition: width 0.5s ease;
 }
 
 .bar-label {
@@ -619,6 +695,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
+  justify-content: center;
 }
 
 .rate-bar {
@@ -632,6 +709,7 @@ onMounted(() => {
 .rate-fill {
   height: 100%;
   border-radius: 10px;
+  transition: width 0.5s ease;
 }
 
 .rate-fill.present { background: #10b981; }
@@ -642,6 +720,7 @@ onMounted(() => {
   font-size: 13px;
   font-weight: 500;
   color: #475569;
+  min-width: 36px;
 }
 
 .attendance-badge {
@@ -665,10 +744,12 @@ onMounted(() => {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 14px 16px;
+  border-bottom: 2px solid #e2e8f0;
 }
 
 .modern-table :deep(td) {
   padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .loading-placeholder {
@@ -677,17 +758,34 @@ onMounted(() => {
   padding: 40px;
 }
 
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #94a3b8;
+}
+
+.empty-state p {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
 @media (max-width: 1200px) {
   .stats-grid-modern { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
   .hero-header { flex-direction: column; align-items: flex-start; }
-  .filters-row { flex-direction: column; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
+  .filter-group { flex-direction: column; }
   .filter-select { width: 100%; }
   .faculty-item { flex-direction: column; align-items: flex-start; }
+  .faculty-name { width: 100%; }
   .faculty-bars { width: 100%; }
   .header-actions { width: 100%; }
   .search-wrapper-small { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid-modern { grid-template-columns: 1fr; }
 }
 </style>

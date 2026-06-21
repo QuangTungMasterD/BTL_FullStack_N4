@@ -18,6 +18,7 @@ namespace StudentAttendanceService.Data
         public DbSet<LearningResult> LearningResults { get; set; } = null!;
         public DbSet<Announcement> Announcements { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Specialization> Specializations { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +30,13 @@ namespace StudentAttendanceService.Data
                 .WithMany(l => l.Courses)
                 .HasForeignKey(c => c.LecturerId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // THÊM: Cấu hình quan hệ Course - Specialization
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.Specialization)
+                .WithMany(s => s.Courses)
+                .HasForeignKey(c => c.SpecializationId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Enrollment>()
                 .HasOne(e => e.Student)
@@ -60,6 +68,15 @@ namespace StudentAttendanceService.Data
                 .HasForeignKey(r => r.EnrollmentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Cấu hình cho Specialization
+            modelBuilder.Entity<Specialization>(entity =>
+            {
+                entity.HasIndex(e => e.SpecializationName).IsUnique();
+                entity.Property(e => e.SpecializationName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Descrt).HasMaxLength(500);
+            });
+
+            // Seed Users
             modelBuilder.Entity<User>().HasData(
                 new User 
                 { 
@@ -83,6 +100,15 @@ namespace StudentAttendanceService.Data
                 new Department { Id = 3, Code = "NNKT", Name = "Ngôn ngữ Anh", StudentCount = 218, LecturerCount = 20, Head = "ThS. Lê Văn Z" }
             );
 
+            // Seed Specializations
+            modelBuilder.Entity<Specialization>().HasData(
+                new Specialization { Id = 1, SpecializationName = "Khoa học máy tính", Descrt = "Chuyên ngành nghiên cứu và phát triển phần mềm", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Specialization { Id = 2, SpecializationName = "Kỹ thuật phần mềm", Descrt = "Chuyên ngành phát triển ứng dụng và hệ thống", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Specialization { Id = 3, SpecializationName = "Quản trị kinh doanh", Descrt = "Chuyên ngành quản lý và điều hành doanh nghiệp", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Specialization { Id = 4, SpecializationName = "Ngôn ngữ Anh", Descrt = "Chuyên ngành ngôn ngữ và văn hóa Anh", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Specialization { Id = 5, SpecializationName = "Trí tuệ nhân tạo", Descrt = "Chuyên ngành AI và Machine Learning", IsActive = true, CreatedAt = DateTime.UtcNow }
+            );
+
             // Seed Lecturers
             modelBuilder.Entity<Lecturer>().HasData(
                 new Lecturer { Id = 1, LecturerId = "GV001", FullName = "PGS.TS Trần Văn X", Email = "tranvanx@university.edu.vn", Phone = "0912345678", Faculty = "CNTT", Title = "Phó Giáo sư", Specialization = "Khoa học máy tính", Status = "Active" },
@@ -90,11 +116,11 @@ namespace StudentAttendanceService.Data
                 new Lecturer { Id = 3, LecturerId = "GV003", FullName = "ThS. Lê Văn Z", Email = "levanz@university.edu.vn", Phone = "0912345680", Faculty = "NNKT", Title = "Thạc sĩ", Specialization = "Ngôn ngữ học", Status = "Active" }
             );
 
-            // Seed Courses
+            // Seed Courses (cập nhật thêm SpecializationId)
             modelBuilder.Entity<Course>().HasData(
-                new Course { Id = 1, Code = "CS101", Name = "Nhập môn lập trình", Credits = 3, Faculty = "CNTT", Semester = "Fall 2024", LecturerId = 1, Schedule = "Thứ 2, 13:30-16:30", Room = "A101", MaxStudents = 60 },
-                new Course { Id = 2, Code = "CS201", Name = "Cấu trúc dữ liệu", Credits = 4, Faculty = "CNTT", Semester = "Fall 2024", LecturerId = 1, Schedule = "Thứ 3, 08:00-11:00", Room = "B202", MaxStudents = 60 },
-                new Course { Id = 3, Code = "CS301", Name = "Cơ sở dữ liệu", Credits = 3, Faculty = "CNTT", Semester = "Fall 2024", LecturerId = 2, Schedule = "Thứ 4, 13:30-16:30", Room = "C303", MaxStudents = 60 }
+                new Course { Id = 1, Code = "CS101", Name = "Nhập môn lập trình", Credits = 3, Faculty = "CNTT", Semester = "Fall 2024", LecturerId = 1, SpecializationId = 1, Schedule = "Thứ 2, 13:30-16:30", Room = "A101", MaxStudents = 60 },
+                new Course { Id = 2, Code = "CS201", Name = "Cấu trúc dữ liệu", Credits = 4, Faculty = "CNTT", Semester = "Fall 2024", LecturerId = 1, SpecializationId = 1, Schedule = "Thứ 3, 08:00-11:00", Room = "B202", MaxStudents = 60 },
+                new Course { Id = 3, Code = "CS301", Name = "Cơ sở dữ liệu", Credits = 3, Faculty = "CNTT", Semester = "Fall 2024", LecturerId = 2, SpecializationId = 2, Schedule = "Thứ 4, 13:30-16:30", Room = "C303", MaxStudents = 60 }
             );
 
             // Seed Students

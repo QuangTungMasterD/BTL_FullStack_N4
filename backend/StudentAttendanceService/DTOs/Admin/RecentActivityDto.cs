@@ -6,6 +6,5 @@ namespace StudentAttendanceService.DTOs.Admin
         public string Action { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public string Type { get; set; } = string.Empty;
-        public string? UserName { get; set; }
     }
 }

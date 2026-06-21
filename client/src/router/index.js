@@ -108,12 +108,12 @@ const routes = [
         component: LecturerManagement,
         meta: { roles: ["ADMIN"] },
       },
-      // {
-      //   path: "admin-courses",
-      //   name: "AdminCourseManagement",
-      //   component: AdminCourseManagement,
-      //   meta: { roles: ["ADMIN"] },
-      // },
+      {
+        path: "admin-courses",
+        name: "AdminCourseManagement",
+        component: AdminCourseManagement,
+        meta: { roles: ["ADMIN"] },
+      },
       {
         path: "admin-attendance",
         name: "AdminAttendanceManagement",
@@ -214,29 +214,30 @@ const routes = [
         component: CourseDetail,
         meta: { roles: ["ADMIN"] },
       },
+      // router/index.js - Cập nhật route teachers
       {
         path: "teachers",
         name: "Teachers",
-        component: TeachersManager,
+        component: LecturerManagement, // SỬA: dùng LecturerManagement thay vì TeachersManager
         meta: { roles: ["ADMIN"] },
       },
       {
         path: "teachers/trash",
         name: "TeachersTrash",
-        component: TeachersTrash,
+        component: TeachersTrash, // Giữ nguyên hoặc comment nếu chưa có
+        meta: { roles: ["ADMIN"] },
+      },
+      {
+        path: "teachers/:id",
+        name: "TeacherDetail",
+        component: TeacherDetail, // Giữ nguyên hoặc comment nếu chưa có
         meta: { roles: ["ADMIN"] },
       },
       {
         path: "teachers/schedule",
         name: "TeacherSchedule",
         component: TeacherSchedule,
-        meta: { roles: ["ADMIN", "LECTURER"] }, // có thể cho giáo viên xem
-      },
-      {
-        path: "teachers/:id",
-        name: "TeacherDetail",
-        component: TeacherDetail,
-        meta: { roles: ["ADMIN"] },
+        meta: { roles: ["ADMIN", "LECTURER"] },
       },
       {
         path: "classes",

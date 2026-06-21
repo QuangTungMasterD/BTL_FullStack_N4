@@ -4,7 +4,7 @@
     <div class="welcome-section">
       <div class="welcome-text">
         <h1 class="greeting">Chào mừng, {{ studentInfo.fullName }}!</h1>
-        <p class="subtitle">Học kỳ Fall 2024 • Tuần 12 • Còn 4 tuần đến kỳ thi</p>
+        <p class="subtitle">Hệ thống quản lý trung tâm dạy học • Năm học {{ currentYear }}</p>
       </div>
       <div class="date-badge">
         <v-icon icon="mdi-calendar" size="20" />
@@ -186,6 +186,7 @@ import api from '@/utils/api'
 const router = useRouter()
 const authStore = useAuthStore()
 const currentDate = ref(new Date().toLocaleDateString('vi-VN'))
+const currentYear = ref(new Date().getFullYear())
 
 const loading = ref({
   courses: true,
@@ -195,7 +196,7 @@ const loading = ref({
 })
 
 const studentInfo = ref({
-  fullName: authStore.user?.fullName || 'Sinh viên',
+  fullName: authStore.user?.fullName || 'Học viên',
   studentId: authStore.user?.studentId || ''
 })
 
@@ -224,21 +225,40 @@ const getRandomGradient = () => {
 
 const loadStudentStats = async () => {
   try {
-    const response = await api.get('/studentattendance/api/student/stats')
+    console.log('🔄 Đang tải thống kê học viên...')
+    const response = await api.get('/api/student/stats')
+    console.log('✅ Thống kê học viên fetch thành công:', response.data)
     studentStats.value = response.data
   } catch (error) {
-    console.error('Failed to load student stats:', error)
+    console.error('❌ Failed to load student stats:', error)
+    // Mock data
+    studentStats.value = {
+      gpa: 3.65,
+      gpaTrend: 0.15,
+      creditsEarned: 98,
+      attendance: 92,
+      currentCourses: 4
+    }
   }
 }
 
 const loadCurrentCourses = async () => {
   loading.value.courses = true
   try {
-    const response = await api.get('/studentattendance/api/student/courses')
+    console.log('🔄 Đang tải danh sách khóa học hiện tại...')
+    const response = await api.get('/api/student/courses')
+    console.log('✅ Danh sách khóa học fetch thành công:', response.data)
     currentCourses.value = response.data
     studentStats.value.currentCourses = currentCourses.value.length
   } catch (error) {
-    console.error('Failed to load current courses:', error)
+    console.error('❌ Failed to load current courses:', error)
+    // Mock data
+    currentCourses.value = [
+      { id: 1, courseName: 'Lập trình Python cơ bản', code: 'PY101', schedule: 'Thứ 2, 13:30-16:30', room: 'A101', credits: 3, lecturer: 'PGS.TS Trần Văn Xuân', attendance: 85 },
+      { id: 2, courseName: 'Lập trình Java cơ bản', code: 'JA101', schedule: 'Thứ 3, 08:00-11:00', room: 'B202', credits: 3, lecturer: 'TS. Nguyễn Thị Yến', attendance: 92 },
+      { id: 3, courseName: 'Tiếng Anh giao tiếp', code: 'EN101', schedule: 'Thứ 4, 13:30-16:30', room: 'C303', credits: 2, lecturer: 'ThS. Lê Văn Anh', attendance: 78 },
+    ]
+    studentStats.value.currentCourses = currentCourses.value.length
   } finally {
     loading.value.courses = false
   }
@@ -247,10 +267,17 @@ const loadCurrentCourses = async () => {
 const loadUpcomingClasses = async () => {
   loading.value.schedule = true
   try {
-    const response = await api.get('/studentattendance/api/student/upcoming-classes')
+    console.log('🔄 Đang tải lịch học sắp tới...')
+    const response = await api.get('/api/student/upcoming-classes')
+    console.log('✅ Lịch học sắp tới fetch thành công:', response.data)
     upcomingClasses.value = response.data
   } catch (error) {
-    console.error('Failed to load upcoming classes:', error)
+    console.error('❌ Failed to load upcoming classes:', error)
+    // Mock data
+    upcomingClasses.value = [
+      { id: 1, courseName: 'Lập trình Python cơ bản', day: 'Thứ 2', time: '13:30-16:30', room: 'A101', lecturer: 'PGS.TS Trần Văn Xuân' },
+      { id: 2, courseName: 'Lập trình Java cơ bản', day: 'Thứ 3', time: '08:00-11:00', room: 'B202', lecturer: 'TS. Nguyễn Thị Yến' },
+    ]
   } finally {
     loading.value.schedule = false
   }
@@ -259,10 +286,18 @@ const loadUpcomingClasses = async () => {
 const loadRecentGrades = async () => {
   loading.value.grades = true
   try {
-    const response = await api.get('/studentattendance/api/student/recent-grades')
+    console.log('🔄 Đang tải điểm gần đây...')
+    const response = await api.get('/api/student/recent-grades')
+    console.log('✅ Điểm gần đây fetch thành công:', response.data)
     recentGrades.value = response.data
   } catch (error) {
-    console.error('Failed to load recent grades:', error)
+    console.error('❌ Failed to load recent grades:', error)
+    // Mock data
+    recentGrades.value = [
+      { id: 1, courseName: 'Lập trình Python cơ bản', examType: 'Giữa kỳ', score: 8.5, letterGrade: 'B+', recordedDate: new Date() },
+      { id: 2, courseName: 'Lập trình Java cơ bản', examType: 'Quiz 1', score: 9.0, letterGrade: 'A', recordedDate: new Date() },
+      { id: 3, courseName: 'Tiếng Anh giao tiếp', examType: 'Cuối kỳ', score: 7.5, letterGrade: 'B', recordedDate: new Date() },
+    ]
   } finally {
     loading.value.grades = false
   }
@@ -271,10 +306,17 @@ const loadRecentGrades = async () => {
 const loadAnnouncements = async () => {
   loading.value.announcements = true
   try {
-    const response = await api.get('/studentattendance/api/student/announcements')
+    console.log('🔄 Đang tải thông báo...')
+    const response = await api.get('/api/student/announcements')
+    console.log('✅ Thông báo fetch thành công:', response.data)
     announcements.value = response.data
   } catch (error) {
-    console.error('Failed to load announcements:', error)
+    console.error('❌ Failed to load announcements:', error)
+    // Mock data
+    announcements.value = [
+      { id: 1, title: 'Lịch thi cuối kỳ', date: new Date(), priority: 'high' },
+      { id: 2, title: 'Đăng ký học phần HK2', date: new Date(), priority: 'medium' },
+    ]
   } finally {
     loading.value.announcements = false
   }
@@ -288,6 +330,7 @@ const getGradeClass = (score) => {
 }
 
 const formatDate = (date) => {
+  if (!date) return ''
   return new Date(date).toLocaleDateString('vi-VN')
 }
 
@@ -296,7 +339,7 @@ const viewAllCourses = () => {
 }
 
 const viewSchedule = () => {
-  router.push('/student-attendance')
+  router.push('/student-schedule')
 }
 
 const viewAllGrades = () => {
@@ -304,16 +347,17 @@ const viewAllGrades = () => {
 }
 
 const viewAllAnnouncements = () => {
-  // router.push('/announcements')
   console.log('View all announcements')
 }
 
 onMounted(() => {
+  console.log('🚀 Khởi tạo trang Dashboard Học viên...')
   loadStudentStats()
   loadCurrentCourses()
   loadUpcomingClasses()
   loadRecentGrades()
   loadAnnouncements()
+  console.log('✅ Trang Dashboard Học viên đã sẵn sàng')
 })
 </script>
 
@@ -321,6 +365,7 @@ onMounted(() => {
 .student-dashboard {
   max-width: 1400px;
   margin: 0 auto;
+  padding: 0 4px;
 }
 
 .welcome-section {
@@ -328,31 +373,42 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 32px;
-  padding: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 28px 36px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%);
   border-radius: 24px;
-  color: white;
+  color: #0f172a;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.welcome-text {
+  text-align: left;
 }
 
 .greeting {
   font-size: 28px;
   font-weight: 700;
+  color: #0f172a;
   margin-bottom: 8px;
+  text-align: left;
 }
 
 .subtitle {
-  opacity: 0.9;
+  color: #475569;
   font-size: 14px;
+  text-align: left;
 }
 
 .date-badge {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 40px;
   backdrop-filter: blur(10px);
+  color: #1e293b;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
 }
 
 .stats-grid {
@@ -365,17 +421,18 @@ onMounted(() => {
 .stat-card {
   background: white;
   border-radius: 20px;
-  padding: 20px;
+  padding: 24px;
   display: flex;
   align-items: center;
   gap: 16px;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
 }
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
 }
 
 .stat-icon {
@@ -386,6 +443,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   color: white;
+  flex-shrink: 0;
 }
 
 .stat-icon.gpa { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
@@ -393,19 +451,24 @@ onMounted(() => {
 .stat-icon.attendance { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
 .stat-icon.courses { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
 
+.stat-content {
+  flex: 1;
+}
+
 .stat-value {
   font-size: 28px;
   font-weight: 700;
-  color: #1e293b;
+  color: #0f172a;
 }
 
 .stat-title {
-  font-size: 14px;
+  font-size: 13px;
   color: #64748b;
+  margin-top: 2px;
 }
 
 .stat-trend {
-  font-size: 12px;
+  font-size: 11px;
   color: #10b981;
   display: flex;
   align-items: center;
@@ -423,12 +486,13 @@ onMounted(() => {
   background: white;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
   transition: all 0.3s ease;
 }
 
 .card:hover {
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
 .card-header {
@@ -436,13 +500,14 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .card-header h3 {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
-  color: #1e293b;
+  color: #0f172a;
+  margin: 0;
 }
 
 .card-body {
@@ -471,10 +536,9 @@ onMounted(() => {
 .grade-item,
 .announcement-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 12px;
-  border-radius: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
   transition: all 0.3s ease;
 }
 
@@ -502,7 +566,7 @@ onMounted(() => {
 
 .course-name {
   font-weight: 600;
-  color: #1e293b;
+  color: #0f172a;
   margin-bottom: 4px;
 }
 
@@ -519,10 +583,14 @@ onMounted(() => {
   gap: 4px;
 }
 
+.course-progress {
+  flex-shrink: 0;
+}
+
 .progress-circle {
   width: 48px;
   height: 48px;
-  background: #e2e8f0;
+  background: #f1f5f9;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -532,12 +600,12 @@ onMounted(() => {
 }
 
 .schedule-time {
-  min-width: 100px;
+  min-width: 120px;
 }
 
 .day {
   font-weight: 600;
-  color: #1e293b;
+  color: #0f172a;
   font-size: 14px;
 }
 
@@ -548,10 +616,12 @@ onMounted(() => {
 
 .schedule-info {
   flex: 1;
+  margin-left: 12px;
 }
 
 .schedule-info .course {
   font-weight: 500;
+  color: #0f172a;
   margin-bottom: 4px;
 }
 
@@ -566,6 +636,7 @@ onMounted(() => {
 
 .grade-course {
   font-weight: 500;
+  color: #0f172a;
   margin-bottom: 4px;
 }
 
@@ -592,6 +663,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   margin-right: 12px;
+  flex-shrink: 0;
 }
 
 .announcement-icon.high { background: #fee2e2; color: #ef4444; }
@@ -604,6 +676,7 @@ onMounted(() => {
 
 .announcement-title {
   font-weight: 500;
+  color: #0f172a;
   margin-bottom: 4px;
 }
 
@@ -628,6 +701,29 @@ onMounted(() => {
   }
   
   .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+  }
+  
+  .greeting {
+    font-size: 22px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
     grid-template-columns: 1fr;
   }
 }

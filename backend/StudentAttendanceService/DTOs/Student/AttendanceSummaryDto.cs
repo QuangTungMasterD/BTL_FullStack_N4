@@ -4,6 +4,7 @@ namespace StudentAttendanceService.DTOs.Student
     {
         public int CourseId { get; set; }
         public string CourseName { get; set; } = string.Empty;
+        public string? CourseCode { get; set; }  // THÊM property này
         public int TotalSessions { get; set; }
         public int Present { get; set; }
         public int Absent { get; set; }

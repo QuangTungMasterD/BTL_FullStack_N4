@@ -7,7 +7,7 @@
         </div>
         <div>
           <h1 class="hero-title">Quản lý giảng viên</h1>
-          <p class="hero-subtitle">Quản lý thông tin, phân công giảng dạy và tài khoản giảng viên</p>
+          <p class="hero-subtitle">Quản lý thông tin, phân công giảng dạy và tài khoản giảng viên trung tâm</p>
         </div>
       </div>
       <v-btn color="primary" class="hero-btn" @click="openAddDialog">
@@ -72,7 +72,7 @@
             <v-select
               v-model="selectedFaculty"
               :items="facultyOptions"
-              label="Khoa"
+              label="Khóa học"
               variant="plain"
               density="comfortable"
               class="filter-select-modern"
@@ -139,6 +139,16 @@
               </v-btn>
             </div>
           </template>
+          <template v-slot:no-data>
+            <div class="empty-state">
+              <v-icon icon="mdi-school-off" size="56" color="#cbd5e1" />
+              <p>Không có dữ liệu giảng viên</p>
+              <v-btn color="primary" variant="tonal" @click="openAddDialog" class="mt-3">
+                <v-icon icon="mdi-plus" class="mr-2" />
+                Thêm giảng viên mới
+              </v-btn>
+            </div>
+          </template>
         </v-data-table>
       </div>
     </div>
@@ -159,14 +169,67 @@
         <v-card-text class="dialog-content-modern">
           <v-form ref="form" v-model="formValid">
             <div class="form-grid">
-              <v-text-field v-model="formData.lecturerId" label="Mã giảng viên" variant="outlined" density="comfortable" :disabled="isEditing" prepend-inner-icon="mdi-identifier" />
-              <v-text-field v-model="formData.fullName" label="Họ và tên" variant="outlined" density="comfortable" prepend-inner-icon="mdi-account" />
-              <v-text-field v-model="formData.email" label="Email" type="email" variant="outlined" density="comfortable" prepend-inner-icon="mdi-email" />
-              <v-text-field v-model="formData.phone" label="Số điện thoại" variant="outlined" density="comfortable" prepend-inner-icon="mdi-phone" />
-              <v-select v-model="formData.faculty" :items="facultyList" label="Khoa" variant="outlined" density="comfortable" prepend-inner-icon="mdi-school" />
-              <v-select v-model="formData.title" :items="titleList" label="Học hàm/Học vị" variant="outlined" density="comfortable" prepend-inner-icon="mdi-account-tie" />
-              <v-text-field v-model="formData.specialization" label="Chuyên ngành" variant="outlined" density="comfortable" prepend-inner-icon="mdi-teacher" />
-              <v-select v-model="formData.status" :items="statusSelectOptions" label="Trạng thái" variant="outlined" density="comfortable" prepend-inner-icon="mdi-check-circle" />
+              <v-text-field 
+                v-model="formData.lecturerId" 
+                label="Mã giảng viên" 
+                variant="outlined" 
+                density="comfortable" 
+                :disabled="isEditing" 
+                prepend-inner-icon="mdi-identifier" 
+              />
+              <v-text-field 
+                v-model="formData.fullName" 
+                label="Họ và tên" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-account" 
+              />
+              <v-text-field 
+                v-model="formData.email" 
+                label="Email" 
+                type="email" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-email" 
+              />
+              <v-text-field 
+                v-model="formData.phone" 
+                label="Số điện thoại" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-phone" 
+              />
+              <v-select 
+                v-model="formData.faculty" 
+                :items="facultyList" 
+                label="Khóa học" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-school" 
+              />
+              <v-select 
+                v-model="formData.title" 
+                :items="titleList" 
+                label="Học hàm/Học vị" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-account-tie" 
+              />
+              <v-text-field 
+                v-model="formData.specialization" 
+                label="Chuyên ngành" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-teacher" 
+              />
+              <v-select 
+                v-model="formData.status" 
+                :items="statusSelectOptions" 
+                label="Trạng thái" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-check-circle" 
+              />
             </div>
           </v-form>
         </v-card-text>
@@ -184,23 +247,73 @@
     <v-dialog v-model="viewDialogVisible" max-width="540px" transition="dialog-transition">
       <v-card class="modern-dialog" v-if="selectedLecturer">
         <div class="view-header">
-          <div class="view-avatar"><span>{{ selectedLecturer.fullName?.charAt(0) || '?' }}</span></div>
-          <div class="view-header-info"><h3>{{ selectedLecturer.fullName }}</h3><p>{{ selectedLecturer.lecturerId }}</p></div>
-          <v-chip :color="getTitleColor(selectedLecturer.title)" size="small" class="view-chip">{{ selectedLecturer.title }}</v-chip>
+          <div class="view-avatar">
+            <span>{{ selectedLecturer.fullName?.charAt(0) || '?' }}</span>
+          </div>
+          <div class="view-header-info">
+            <h3>{{ selectedLecturer.fullName }}</h3>
+            <p>{{ selectedLecturer.lecturerId }}</p>
+          </div>
+          <v-chip :color="getTitleColor(selectedLecturer.title)" size="small" class="view-chip">
+            {{ selectedLecturer.title }}
+          </v-chip>
         </div>
         <v-divider />
         <v-card-text class="view-content">
           <div class="info-grid">
-            <div class="info-item"><div class="info-icon"><v-icon icon="mdi-email" size="18" color="#64748b" /></div><div><div class="info-label">Email</div><div class="info-value">{{ selectedLecturer.email }}</div></div></div>
-            <div class="info-item"><div class="info-icon"><v-icon icon="mdi-phone" size="18" color="#64748b" /></div><div><div class="info-label">Điện thoại</div><div class="info-value">{{ selectedLecturer.phone || 'Chưa cập nhật' }}</div></div></div>
-            <div class="info-item"><div class="info-icon"><v-icon icon="mdi-school" size="18" color="#64748b" /></div><div><div class="info-label">Khoa</div><div class="info-value">{{ selectedLecturer.faculty }}</div></div></div>
-            <div class="info-item"><div class="info-icon"><v-icon icon="mdi-teacher" size="18" color="#64748b" /></div><div><div class="info-label">Chuyên ngành</div><div class="info-value">{{ selectedLecturer.specialization }}</div></div></div>
-            <div class="info-item"><div class="info-icon"><v-icon icon="mdi-book-open" size="18" color="#64748b" /></div><div><div class="info-label">Số khóa đang dạy</div><div class="info-value">{{ selectedLecturer.courses }} khóa</div></div></div>
+            <div class="info-item">
+              <div class="info-icon"><v-icon icon="mdi-email" size="18" color="#64748b" /></div>
+              <div>
+                <div class="info-label">Email</div>
+                <div class="info-value">{{ selectedLecturer.email }}</div>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon"><v-icon icon="mdi-phone" size="18" color="#64748b" /></div>
+              <div>
+                <div class="info-label">Điện thoại</div>
+                <div class="info-value">{{ selectedLecturer.phone || 'Chưa cập nhật' }}</div>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon"><v-icon icon="mdi-school" size="18" color="#64748b" /></div>
+              <div>
+                <div class="info-label">Khóa học</div>
+                <div class="info-value">{{ selectedLecturer.faculty || 'Chưa phân loại' }}</div>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon"><v-icon icon="mdi-teacher" size="18" color="#64748b" /></div>
+              <div>
+                <div class="info-label">Chuyên ngành</div>
+                <div class="info-value">{{ selectedLecturer.specialization || 'Chưa cập nhật' }}</div>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon"><v-icon icon="mdi-book-open" size="18" color="#64748b" /></div>
+              <div>
+                <div class="info-label">Số khóa đang dạy</div>
+                <div class="info-value">{{ selectedLecturer.courses || 0 }} khóa</div>
+              </div>
+            </div>
           </div>
           <v-divider class="my-4" />
-          <div class="teaching-courses"><h4 class="section-title">Khóa học đang giảng dạy</h4><div class="course-list"><div class="teaching-course" v-for="course in teachingCourses" :key="course.id"><div class="course-code">{{ course.code }}</div><div class="course-name">{{ course.name }}</div><div class="course-students">{{ course.students }} SV</div></div><div v-if="teachingCourses.length === 0" class="empty-text">Chưa có khóa học nào</div></div></div>
+          <div class="teaching-courses">
+            <h4 class="section-title">Khóa học đang giảng dạy</h4>
+            <div class="course-list">
+              <div class="teaching-course" v-for="course in teachingCourses" :key="course.id">
+                <div class="course-code">{{ course.code }}</div>
+                <div class="course-name">{{ course.name }}</div>
+                <div class="course-students">{{ course.students }} HV</div>
+              </div>
+              <div v-if="teachingCourses.length === 0" class="empty-text">Chưa có khóa học nào</div>
+            </div>
+          </div>
         </v-card-text>
-        <v-card-actions class="dialog-actions-modern"><v-spacer /><v-btn color="primary" variant="text" @click="viewDialogVisible = false">Đóng</v-btn></v-card-actions>
+        <v-card-actions class="dialog-actions-modern">
+          <v-spacer />
+          <v-btn color="primary" variant="text" @click="viewDialogVisible = false">Đóng</v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
@@ -223,14 +336,17 @@ const loading = ref(false)
 const saving = ref(false)
 const selectedLecturer = ref(null)
 
+// Options cho filter - Đổi thành khóa học
 const facultyOptions = [
-  { title: 'Tất cả khoa', value: 'all' },
-  { title: 'Công nghệ thông tin', value: 'CNTT' },
-  { title: 'Quản trị kinh doanh', value: 'QTKD' },
-  { title: 'Ngôn ngữ Anh', value: 'NNKT' },
+  { title: 'Tất cả khóa học', value: 'all' },
+  { title: 'Lập trình Python', value: 'Python' },
+  { title: 'Lập trình Java', value: 'Java' },
+  { title: 'Tiếng Anh giao tiếp', value: 'English' },
+  { title: 'Toán cao cấp', value: 'Math' },
+  { title: 'Kỹ năng mềm', value: 'SoftSkills' },
 ]
 
-const facultyList = ['Công nghệ thông tin', 'Quản trị kinh doanh', 'Ngôn ngữ Anh']
+const facultyList = ['Python', 'Java', 'English', 'Math', 'SoftSkills', 'Data Science', 'AI/ML']
 
 const titleOptions = [
   { title: 'Tất cả', value: 'all' },
@@ -241,25 +357,29 @@ const titleOptions = [
 ]
 
 const titleList = ['Giáo sư', 'Phó Giáo sư', 'Tiến sĩ', 'Thạc sĩ']
-const statusSelectOptions = [{ title: 'Đang công tác', value: 'Active' }, { title: 'Đã nghỉ', value: 'Inactive' }]
-
-const headers = [
-  { title: 'Mã GV', key: 'lecturerId', sortable: true },
-  { title: 'Họ tên', key: 'fullName', sortable: true },
-  { title: 'Email', key: 'email' },
-  { title: 'Khoa', key: 'faculty' },
-  { title: 'Học hàm/Học vị', key: 'title', sortable: true },
-  { title: 'Số khóa', key: 'courses', sortable: true },
-  { title: 'Trạng thái', key: 'status', sortable: true },
-  { title: 'Thao tác', key: 'actions', sortable: false },
+const statusSelectOptions = [
+  { title: 'Đang công tác', value: 'Active' }, 
+  { title: 'Đã nghỉ', value: 'Inactive' }
 ]
 
-// Mock data fallback
+// Headers cho bảng
+const headers = [
+  { title: 'Mã GV', key: 'lecturerId', sortable: true, align: 'start' },
+  { title: 'Họ tên', key: 'fullName', sortable: true, align: 'start' },
+  { title: 'Email', key: 'email', align: 'start' },
+  { title: 'Khóa học', key: 'faculty', align: 'start' },
+  { title: 'Học hàm/Học vị', key: 'title', sortable: true, align: 'start' },
+  { title: 'Số khóa', key: 'courses', sortable: true, align: 'center' },
+  { title: 'Trạng thái', key: 'status', sortable: true, align: 'center' },
+  { title: 'Thao tác', key: 'actions', sortable: false, align: 'center', width: 120 },
+]
+
+// Mock data
 const mockLecturers = [
-  { id: 1, lecturerId: 'GV001', fullName: 'PGS.TS Trần Văn Xuân', email: 'tranvanx.khmt@gmail.com', phone: '0912345678', faculty: 'CNTT', title: 'Phó Giáo sư', specialization: 'Khoa học máy tính', courses: 3, status: 'Active' },
-  { id: 2, lecturerId: 'GV002', fullName: 'TS. Nguyễn Thị Hải Yến', email: 'nguyenthiy.qtkd@gmail.com', phone: '0903456789', faculty: 'QTKD', title: 'Tiến sĩ', specialization: 'Quản trị chiến lược', courses: 2, status: 'Active' },
-  { id: 3, lecturerId: 'GV003', fullName: 'ThS. Lê Văn Anh Tuấn', email: 'levanz.nna@gmail.com', phone: '0945678912', faculty: 'NNKT', title: 'Thạc sĩ', specialization: 'Ngôn ngữ học', courses: 2, status: 'Active' },
-  { id: 4, lecturerId: 'GV004', fullName: 'GS.TS Phạm Thị Hải Vân', email: 'phamthiw.ai@gmail.com', phone: '0988765432', faculty: 'CNTT', title: 'Giáo sư', specialization: 'Trí tuệ nhân tạo', courses: 1, status: 'Active' },
+  { id: 1, lecturerId: 'GV001', fullName: 'PGS.TS Trần Văn Xuân', email: 'tranvanx@gmail.com', phone: '0912345678', faculty: 'Python', title: 'Phó Giáo sư', specialization: 'Khoa học máy tính', courses: 3, status: 'Active' },
+  { id: 2, lecturerId: 'GV002', fullName: 'TS. Nguyễn Thị Hải Yến', email: 'nguyenthiy@gmail.com', phone: '0903456789', faculty: 'Java', title: 'Tiến sĩ', specialization: 'Lập trình hướng đối tượng', courses: 2, status: 'Active' },
+  { id: 3, lecturerId: 'GV003', fullName: 'ThS. Lê Văn Anh Tuấn', email: 'levanz@gmail.com', phone: '0945678912', faculty: 'English', title: 'Thạc sĩ', specialization: 'Ngôn ngữ học ứng dụng', courses: 2, status: 'Active' },
+  { id: 4, lecturerId: 'GV004', fullName: 'GS.TS Phạm Thị Hải Vân', email: 'phamthiw@gmail.com', phone: '0988765432', faculty: 'Math', title: 'Giáo sư', specialization: 'Toán ứng dụng', courses: 1, status: 'Active' },
 ]
 
 const lecturersData = ref([])
@@ -270,48 +390,17 @@ const masterCount = ref(0)
 const teachingCourses = ref([])
 
 const formData = ref({
-  lecturerId: '', fullName: '', email: '', phone: '', faculty: '', title: '', specialization: '', status: 'Active'
+  lecturerId: '',
+  fullName: '',
+  email: '',
+  phone: '',
+  faculty: '',
+  title: '',
+  specialization: '',
+  status: 'Active'
 })
 
-const loadLecturers = async () => {
-  loading.value = true
-  try {
-    const params = {}
-    if (searchQuery.value) params.search = searchQuery.value
-    if (selectedFaculty.value !== 'all') params.faculty = selectedFaculty.value
-    if (selectedTitle.value !== 'all') params.title = selectedTitle.value
-    
-    const response = await api.get('/studentattendance/api/admin/lecturers', { params })
-    const data = response.data.items || response.data || []
-    
-    if (data && data.length > 0) {
-      lecturersData.value = data
-    } else {
-      lecturersData.value = [...mockLecturers]
-    }
-    totalLecturers.value = lecturersData.value.length
-    professorCount.value = lecturersData.value.filter(l => l.title === 'Giáo sư' || l.title === 'Phó Giáo sư').length
-    doctorCount.value = lecturersData.value.filter(l => l.title === 'Tiến sĩ').length
-    masterCount.value = lecturersData.value.filter(l => l.title === 'Thạc sĩ').length
-  } catch (error) {
-    console.error('API failed, using mock data:', error)
-    lecturersData.value = [...mockLecturers]
-    totalLecturers.value = lecturersData.value.length
-    professorCount.value = lecturersData.value.filter(l => l.title === 'Giáo sư' || l.title === 'Phó Giáo sư').length
-    doctorCount.value = lecturersData.value.filter(l => l.title === 'Tiến sĩ').length
-    masterCount.value = lecturersData.value.filter(l => l.title === 'Thạc sĩ').length
-  } finally {
-    loading.value = false
-  }
-}
-
-const resetFilters = () => {
-  searchQuery.value = ''
-  selectedFaculty.value = 'all'
-  selectedTitle.value = 'all'
-  loadLecturers()
-}
-
+// Helper methods
 const getTitleColor = (title) => {
   const colors = { 'Giáo sư': 'deep-purple', 'Phó Giáo sư': 'purple', 'Tiến sĩ': 'primary', 'Thạc sĩ': 'info' }
   return colors[title] || 'default'
@@ -320,6 +409,47 @@ const getTitleColor = (title) => {
 const getTitleClass = (title) => {
   const classes = { 'Giáo sư': 'professor', 'Phó Giáo sư': 'associate', 'Tiến sĩ': 'doctor', 'Thạc sĩ': 'master' }
   return classes[title] || ''
+}
+
+// Load lecturers
+const loadLecturers = async () => {
+  loading.value = true
+  try {
+    const params = {}
+    if (searchQuery.value) params.search = searchQuery.value
+    if (selectedFaculty.value !== 'all') params.faculty = selectedFaculty.value
+    if (selectedTitle.value !== 'all') params.title = selectedTitle.value
+    
+    const response = await api.get('/api/admin/lecturers', { params })
+    const data = response.data.items || response.data || []
+    
+    if (data && data.length > 0) {
+      lecturersData.value = data
+    } else {
+      lecturersData.value = [...mockLecturers]
+    }
+    updateStatistics()
+  } catch (error) {
+    console.error('❌ API failed, using mock data:', error)
+    lecturersData.value = [...mockLecturers]
+    updateStatistics()
+  } finally {
+    loading.value = false
+  }
+}
+
+const updateStatistics = () => {
+  totalLecturers.value = lecturersData.value.length
+  professorCount.value = lecturersData.value.filter(l => l.title === 'Giáo sư' || l.title === 'Phó Giáo sư').length
+  doctorCount.value = lecturersData.value.filter(l => l.title === 'Tiến sĩ').length
+  masterCount.value = lecturersData.value.filter(l => l.title === 'Thạc sĩ').length
+}
+
+const resetFilters = () => {
+  searchQuery.value = ''
+  selectedFaculty.value = 'all'
+  selectedTitle.value = 'all'
+  loadLecturers()
 }
 
 const openAddDialog = () => {
@@ -337,25 +467,33 @@ const editLecturer = (lecturer) => {
 const viewLecturer = (lecturer) => {
   selectedLecturer.value = lecturer
   viewDialogVisible.value = true
-  teachingCourses.value = [
-    { id: 1, code: 'CS101', name: 'Nhập môn lập trình', students: 45 },
-    { id: 2, code: 'CS201', name: 'Cấu trúc dữ liệu', students: 42 },
-  ]
+  // Tải danh sách khóa học của giảng viên
+  loadLecturerCourses(lecturer.id)
+}
+
+const loadLecturerCourses = async (lecturerId) => {
+  try {
+    const response = await api.get(`/api/admin/lecturers/${lecturerId}/courses`)
+    teachingCourses.value = response.data || []
+  } catch (error) {
+    console.error('❌ Không thể tải khóa học của giảng viên:', error)
+    teachingCourses.value = [
+      { id: 1, code: 'PY101', name: 'Lập trình Python cơ bản', students: 35 },
+      { id: 2, code: 'PY201', name: 'Lập trình Python nâng cao', students: 28 },
+    ]
+  }
 }
 
 const deleteLecturer = async (lecturer) => {
   if (confirm(`Bạn có chắc muốn xóa giảng viên ${lecturer.fullName}?`)) {
     try {
-      await api.delete(`/studentattendance/api/admin/lecturers/${lecturer.id}`)
+      await api.delete(`/api/admin/lecturers/${lecturer.id}`)
       await loadLecturers()
     } catch (error) {
-      console.error('Delete failed, removing from local:', error)
+      console.error('❌ Delete failed, removing from local:', error)
       const index = lecturersData.value.findIndex(l => l.id === lecturer.id)
       if (index > -1) lecturersData.value.splice(index, 1)
-      totalLecturers.value = lecturersData.value.length
-      professorCount.value = lecturersData.value.filter(l => l.title === 'Giáo sư' || l.title === 'Phó Giáo sư').length
-      doctorCount.value = lecturersData.value.filter(l => l.title === 'Tiến sĩ').length
-      masterCount.value = lecturersData.value.filter(l => l.title === 'Thạc sĩ').length
+      updateStatistics()
     }
   }
 }
@@ -364,14 +502,14 @@ const saveLecturer = async () => {
   saving.value = true
   try {
     if (isEditing.value) {
-      await api.put(`/studentattendance/api/admin/lecturers/${formData.value.id}`, formData.value)
+      await api.put(`/api/admin/lecturers/${formData.value.id}`, formData.value)
     } else {
-      await api.post('/studentattendance/api/admin/lecturers', formData.value)
+      await api.post('/api/admin/lecturers', formData.value)
     }
     await loadLecturers()
     dialogVisible.value = false
   } catch (error) {
-    console.error('Save failed, using local:', error)
+    console.error('❌ Save failed, using local:', error)
     if (isEditing.value) {
       const index = lecturersData.value.findIndex(l => l.id === formData.value.id)
       if (index > -1) lecturersData.value[index] = { ...formData.value }
@@ -379,16 +517,23 @@ const saveLecturer = async () => {
       const newId = Math.max(...lecturersData.value.map(l => l.id), 0) + 1
       lecturersData.value.push({ ...formData.value, id: newId, courses: 0 })
     }
+    updateStatistics()
     dialogVisible.value = false
-    loadLecturers()
   } finally {
     saving.value = false
   }
 }
 
-const exportData = () => { console.log('Export data') }
+const exportData = () => {
+  console.log('📊 Export data...')
+  alert('Chức năng xuất Excel đang được phát triển')
+}
 
-onMounted(() => { loadLecturers() })
+onMounted(() => {
+  console.log('🚀 Khởi tạo trang Quản lý giảng viên...')
+  loadLecturers()
+  console.log('✅ Trang Quản lý giảng viên đã sẵn sàng')
+})
 </script>
 
 <style scoped>
@@ -574,18 +719,65 @@ onMounted(() => { loadLecturers() })
   overflow-x: auto;
 }
 
+.modern-table :deep(.v-data-table-header) {
+  background-color: #f8fafc !important;
+}
+
 .modern-table :deep(.v-data-table-header th) {
-  background: #f8fafc;
+  background: #f8fafc !important;
   font-weight: 600;
-  color: #475569;
+  color: #1e293b;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 16px;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.modern-table :deep(.v-data-table-header th:first-child) {
+  border-top-left-radius: 12px;
+}
+
+.modern-table :deep(.v-data-table-header th:last-child) {
+  border-top-right-radius: 12px;
 }
 
 .modern-table :deep(td) {
   padding: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.modern-table :deep(.v-data-table-footer) {
+  padding: 16px 24px;
+  background: white;
+  border-top: 1px solid #eef2f6;
+}
+
+.modern-table :deep(.v-data-table-footer .v-select) {
+  width: 100px;
+}
+
+.modern-table :deep(.v-data-table-footer .v-select .v-field) {
+  border-radius: 8px;
+}
+
+.modern-table :deep(.v-data-table-footer .v-select .v-field__input) {
+  text-align: center;
+  justify-content: center;
+}
+
+.modern-table :deep(.v-data-table-footer .v-select .v-select__selection) {
+  justify-content: center;
+}
+
+.modern-table :deep(.v-data-table-footer .v-pagination) {
+  justify-content: flex-end;
+}
+
+.modern-table :deep(.v-data-table-footer .v-data-table-footer__info) {
+  font-size: 13px;
+  color: #64748b;
 }
 
 .title-badge {
@@ -629,6 +821,7 @@ onMounted(() => { loadLecturers() })
 .action-group {
   display: flex;
   gap: 4px;
+  justify-content: center;
 }
 
 .action-btn.view:hover { background: #dbeafe; color: #3b82f6; }
@@ -686,6 +879,10 @@ onMounted(() => { loadLecturers() })
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+}
+
+.form-grid :deep(.v-field) {
+  border-radius: 14px;
 }
 
 .dialog-actions-modern {
@@ -816,6 +1013,17 @@ onMounted(() => { loadLecturers() })
   text-align: center;
   padding: 20px;
   color: #94a3b8;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  color: #94a3b8;
+}
+
+.empty-state p {
+  margin-top: 16px;
+  font-size: 14px;
 }
 
 @media (max-width: 1200px) {

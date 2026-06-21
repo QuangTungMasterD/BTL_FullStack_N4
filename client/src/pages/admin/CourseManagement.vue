@@ -1,5 +1,6 @@
 <template>
   <div class="course-management">
+    <!-- Hero Header -->
     <div class="hero-header">
       <div class="hero-content">
         <div class="hero-icon">
@@ -7,13 +8,19 @@
         </div>
         <div>
           <h1 class="hero-title">Quản lý khóa học</h1>
-          <p class="hero-subtitle">Quản lý danh sách khóa học và phân công giảng viên</p>
+          <p class="hero-subtitle">Quản lý danh sách khóa học và phân công giảng viên tại trung tâm</p>
         </div>
       </div>
-      <v-btn color="primary" class="hero-btn" @click="openAddDialog">
-        <v-icon icon="mdi-plus" class="mr-2" />
-        Thêm khóa học
-      </v-btn>
+      <div class="hero-actions">
+        <v-btn color="primary" class="hero-btn" @click="openAddDialog">
+          <v-icon icon="mdi-plus" class="mr-2" />
+          Thêm khóa học
+        </v-btn>
+        <v-btn variant="tonal" class="hero-btn-outline" @click="goToTrash">
+          <v-icon icon="mdi-delete" class="mr-2" />
+          Thùng rác
+        </v-btn>
+      </div>
     </div>
 
     <!-- Statistics Section -->
@@ -57,66 +64,137 @@
       </div>
     </div>
 
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <div class="search-wrapper">
+          <v-icon icon="mdi-magnify" size="20" class="search-icon" />
+          <input 
+            v-model="searchQuery" 
+            type="text" 
+            placeholder="Tìm kiếm khóa học..." 
+            class="search-input-modern"
+            @input="loadCourses"
+          />
+        </div>
+        <v-select
+          v-model="selectedFaculty"
+          :items="facultyOptions"
+          label="Khóa học"
+          variant="outlined"
+          density="compact"
+          class="filter-select"
+          hide-details
+          @update:model-value="loadCourses"
+        />
+        <v-select
+          v-model="selectedSemester"
+          :items="semesterOptions"
+          label="Học kỳ"
+          variant="outlined"
+          density="compact"
+          class="filter-select"
+          hide-details
+          @update:model-value="loadCourses"
+        />
+        <v-select
+          v-model="selectedStatus"
+          :items="statusOptions"
+          label="Trạng thái"
+          variant="outlined"
+          density="compact"
+          class="filter-select"
+          hide-details
+          @update:model-value="loadCourses"
+        />
+      </div>
+      <div class="filter-actions">
+        <v-btn variant="text" color="primary" @click="resetFilters" class="reset-btn">
+          <v-icon icon="mdi-filter-remove" size="18" class="mr-1" />
+          Xóa lọc
+        </v-btn>
+      </div>
+    </div>
+
+    <!-- Course Cards Grid -->
     <div class="workspace-card">
       <div class="workspace-toolbar">
         <div class="toolbar-left">
-          <div class="search-wrapper">
-            <v-icon icon="mdi-magnify" size="20" class="search-icon" />
-            <input v-model="searchQuery" type="text" placeholder="Tìm kiếm khóa học..." class="search-input-modern"
-              @input="loadCourses" />
-          </div>
-          <div class="filter-group">
-            <v-select v-model="selectedFaculty" :items="facultyOptions" label="Khoa" variant="plain"
-              density="comfortable" class="filter-select-modern" hide-details @update:model-value="loadCourses" />
-            <v-select v-model="selectedSemester" :items="semesterOptions" label="Học kỳ" variant="plain"
-              density="comfortable" class="filter-select-modern" hide-details @update:model-value="loadCourses" />
-          </div>
+          <span class="total-records">Tổng: {{ totalCourses }} khóa học</span>
         </div>
         <div class="toolbar-right">
-          <v-btn variant="text" color="primary" @click="resetFilters" class="reset-btn"><v-icon icon="mdi-filter-remove"
-              size="18" class="mr-1" />Xóa lọc</v-btn>
-          <v-btn variant="tonal" color="primary" @click="exportData" class="export-btn"><v-icon icon="mdi-export"
-              size="18" class="mr-1" />Xuất Excel</v-btn>
+          <v-btn variant="tonal" color="primary" @click="exportData" class="export-btn">
+            <v-icon icon="mdi-export" size="18" class="mr-1" />
+            Xuất Excel
+          </v-btn>
         </div>
       </div>
 
-      <div class="courses-grid">
+      <div v-if="loading" class="loading-container">
+        <v-icon icon="mdi-loading" size="40" class="spin" />
+        <p>Đang tải dữ liệu...</p>
+      </div>
+
+      <div v-else class="courses-grid">
         <div class="course-card-modern" v-for="course in coursesData" :key="course.id">
           <div class="course-card-header" :style="{ background: getCourseGradient(course.id) }">
             <div class="course-code-badge">{{ course.code }}</div>
             <div class="course-actions">
-              <v-btn icon size="small" variant="text" class="card-action-btn" @click="editCourse(course)"><v-icon
-                  icon="mdi-pencil" size="18" color="white" /></v-btn>
-              <v-btn icon size="small" variant="text" class="card-action-btn" @click="deleteCourse(course)"><v-icon
-                  icon="mdi-delete" size="18" color="white" /></v-btn>
+              <v-btn icon size="small" variant="text" class="card-action-btn" @click="editCourse(course)">
+                <v-icon icon="mdi-pencil" size="18" color="white" />
+              </v-btn>
+              <v-btn icon size="small" variant="text" class="card-action-btn" @click="deleteCourse(course)">
+                <v-icon icon="mdi-delete" size="18" color="white" />
+              </v-btn>
             </div>
           </div>
           <div class="course-card-body">
             <h3 class="course-name-modern">{{ course.name }}</h3>
             <div class="course-info-grid">
-              <div class="course-info-item"><v-icon icon="mdi-credit-card" size="14" class="info-icon" /><span>{{
-                  course.credits }} tín chỉ</span></div>
-              <div class="course-info-item"><v-icon icon="mdi-school" size="14" class="info-icon" /><span>{{
-                  course.lecturer }}</span></div>
-              <div class="course-info-item"><v-icon icon="mdi-domain" size="14" class="info-icon" /><span>{{
-                  course.faculty }}</span></div>
-              <div class="course-info-item"><v-icon icon="mdi-calendar" size="14" class="info-icon" /><span>{{
-                  course.semester }}</span></div>
+              <div class="course-info-item">
+                <v-icon icon="mdi-credit-card" size="14" class="info-icon" />
+                <span>{{ course.credits }} tín chỉ</span>
+              </div>
+              <div class="course-info-item">
+                <v-icon icon="mdi-school" size="14" class="info-icon" />
+                <span>{{ course.lecturer || 'Chưa phân công' }}</span>
+              </div>
+              <div class="course-info-item">
+                <v-icon icon="mdi-domain" size="14" class="info-icon" />
+                <span>{{ course.faculty }}</span>
+              </div>
+              <div class="course-info-item">
+                <v-icon icon="mdi-calendar" size="14" class="info-icon" />
+                <span>{{ course.semester }}</span>
+              </div>
             </div>
-            <div class="course-schedule-info"><v-icon icon="mdi-clock" size="14" class="info-icon" /><span>{{
-              course.schedule }}</span></div>
-            <div class="course-room-info"><v-icon icon="mdi-map-marker" size="14" class="info-icon" /><span>{{
-                course.room }}</span></div>
+            <div class="course-schedule-info" v-if="course.schedule">
+              <v-icon icon="mdi-clock" size="14" class="info-icon" />
+              <span>{{ course.schedule }}</span>
+            </div>
+            <div class="course-room-info" v-if="course.room">
+              <v-icon icon="mdi-map-marker" size="14" class="info-icon" />
+              <span>{{ course.room }}</span>
+            </div>
             <div class="course-enrollment-progress">
               <div class="progress-bar-container">
                 <div class="progress-bar-bg">
-                  <div class="progress-fill" :style="{ width: `${(course.enrolled / course.maxStudents) * 100}%` }">
-                  </div>
-                </div><span class="progress-text">{{ course.enrolled }}/{{ course.maxStudents }}</span>
+                  <div class="progress-fill" :style="{ width: `${Math.min((course.enrolled / course.maxStudents) * 100, 100)}%` }"></div>
+                </div>
+                <span class="progress-text">{{ course.enrolled || 0 }}/{{ course.maxStudents }}</span>
               </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div v-if="!loading && coursesData.length === 0" class="empty-state">
+        <v-icon icon="mdi-book-open-off" size="56" color="#cbd5e1" />
+        <p>Không có dữ liệu khóa học</p>
+        <v-btn color="primary" variant="tonal" @click="openAddDialog" class="mt-3">
+          <v-icon icon="mdi-plus" class="mr-2" />
+          Thêm khóa học mới
+        </v-btn>
       </div>
     </div>
 
@@ -124,7 +202,9 @@
     <v-dialog v-model="dialogVisible" max-width="560px" transition="dialog-transition">
       <v-card class="modern-dialog">
         <div class="dialog-header-modern" :class="isEditing ? 'edit-mode' : 'create-mode'">
-          <div class="dialog-header-icon"><v-icon :icon="isEditing ? 'mdi-pencil' : 'mdi-book-plus'" size="28" /></div>
+          <div class="dialog-header-icon">
+            <v-icon :icon="isEditing ? 'mdi-pencil' : 'mdi-book-plus'" size="28" />
+          </div>
           <div>
             <h2 class="dialog-title">{{ isEditing ? 'Chỉnh sửa khóa học' : 'Thêm khóa học mới' }}</h2>
             <p class="dialog-subtitle">{{ isEditing ? 'Cập nhật thông tin khóa học' : 'Nhập thông tin để tạo khóa học mới' }}</p>
@@ -134,47 +214,108 @@
         <v-card-text class="dialog-content-modern">
           <v-form ref="form" v-model="formValid">
             <div class="form-grid">
-              <v-text-field v-model="formData.code" label="Mã khóa học" variant="outlined" density="comfortable"
-                :disabled="isEditing" prepend-inner-icon="mdi-identifier" />
-              <v-text-field v-model="formData.name" label="Tên khóa học" variant="outlined" density="comfortable"
-                prepend-inner-icon="mdi-book-open" />
-              <v-text-field v-model="formData.credits" label="Số tín chỉ" type="number" variant="outlined"
-                density="comfortable" prepend-inner-icon="mdi-credit-card" />
-              <v-select v-model="formData.faculty" :items="facultyList" label="Khoa" variant="outlined"
-                density="comfortable" prepend-inner-icon="mdi-domain" />
-              <v-select v-model="formData.lecturer" :items="lecturerList" label="Giảng viên" variant="outlined"
-                density="comfortable" prepend-inner-icon="mdi-school" />
-              <v-text-field v-model="formData.schedule" label="Lịch học" placeholder="Thứ 2, 13:30-16:30"
-                variant="outlined" density="comfortable" prepend-inner-icon="mdi-clock" />
-              <v-text-field v-model="formData.room" label="Phòng học" variant="outlined" density="comfortable"
-                prepend-inner-icon="mdi-map-marker" />
-              <v-select v-model="formData.semester" :items="semesterOptions" label="Học kỳ" variant="outlined"
-                density="comfortable" prepend-inner-icon="mdi-calendar" />
-              <v-text-field v-model="formData.maxStudents" label="Sĩ số tối đa" type="number" variant="outlined"
-                density="comfortable" prepend-inner-icon="mdi-account-group" />
+              <v-text-field 
+                v-model="formData.code" 
+                label="Mã khóa học" 
+                variant="outlined" 
+                density="comfortable" 
+                :disabled="isEditing" 
+                prepend-inner-icon="mdi-identifier" 
+              />
+              <v-text-field 
+                v-model="formData.name" 
+                label="Tên khóa học" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-book-open" 
+              />
+              <v-text-field 
+                v-model="formData.credits" 
+                label="Số tín chỉ" 
+                type="number" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-credit-card" 
+              />
+              <v-select 
+                v-model="formData.faculty" 
+                :items="facultyList" 
+                label="Khóa học" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-domain" 
+              />
+              <v-select 
+                v-model="formData.lecturerId" 
+                :items="lecturerList" 
+                label="Giảng viên" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-school" 
+                item-title="title"
+                item-value="value"
+              />
+              <v-text-field 
+                v-model="formData.schedule" 
+                label="Lịch học" 
+                placeholder="Thứ 2, 13:30-16:30" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-clock" 
+              />
+              <v-text-field 
+                v-model="formData.room" 
+                label="Phòng học" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-map-marker" 
+              />
+              <v-select 
+                v-model="formData.semester" 
+                :items="semesterOptions" 
+                label="Học kỳ" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-calendar" 
+              />
+              <v-text-field 
+                v-model="formData.maxStudents" 
+                label="Sĩ số tối đa" 
+                type="number" 
+                variant="outlined" 
+                density="comfortable" 
+                prepend-inner-icon="mdi-account-group" 
+              />
             </div>
           </v-form>
         </v-card-text>
         <v-divider />
-        <v-card-actions class="dialog-actions-modern"><v-btn variant="text" class="cancel-btn"
-            @click="dialogVisible = false">Hủy</v-btn><v-btn :color="isEditing ? 'warning' : 'primary'" class="save-btn"
-            @click="saveCourse" :loading="saving">{{ isEditing ? 'Cập nhật' : 'Thêm mới' }}</v-btn></v-card-actions>
+        <v-card-actions class="dialog-actions-modern">
+          <v-btn variant="text" class="cancel-btn" @click="dialogVisible = false">Hủy</v-btn>
+          <v-btn :color="isEditing ? 'warning' : 'primary'" class="save-btn" @click="saveCourse" :loading="saving">
+            {{ isEditing ? 'Cập nhật' : 'Thêm mới' }}
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import api from '@/utils/api'
 
+const router = useRouter()
 const searchQuery = ref('')
 const selectedFaculty = ref('all')
 const selectedSemester = ref('all')
+const selectedStatus = ref('all')
 const dialogVisible = ref(false)
 const isEditing = ref(false)
 const loading = ref(false)
 const saving = ref(false)
+const formValid = ref(true)
 
 // Statistics data
 const totalCourses = ref(0)
@@ -183,24 +324,43 @@ const activeCourses = ref(0)
 const totalEnrollments = ref(0)
 const popularCourse = ref('')
 
+// Options
 const facultyOptions = [
-  { title: 'Tất cả khoa', value: 'all' },
-  { title: 'Công nghệ thông tin', value: 'CNTT' },
-  { title: 'Quản trị kinh doanh', value: 'QTKD' },
-  { title: 'Ngôn ngữ Anh', value: 'NNKT' },
+  { title: 'Tất cả khóa học', value: 'all' },
+  { title: 'Python', value: 'Python' },
+  { title: 'Java', value: 'Java' },
+  { title: 'Tiếng Anh giao tiếp', value: 'English' },
+  { title: 'Toán cao cấp', value: 'Math' },
+  { title: 'Kỹ năng mềm', value: 'SoftSkills' },
 ]
 
-const facultyList = ['CNTT', 'QTKD', 'NNKT']
-const lecturerList = ref([])
+const facultyList = ['Python', 'Java', 'English', 'Math', 'SoftSkills', 'Data Science', 'AI/ML']
+
+const statusOptions = [
+  { title: 'Tất cả trạng thái', value: 'all' },
+  { title: 'Đang mở', value: 'active' },
+  { title: 'Đã đóng', value: 'closed' },
+  { title: 'Sắp khai giảng', value: 'upcoming' },
+]
+
 const semesterOptions = ref(['Fall 2024', 'Spring 2025', 'Summer 2025'])
+const lecturerList = ref([])
 
 const coursesData = ref([])
 
 const formData = ref({
-  code: '', name: '', credits: 3, faculty: '', lecturerId: null, lecturer: '', schedule: '', room: '', semester: 'Fall 2024', maxStudents: 60
+  code: '',
+  name: '',
+  credits: 3,
+  faculty: '',
+  lecturerId: null,
+  schedule: '',
+  room: '',
+  semester: 'Fall 2024',
+  maxStudents: 60
 })
 
-// Mock data fallback
+// Mock data
 const mockStats = {
   totalCourses: 156,
   totalCredits: 486,
@@ -213,30 +373,32 @@ const mockStats = {
 // Load course statistics
 const loadCourseStatistics = async () => {
   try {
-    const response = await api.get('/studentattendance/api/admin/courses/stats')
+    console.log('🔄 Đang tải thống kê khóa học...')
+    const response = await api.get('/api/admin/courses/stats')
+    console.log('✅ Thống kê khóa học fetch thành công:', response.data)
     const data = response.data
-    totalCourses.value = data.totalCourses
-    totalCredits.value = data.totalCredits
-    activeCourses.value = data.activeCourses
-    totalEnrollments.value = data.totalEnrollments
-    popularCourse.value = `${data.popularCourseName} (${data.popularCourseEnrollment} SV)`
+    totalCourses.value = data.totalCourses || 0
+    totalCredits.value = data.totalCredits || 0
+    activeCourses.value = data.activeCourses || 0
+    totalEnrollments.value = data.totalEnrollments || 0
+    popularCourse.value = `${data.popularCourseName || 'N/A'} (${data.popularCourseEnrollment || 0} HV)`
   } catch (error) {
-    console.error('API failed, using mock data:', error)
+    console.error('❌ API failed, using mock data:', error)
     totalCourses.value = mockStats.totalCourses
     totalCredits.value = mockStats.totalCredits
     activeCourses.value = mockStats.activeCourses
     totalEnrollments.value = mockStats.totalEnrollments
-    popularCourse.value = `${mockStats.popularCourseName} (${mockStats.popularCourseEnrollment} SV)`
+    popularCourse.value = `${mockStats.popularCourseName} (${mockStats.popularCourseEnrollment} HV)`
   }
 }
 
 // Load semesters
 const loadSemesters = async () => {
   try {
-    const response = await api.get('/studentattendance/api/admin/semesters')
-    semesterOptions.value = response.data
+    const response = await api.get('/api/admin/semesters')
+    semesterOptions.value = response.data || ['Fall 2024', 'Spring 2024', 'Summer 2024']
   } catch (error) {
-    console.error('Failed to load semesters, using mock data:', error)
+    console.error('❌ Failed to load semesters, using mock data:', error)
     semesterOptions.value = ['Fall 2024', 'Spring 2024', 'Summer 2024', 'Fall 2023']
   }
 }
@@ -244,11 +406,11 @@ const loadSemesters = async () => {
 // Load lecturers
 const loadLecturers = async () => {
   try {
-    const response = await api.get('/studentattendance/api/admin/lecturers')
+    const response = await api.get('/api/admin/lecturers')
     const items = response.data.items || response.data || []
     lecturerList.value = items.map(l => ({ title: l.fullName, value: l.id }))
   } catch (error) {
-    console.error('Failed to load lecturers, using mock data:', error)
+    console.error('❌ Failed to load lecturers, using mock data:', error)
     lecturerList.value = [
       { title: 'PGS.TS Trần Văn X', value: 1 },
       { title: 'TS. Nguyễn Thị Y', value: 2 },
@@ -265,27 +427,50 @@ const loadCourses = async () => {
     if (searchQuery.value) params.search = searchQuery.value
     if (selectedFaculty.value !== 'all') params.faculty = selectedFaculty.value
     if (selectedSemester.value !== 'all') params.semester = selectedSemester.value
+    if (selectedStatus.value !== 'all') params.status = selectedStatus.value
 
-    const response = await api.get('/studentattendance/api/admin/courses', { params })
+    console.log('🔄 Đang tải danh sách khóa học với params:', params)
+    const response = await api.get('/api/admin/courses', { params })
+    console.log('✅ Danh sách khóa học fetch thành công:', response.data)
+    
     const items = response.data.items || response.data || []
-    coursesData.value = items
+    
+    if (items && items.length > 0) {
+      coursesData.value = items
+    } else {
+      console.warn('⚠️ Không có dữ liệu khóa học, sử dụng mock data')
+      // Mock data fallback
+      coursesData.value = [
+        { id: 1, code: 'PY101', name: 'Lập trình Python cơ bản', credits: 3, faculty: 'Python', semester: 'Fall 2024', lecturer: 'PGS.TS Trần Văn X', schedule: 'Thứ 2, 13:30-16:30', room: 'A101', enrolled: 45, maxStudents: 60 },
+        { id: 2, code: 'JA101', name: 'Lập trình Java cơ bản', credits: 4, faculty: 'Java', semester: 'Fall 2024', lecturer: 'TS. Nguyễn Thị Y', schedule: 'Thứ 3, 08:00-11:00', room: 'B202', enrolled: 42, maxStudents: 60 },
+        { id: 3, code: 'EN101', name: 'Tiếng Anh giao tiếp', credits: 2, faculty: 'English', semester: 'Fall 2024', lecturer: 'ThS. Lê Văn Z', schedule: 'Thứ 4, 13:30-16:30', room: 'C303', enrolled: 50, maxStudents: 60 },
+        { id: 4, code: 'MA101', name: 'Toán cao cấp', credits: 3, faculty: 'Math', semester: 'Fall 2024', lecturer: 'PGS.TS Trần Văn X', schedule: 'Thứ 5, 08:00-11:00', room: 'D404', enrolled: 38, maxStudents: 60 },
+        { id: 5, code: 'SK101', name: 'Kỹ năng mềm', credits: 2, faculty: 'SoftSkills', semester: 'Fall 2024', lecturer: 'ThS. Lê Văn Z', schedule: 'Thứ 6, 13:30-16:30', room: 'E505', enrolled: 55, maxStudents: 60 },
+      ]
+    }
   } catch (error) {
-    console.error('API failed, using mock data:', error)
-    // Mock data fallback
+    console.error('❌ API failed, using mock data:', error)
     coursesData.value = [
-      { id: 1, code: 'CS101', name: 'Nhập môn lập trình', credits: 3, faculty: 'CNTT', semester: 'Fall 2024', lecturer: 'PGS.TS Trần Văn X', schedule: 'Thứ 2, 13:30-16:30', room: 'A101', enrolled: 45, maxStudents: 60 },
-      { id: 2, code: 'CS201', name: 'Cấu trúc dữ liệu', credits: 4, faculty: 'CNTT', semester: 'Fall 2024', lecturer: 'PGS.TS Trần Văn X', schedule: 'Thứ 3, 08:00-11:00', room: 'B202', enrolled: 42, maxStudents: 60 },
-      { id: 3, code: 'CS301', name: 'Cơ sở dữ liệu', credits: 3, faculty: 'CNTT', semester: 'Fall 2024', lecturer: 'TS. Nguyễn Thị Y', schedule: 'Thứ 4, 13:30-16:30', room: 'C303', enrolled: 50, maxStudents: 60 },
+      { id: 1, code: 'PY101', name: 'Lập trình Python cơ bản', credits: 3, faculty: 'Python', semester: 'Fall 2024', lecturer: 'PGS.TS Trần Văn X', schedule: 'Thứ 2, 13:30-16:30', room: 'A101', enrolled: 45, maxStudents: 60 },
+      { id: 2, code: 'JA101', name: 'Lập trình Java cơ bản', credits: 4, faculty: 'Java', semester: 'Fall 2024', lecturer: 'TS. Nguyễn Thị Y', schedule: 'Thứ 3, 08:00-11:00', room: 'B202', enrolled: 42, maxStudents: 60 },
+      { id: 3, code: 'EN101', name: 'Tiếng Anh giao tiếp', credits: 2, faculty: 'English', semester: 'Fall 2024', lecturer: 'ThS. Lê Văn Z', schedule: 'Thứ 4, 13:30-16:30', room: 'C303', enrolled: 50, maxStudents: 60 },
+      { id: 4, code: 'MA101', name: 'Toán cao cấp', credits: 3, faculty: 'Math', semester: 'Fall 2024', lecturer: 'PGS.TS Trần Văn X', schedule: 'Thứ 5, 08:00-11:00', room: 'D404', enrolled: 38, maxStudents: 60 },
+      { id: 5, code: 'SK101', name: 'Kỹ năng mềm', credits: 2, faculty: 'SoftSkills', semester: 'Fall 2024', lecturer: 'ThS. Lê Văn Z', schedule: 'Thứ 6, 13:30-16:30', room: 'E505', enrolled: 55, maxStudents: 60 },
     ]
   } finally {
     loading.value = false
   }
 }
 
+const goToTrash = () => {
+  router.push('/courses/trash')
+}
+
 const resetFilters = () => {
   searchQuery.value = ''
   selectedFaculty.value = 'all'
   selectedSemester.value = 'all'
+  selectedStatus.value = 'all'
   loadCourses()
 }
 
@@ -295,13 +480,25 @@ const getCourseGradient = (id) => {
     'linear-gradient(135deg, #10b981, #059669)',
     'linear-gradient(135deg, #8b5cf6, #7c3aed)',
     'linear-gradient(135deg, #f59e0b, #d97706)',
+    'linear-gradient(135deg, #ef4444, #dc2626)',
+    'linear-gradient(135deg, #14b8a6, #0d9488)',
   ]
   return gradients[(id - 1) % gradients.length]
 }
 
 const openAddDialog = () => {
   isEditing.value = false
-  formData.value = { code: '', name: '', credits: 3, faculty: '', lecturerId: null, lecturer: '', schedule: '', room: '', semester: 'Fall 2024', maxStudents: 60 }
+  formData.value = { 
+    code: '', 
+    name: '', 
+    credits: 3, 
+    faculty: '', 
+    lecturerId: null, 
+    schedule: '', 
+    room: '', 
+    semester: 'Fall 2024', 
+    maxStudents: 60 
+  }
   dialogVisible.value = true
 }
 
@@ -314,9 +511,8 @@ const editCourse = (course) => {
     credits: course.credits,
     faculty: course.faculty,
     lecturerId: null,
-    lecturer: course.lecturer,
-    schedule: course.schedule,
-    room: course.room,
+    schedule: course.schedule || '',
+    room: course.room || '',
     semester: course.semester,
     maxStudents: course.maxStudents
   }
@@ -326,11 +522,11 @@ const editCourse = (course) => {
 const deleteCourse = async (course) => {
   if (confirm(`Bạn có chắc muốn xóa khóa học ${course.name}?`)) {
     try {
-      await api.delete(`/studentattendance/api/admin/courses/${course.id}`)
+      await api.delete(`/api/admin/courses/${course.id}`)
       await loadCourses()
       await loadCourseStatistics()
     } catch (error) {
-      console.error('Delete failed, using local:', error)
+      console.error('❌ Delete failed, using local:', error)
       const index = coursesData.value.findIndex(c => c.id === course.id)
       if (index > -1) coursesData.value.splice(index, 1)
     }
@@ -341,15 +537,15 @@ const saveCourse = async () => {
   saving.value = true
   try {
     if (isEditing.value) {
-      await api.put(`/studentattendance/api/admin/courses/${formData.value.id}`, formData.value)
+      await api.put(`/api/admin/courses/${formData.value.id}`, formData.value)
     } else {
-      await api.post('/studentattendance/api/admin/courses', formData.value)
+      await api.post('/api/admin/courses', formData.value)
     }
     await loadCourses()
     await loadCourseStatistics()
     dialogVisible.value = false
   } catch (error) {
-    console.error('Save failed, using local:', error)
+    console.error('❌ Save failed, using local:', error)
     if (isEditing.value) {
       const index = coursesData.value.findIndex(c => c.id === formData.value.id)
       if (index > -1) coursesData.value[index] = { ...formData.value, enrolled: coursesData.value[index].enrolled }
@@ -363,23 +559,30 @@ const saveCourse = async () => {
   }
 }
 
-const exportData = () => { console.log('Export data') }
+const exportData = () => { 
+  console.log('📊 Export data...')
+  alert('Chức năng xuất Excel đang được phát triển')
+}
 
 onMounted(() => {
+  console.log('🚀 Khởi tạo trang Quản lý khóa học...')
   loadCourseStatistics()
   loadCourses()
   loadLecturers()
   loadSemesters()
+  console.log('✅ Trang Quản lý khóa học đã sẵn sàng')
 })
 </script>
 
 <style scoped>
+/* Giữ nguyên style như cũ */
 .course-management {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 4px;
 }
 
+/* Hero Header */
 .hero-header {
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   border-radius: 28px;
@@ -421,6 +624,11 @@ onMounted(() => {
   color: rgba(255, 255, 255, 0.7);
 }
 
+.hero-actions {
+  display: flex;
+  gap: 12px;
+}
+
 .hero-btn {
   padding: 10px 24px;
   border-radius: 40px;
@@ -429,6 +637,16 @@ onMounted(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+.hero-btn-outline {
+  padding: 10px 24px;
+  border-radius: 40px;
+  font-weight: 600;
+  text-transform: none;
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Statistics */
 .stats-grid-modern {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -461,30 +679,16 @@ onMounted(() => {
   justify-content: center;
 }
 
-.stat-icon-wrapper.total {
-  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-  color: #3b82f6;
-}
-
-.stat-icon-wrapper.active {
-  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-  color: #10b981;
-}
-
-.stat-icon-wrapper.credits {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  color: #f59e0b;
-}
-
-.stat-icon-wrapper.enrollment {
-  background: linear-gradient(135deg, #e9d5ff, #d8b4fe);
-  color: #8b5cf6;
-}
+.stat-icon-wrapper.total { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #3b82f6; }
+.stat-icon-wrapper.active { background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #10b981; }
+.stat-icon-wrapper.credits { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #f59e0b; }
+.stat-icon-wrapper.enrollment { background: linear-gradient(135deg, #e9d5ff, #d8b4fe); color: #8b5cf6; }
 
 .stat-info-modern .stat-value {
   font-size: 32px;
   font-weight: 700;
   color: #1e293b;
+  line-height: 1.2;
 }
 
 .stat-info-modern .stat-label {
@@ -493,34 +697,37 @@ onMounted(() => {
   margin-top: 4px;
 }
 
-.workspace-card {
-  background: white;
-  border-radius: 28px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+.stat-trend {
+  font-size: 12px;
+  color: #f59e0b;
+  margin-top: 4px;
 }
 
-.workspace-toolbar {
-  padding: 20px 24px;
-  border-bottom: 1px solid #eef2f6;
+/* Filter Bar */
+.filter-bar {
+  background: white;
+  border-radius: 20px;
+  padding: 16px 24px;
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
-.toolbar-left {
+.filter-group {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  gap: 12px;
   flex-wrap: wrap;
   flex: 1;
 }
 
 .search-wrapper {
   position: relative;
-  min-width: 280px;
+  min-width: 250px;
+  flex: 1;
 }
 
 .search-icon {
@@ -533,9 +740,9 @@ onMounted(() => {
 
 .search-input-modern {
   width: 100%;
-  padding: 12px 16px 12px 44px;
+  padding: 10px 16px 10px 44px;
   border: 1.5px solid #e2e8f0;
-  border-radius: 14px;
+  border-radius: 12px;
   font-size: 14px;
   transition: all 0.2s ease;
   background: white;
@@ -547,13 +754,55 @@ onMounted(() => {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.filter-group {
-  display: flex;
-  gap: 12px;
+.filter-select {
+  min-width: 150px;
 }
 
-.filter-select-modern {
-  min-width: 150px;
+.filter-select :deep(.v-field) {
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.reset-btn {
+  border-radius: 12px;
+  text-transform: none;
+  font-weight: 500;
+}
+
+/* Workspace */
+.workspace-card {
+  background: white;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.workspace-toolbar {
+  padding: 16px 24px;
+  border-bottom: 1px solid #eef2f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.total-records {
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
 }
 
 .toolbar-right {
@@ -561,13 +810,31 @@ onMounted(() => {
   gap: 12px;
 }
 
-.reset-btn,
 .export-btn {
   border-radius: 12px;
   text-transform: none;
   font-weight: 500;
 }
 
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  color: #94a3b8;
+}
+
+.loading-container .spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Course Grid */
 .courses-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -688,6 +955,18 @@ onMounted(() => {
   color: #3b82f6;
 }
 
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  color: #94a3b8;
+}
+
+.empty-state p {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+/* Dialog */
 .modern-dialog {
   border-radius: 28px !important;
   overflow: hidden;
@@ -759,42 +1038,23 @@ onMounted(() => {
 }
 
 @media (max-width: 1200px) {
-  .stats-grid-modern {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .stats-grid-modern { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
-  .hero-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  .hero-header { flex-direction: column; align-items: flex-start; }
+  .hero-actions { width: 100%; flex-direction: column; }
+  .hero-actions .hero-btn { width: 100%; justify-content: center; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
+  .filter-group { flex-direction: column; }
+  .search-wrapper { min-width: 100%; }
+  .filter-select { width: 100%; }
+  .toolbar-left { flex-direction: column; align-items: flex-start; }
+  .form-grid { grid-template-columns: 1fr; }
+  .courses-grid { grid-template-columns: 1fr; padding: 16px; }
+}
 
-  .toolbar-left {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .search-wrapper {
-    width: 100%;
-  }
-
-  .filter-group {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .filter-select-modern {
-    width: 100%;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .courses-grid {
-    grid-template-columns: 1fr;
-    padding: 16px;
-  }
+@media (max-width: 480px) {
+  .stats-grid-modern { grid-template-columns: 1fr; }
 }
 </style>

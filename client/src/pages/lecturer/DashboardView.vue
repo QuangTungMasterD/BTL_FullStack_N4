@@ -8,7 +8,7 @@
         </div>
         <div>
           <h1 class="hero-title">Chào mừng, {{ lecturerInfo.fullName }}!</h1>
-          <p class="hero-subtitle">Học kỳ Fall 2024 • Đang giảng dạy {{ teachingCourses.length }} lớp</p>
+          <p class="hero-subtitle">Hệ thống quản lý trung tâm dạy học • Năm học {{ currentYear }}</p>
         </div>
       </div>
       <div class="date-badge">
@@ -25,8 +25,7 @@
         </div>
         <div class="stat-info-modern">
           <div class="stat-value">{{ teachingCourses.length }}</div>
-          <div class="stat-label">Lớp đang dạy</div>
-          <div class="stat-trend positive" v-if="courseGrowth">+{{ courseGrowth }}</div>
+          <div class="stat-label">Khóa học đang dạy</div>
         </div>
       </div>
       <div class="stat-card-modern">
@@ -35,7 +34,7 @@
         </div>
         <div class="stat-info-modern">
           <div class="stat-value">{{ totalStudents }}</div>
-          <div class="stat-label">Sinh viên quản lý</div>
+          <div class="stat-label">Học viên quản lý</div>
         </div>
       </div>
       <div class="stat-card-modern">
@@ -53,7 +52,7 @@
         </div>
         <div class="stat-info-modern">
           <div class="stat-value">{{ averageGrade }}</div>
-          <div class="stat-label">Điểm TB sinh viên</div>
+          <div class="stat-label">Điểm TB học viên</div>
         </div>
       </div>
     </div>
@@ -63,7 +62,7 @@
       <!-- Teaching Courses -->
       <div class="workspace-card">
         <div class="card-header">
-          <h3>Lớp học đang giảng dạy</h3>
+          <h3>Khóa học đang giảng dạy</h3>
           <v-btn variant="text" size="small" color="primary" @click="viewAllCourses">Xem tất cả</v-btn>
         </div>
         <div class="card-body">
@@ -78,7 +77,7 @@
               <div class="course-info">
                 <div class="course-name">{{ course.courseName }}</div>
                 <div class="course-meta">
-                  <span><v-icon icon="mdi-account-group" size="12" /> {{ course.studentCount }} sinh viên</span>
+                  <span><v-icon icon="mdi-account-group" size="12" /> {{ course.studentCount }} học viên</span>
                   <span><v-icon icon="mdi-clock" size="12" /> {{ course.schedule }}</span>
                   <span><v-icon icon="mdi-map-marker" size="12" /> {{ course.room }}</span>
                 </div>
@@ -91,7 +90,7 @@
             </div>
             <div v-if="teachingCourses.length === 0" class="empty-state">
               <v-icon icon="mdi-book-open" size="48" color="#cbd5e1" />
-              <p>Chưa có lớp học nào được phân công</p>
+              <p>Chưa có khóa học nào được phân công</p>
             </div>
           </div>
         </div>
@@ -101,7 +100,7 @@
       <div class="workspace-card">
         <div class="card-header">
           <h3>Lịch dạy hôm nay</h3>
-          <v-chip color="primary" size="small" variant="tonal">{{ todayClasses.length }} lớp</v-chip>
+          <v-chip color="primary" size="small" variant="tonal">{{ todayClasses.length }} khóa</v-chip>
         </div>
         <div class="card-body">
           <div v-if="loading.schedule" class="loading-placeholder">
@@ -114,7 +113,7 @@
               </div>
               <div class="schedule-info">
                 <div class="course">{{ item.courseName }}</div>
-                <div class="location">{{ item.room }} • {{ item.studentCount }} sinh viên</div>
+                <div class="location">{{ item.room }} • {{ item.studentCount }} học viên</div>
               </div>
               <div class="schedule-action">
                 <v-btn size="small" color="primary" variant="tonal" class="action-btn" @click="takeAttendance(item.id)">
@@ -167,11 +166,11 @@
       <!-- Top Students -->
       <div class="workspace-card">
         <div class="card-header">
-          <h3>Top sinh viên xuất sắc</h3>
+          <h3>Top học viên xuất sắc</h3>
           <v-select
             v-model="selectedCourseForRanking"
             :items="courseOptions"
-            label="Chọn lớp"
+            label="Chọn khóa học"
             variant="plain"
             density="compact"
             class="ranking-select"
@@ -217,6 +216,7 @@ import api from '@/utils/api'
 const router = useRouter()
 const authStore = useAuthStore()
 const currentDate = ref(new Date().toLocaleDateString('vi-VN'))
+const currentYear = ref(new Date().getFullYear())
 
 const loading = ref({ courses: true, schedule: true, attendance: true, topStudents: true })
 
@@ -229,7 +229,6 @@ const teachingCourses = ref([])
 const totalStudents = ref(0)
 const averageAttendance = ref(0)
 const averageGrade = ref(0)
-const courseGrowth = ref(0)
 const todayClasses = ref([])
 const recentAttendance = ref([])
 const topStudents = ref([])
@@ -249,7 +248,9 @@ const getRandomGradient = () => {
 const loadTeachingCourses = async () => {
   loading.value.courses = true
   try {
-    const response = await api.get('/studentattendance/api/lecturer/courses')
+    console.log('🔄 Đang tải danh sách khóa học giảng dạy...')
+    const response = await api.get('/api/lecturer/courses')
+    console.log('✅ Danh sách khóa học fetch thành công:', response.data)
     teachingCourses.value = response.data
     totalStudents.value = teachingCourses.value.reduce((sum, c) => sum + (c.studentCount || 0), 0)
     courseOptions.value = teachingCourses.value.map(c => ({ title: c.courseName, value: c.id }))
@@ -258,7 +259,7 @@ const loadTeachingCourses = async () => {
       loadTopStudents()
     }
   } catch (error) {
-    console.error('Failed to load teaching courses:', error)
+    console.error('❌ Failed to load teaching courses:', error)
   } finally {
     loading.value.courses = false
   }
@@ -267,10 +268,12 @@ const loadTeachingCourses = async () => {
 const loadTodaySchedule = async () => {
   loading.value.schedule = true
   try {
-    const response = await api.get('/studentattendance/api/lecturer/today-schedule')
+    console.log('🔄 Đang tải lịch dạy hôm nay...')
+    const response = await api.get('/api/lecturer/today-schedule')
+    console.log('✅ Lịch dạy hôm nay fetch thành công:', response.data)
     todayClasses.value = response.data
   } catch (error) {
-    console.error('Failed to load today schedule:', error)
+    console.error('❌ Failed to load today schedule:', error)
   } finally {
     loading.value.schedule = false
   }
@@ -279,14 +282,16 @@ const loadTodaySchedule = async () => {
 const loadRecentAttendance = async () => {
   loading.value.attendance = true
   try {
-    const response = await api.get('/studentattendance/api/lecturer/recent-attendance')
+    console.log('🔄 Đang tải điểm danh gần đây...')
+    const response = await api.get('/api/lecturer/recent-attendance')
+    console.log('✅ Điểm danh gần đây fetch thành công:', response.data)
     recentAttendance.value = response.data
     if (recentAttendance.value.length > 0) {
       const avg = recentAttendance.value.reduce((sum, r) => sum + r.rate, 0) / recentAttendance.value.length
       averageAttendance.value = Math.round(avg)
     }
   } catch (error) {
-    console.error('Failed to load recent attendance:', error)
+    console.error('❌ Failed to load recent attendance:', error)
   } finally {
     loading.value.attendance = false
   }
@@ -294,22 +299,26 @@ const loadRecentAttendance = async () => {
 
 const loadAverageGrade = async () => {
   try {
-    const response = await api.get('/studentattendance/api/lecturer/average-grade')
+    console.log('🔄 Đang tải điểm trung bình...')
+    const response = await api.get('/api/lecturer/average-grade')
+    console.log('✅ Điểm trung bình fetch thành công:', response.data)
     averageGrade.value = response.data.average || 0
   } catch (error) {
-    console.error('Failed to load average grade:', error)
+    console.error('❌ Failed to load average grade:', error)
   }
 }
 
 const loadTopStudents = async () => {
   loading.value.topStudents = true
   try {
-    const response = await api.get(`/studentattendance/api/lecturer/top-students`, {
+    console.log(`🔄 Đang tải top học viên cho khóa ${selectedCourseForRanking.value}...`)
+    const response = await api.get('/api/lecturer/top-students', {
       params: { courseId: selectedCourseForRanking.value }
     })
+    console.log('✅ Top học viên fetch thành công:', response.data)
     topStudents.value = response.data
   } catch (error) {
-    console.error('Failed to load top students:', error)
+    console.error('❌ Failed to load top students:', error)
   } finally {
     loading.value.topStudents = false
   }
@@ -346,10 +355,12 @@ const viewAllAttendance = () => {
 }
 
 onMounted(() => {
+  console.log('🚀 Khởi tạo trang Dashboard Giảng viên...')
   loadTeachingCourses()
   loadTodaySchedule()
   loadRecentAttendance()
   loadAverageGrade()
+  console.log('✅ Trang Dashboard Giảng viên đã sẵn sàng')
 })
 </script>
 
@@ -460,12 +471,6 @@ onMounted(() => {
 .stat-info-modern .stat-label {
   font-size: 13px;
   color: #64748b;
-  margin-top: 4px;
-}
-
-.stat-trend.positive {
-  font-size: 11px;
-  color: #10b981;
   margin-top: 4px;
 }
 

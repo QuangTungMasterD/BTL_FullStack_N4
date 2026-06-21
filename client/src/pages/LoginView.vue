@@ -156,21 +156,6 @@
               <div v-if="loginError" class="error-message">
                 {{ loginError }}
               </div>
-
-              <!-- <div class="demo-section">
-                <p class="demo-label">Đăng nhập Demo</p>
-                <div class="demo-buttons">
-                  <button type="button" class="demo-btn admin" @click="quickLogin('admin@example.com', 'admin123')">
-                    <span class="demo-role">👤 Admin</span>
-                  </button>
-                  <button type="button" class="demo-btn teacher" @click="quickLogin('lecturer@example.com', 'lecturer123')">
-                    <span class="demo-role">👨‍🏫 Lecturer</span>
-                  </button>
-                  <button type="button" class="demo-btn student" @click="quickLogin('student@example.com', 'student123')">
-                    <span class="demo-role">👨‍🎓 Student</span>
-                  </button>
-                </div>
-              </div> -->
             </form>
           </div>
 
@@ -311,20 +296,12 @@ const registerLoading = ref(false)
 const registerError = ref('')
 const agreeTerms = ref(false)
 
-// Quick login for demo
-const quickLogin = (email, password) => {
-  loginForm.value.email = email
-  loginForm.value.password = password
-  handleLogin()
-}
-
 // LOGIN WITH REAL API
 const handleLogin = async () => {
   loginError.value = ''
   loading.value = true
   
   try {
-    // Gọi API đăng nhập qua gateway
     const response = await api.post('/auth/login', {
       email: loginForm.value.email,
       password: loginForm.value.password,
@@ -332,10 +309,8 @@ const handleLogin = async () => {
     
     console.log('Login response:', response.data)
     
-    // Lấy dữ liệu từ response
     const { token, userId, fullName, role, email } = response.data
     
-    // Lưu vào store
     authStore.setToken(token, { 
       userId, 
       email: email || loginForm.value.email, 
@@ -343,12 +318,10 @@ const handleLogin = async () => {
       role 
     })
     
-    // Nếu có rememberMe, lưu thêm (đã có trong store)
     if (rememberMe.value) {
       localStorage.setItem('rememberMe', 'true')
     }
     
-    // Chuyển hướng dựa trên role
     if (role === 'ADMIN') {
       router.push('/')
     } else if (role === 'LECTURER') {
@@ -360,10 +333,8 @@ const handleLogin = async () => {
   } catch (err) {
     console.error('Login error:', err)
     if (err.response) {
-      // Server trả về lỗi
       loginError.value = err.response.data?.message || 'Đăng nhập thất bại'
     } else if (err.request) {
-      // Không kết nối được server
       loginError.value = 'Không thể kết nối đến server. Vui lòng kiểm tra kết nối.'
     } else {
       loginError.value = 'Đăng nhập thất bại. Vui lòng thử lại.'
@@ -377,7 +348,6 @@ const handleLogin = async () => {
 const handleRegister = async () => {
   registerError.value = ''
   
-  // Validate form
   if (!registerForm.value.fullName.trim()) {
     registerError.value = 'Vui lòng nhập họ tên'
     return
@@ -406,7 +376,6 @@ const handleRegister = async () => {
   registerLoading.value = true
   
   try {
-    // Gọi API đăng ký
     const response = await api.post('/auth/register', {
       fullName: registerForm.value.fullName,
       email: registerForm.value.email,
@@ -415,7 +384,6 @@ const handleRegister = async () => {
     
     console.log('Register response:', response.data)
     
-    // Đăng ký thành công, chuyển sang tab login
     loginForm.value = { 
       email: registerForm.value.email, 
       password: registerForm.value.password 
@@ -423,7 +391,6 @@ const handleRegister = async () => {
     activeTab.value = 'login'
     registerError.value = 'Đăng ký thành công! Vui lòng đăng nhập.'
     
-    // Clear register form
     registerForm.value = { fullName: '', email: '', password: '', confirmPassword: '' }
     agreeTerms.value = false
     
@@ -443,7 +410,6 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
-/* Giữ nguyên style cũ, không thay đổi */
 * {
   margin: 0;
   padding: 0;
@@ -661,18 +627,20 @@ const handleRegister = async () => {
   justify-content: center;
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(10px);
+  padding: 20px;
+  overflow-y: auto;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 400px;
-  padding: 20px;
+  max-width: 420px;
+  padding: 24px 28px;
 }
 
 .auth-tabs {
   display: flex;
   gap: 8px;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
   background: #f1f5f9;
   padding: 6px;
   border-radius: 50px;
@@ -714,13 +682,13 @@ const handleRegister = async () => {
 
 .form-header {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .form-header h2 {
-  font-size: 26px;
+  font-size: 24px;
   color: #1e293b;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .form-header p {
@@ -729,15 +697,16 @@ const handleRegister = async () => {
 }
 
 .input-group {
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .input-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   font-size: 13px;
   font-weight: 600;
   color: #334155;
+  text-align: left;
 }
 
 .input-wrapper {
@@ -751,6 +720,7 @@ const handleRegister = async () => {
   left: 14px;
   color: #94a3b8;
   pointer-events: none;
+  flex-shrink: 0;
 }
 
 .input-wrapper input {
@@ -761,12 +731,17 @@ const handleRegister = async () => {
   font-size: 14px;
   transition: all 0.3s ease;
   background: white;
+  text-align: left;
 }
 
 .input-wrapper input:focus {
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
+}
+
+.input-wrapper input::placeholder {
+  text-align: left;
 }
 
 .toggle-password {
@@ -777,6 +752,7 @@ const handleRegister = async () => {
   cursor: pointer;
   font-size: 18px;
   opacity: 0.6;
+  padding: 4px;
 }
 
 .toggle-password:hover {
@@ -787,7 +763,7 @@ const handleRegister = async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   font-size: 13px;
 }
 
@@ -803,6 +779,7 @@ const handleRegister = async () => {
   width: 15px;
   height: 15px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .forgot-link {
@@ -810,6 +787,7 @@ const handleRegister = async () => {
   text-decoration: none;
   font-size: 13px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .forgot-link:hover {
@@ -850,54 +828,10 @@ const handleRegister = async () => {
   text-align: center;
 }
 
-.demo-section {
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid #e0e0e0;
-}
-
-.demo-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #666;
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.demo-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.demo-btn {
-  padding: 10px 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background: white;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.demo-btn:hover {
-  border-color: #667eea;
-  background: #f8f9ff;
-  transform: translateY(-2px);
-}
-
-.demo-btn.admin { color: #e74c3c; }
-.demo-btn.admin:hover { background: rgba(231, 76, 60, 0.08); }
-.demo-btn.teacher { color: #f39c12; }
-.demo-btn.teacher:hover { background: rgba(243, 156, 18, 0.08); }
-.demo-btn.student { color: #27ae60; }
-.demo-btn.student:hover { background: rgba(39, 174, 96, 0.08); }
-
 .auth-footer {
-  margin-top: 28px;
+  margin-top: 24px;
   text-align: center;
-  padding-top: 20px;
+  padding-top: 16px;
   border-top: 1px solid #e2e8f0;
 }
 
@@ -915,6 +849,28 @@ const handleRegister = async () => {
   .auth-section {
     flex: 1;
     background: white;
+    padding: 16px;
+  }
+  
+  .auth-card {
+    padding: 16px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 12px 16px;
+  }
+  
+  .form-options {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .auth-tabs .tab-btn {
+    font-size: 13px;
+    padding: 8px 16px;
   }
 }
 </style>

@@ -13,7 +13,7 @@
           </div>
           <div class="logo-text" v-show="!isSidebarCollapsed">
             <span class="logo-title">EduTrack</span>
-            <span class="logo-subtitle">Academic System</span>
+            <!-- <span class="logo-subtitle">Academic System</span> -->
           </div>
         </div>
         <button class="collapse-btn" @click="toggleSidebar">
@@ -77,7 +77,7 @@
             </div>
             <div class="user-info" v-show="!isSidebarCollapsed">
               <span class="user-name">{{ user?.fullName || 'Người dùng' }}</span>
-              <span class="user-role">{{ userRole }}</span>
+              <!-- <span class="user-role">{{ userRole }}</span> -->
             </div>
           </div>
         </div>

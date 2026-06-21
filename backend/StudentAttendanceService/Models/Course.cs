@@ -30,6 +30,9 @@ namespace StudentAttendanceService.Models
         [Required]
         public int LecturerId { get; set; }
         
+        // THÊM: Khóa ngoại đến Specialization
+        public int? SpecializationId { get; set; }
+        
         [MaxLength(200)]
         public string? Schedule { get; set; } // Thứ 2, 13:30-16:30
         
@@ -44,6 +47,11 @@ namespace StudentAttendanceService.Models
         // Navigation properties
         [ForeignKey("LecturerId")]
         public virtual Lecturer? Lecturer { get; set; }
+        
+        // THÊM: Navigation property cho Specialization
+        [ForeignKey("SpecializationId")]
+        public virtual Specialization? Specialization { get; set; }
+        
         public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     }
 }

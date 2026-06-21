@@ -39,14 +39,14 @@ builder.Services.AddSwaggerGen(c =>
 // Connection string
 var studentAttendanceConnection = Environment.GetEnvironmentVariable("CONNECTION_STRING_ATTENDANCE")
     ?? builder.Configuration.GetConnectionString("StudentAttendanceDb")
-    ?? "Server=sqlserver;Database=StudentAttendanceDb;User Id=sa;Password=Tung@2005;TrustServerCertificate=True;";
+    ?? "Server=LAPTOP-M5K0D1B8\\MSSQLSERVER02;Database=StudentAttendanceDb;Integrated Security=True;TrustServerCertificate=True;";
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(studentAttendanceConnection));
 
-// JWT Authentication
-var jwtKey = builder.Configuration["Jwt:Key"] ?? "YourSuperSecretKeyThatIsAtLeast32CharactersLong";
-var issuer = builder.Configuration["Jwt:Issuer"] ?? "PaymentAndReportService";
+// JWT Authentication - SỬA: Dùng cùng key với AuthService
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "VerySecretSharedJwtKey123!VerySecretKey4567";
+var issuer = builder.Configuration["Jwt:Issuer"] ?? "AttendanceAuth";
 
 builder.Services.AddAuthentication(options =>
 {
@@ -66,6 +66,15 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = issuer,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
+    
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine($"Auth failed: {context.Exception.Message}");
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddAuthorization();
@@ -74,7 +83,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:5173")
+        policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:8080")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -98,15 +107,15 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
+// Log headers middleware
 app.Use(async (context, next) =>
 {
-    Console.WriteLine("===== HEADERS =====");
-
+    Console.WriteLine($"===== REQUEST: {context.Request.Method} {context.Request.Path} =====");
     foreach (var h in context.Request.Headers)
     {
-        Console.WriteLine($"{h.Key}: {h.Value}");
+        if (h.Key.StartsWith("Authorization"))
+            Console.WriteLine($"{h.Key}: {h.Value}");
     }
-
     await next();
 });
 
@@ -117,7 +126,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontend");
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();

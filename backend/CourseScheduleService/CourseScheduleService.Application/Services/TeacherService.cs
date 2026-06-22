@@ -246,5 +246,17 @@ namespace CourseScheduleService.Application.Services
         var classDtos = _mapper.Map<IEnumerable<ClassResDto>>(classes);
         return ApiResponse<IEnumerable<ClassResDto>>.SuccessResponse(classDtos);
     }
+
+    public async Task<ApiResponse<TeacherResDto?>> GetTeacherByUserId(int userId)
+    {
+      var teacher = await _teacherRepository.GetTeacherByUserIdAsync(userId);
+      if(teacher == null)
+      {
+        return ApiResponse<TeacherResDto?>.ErrorResponse("Không tìm thấy giáo viên");
+      }
+
+      var teacherRes = _mapper.Map<TeacherResDto>(teacher);
+      return ApiResponse<TeacherResDto?>.SuccessResponse(teacherRes);
+    }
   }
 }

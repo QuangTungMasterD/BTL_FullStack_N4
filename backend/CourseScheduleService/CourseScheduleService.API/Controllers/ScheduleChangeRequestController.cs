@@ -16,32 +16,36 @@ namespace CourseScheduleService.API.Controllers
     public class ScheduleChangeRequestController : ControllerBase
     {
         private readonly IScheduleChangeRequestService _requestService;
+        private readonly ITeacherService _teacherService;
 
-        public ScheduleChangeRequestController(IScheduleChangeRequestService requestService)
+        public ScheduleChangeRequestController(
+            IScheduleChangeRequestService requestService, 
+            ITeacherService teacherService) 
         {
             _requestService = requestService;
+            _teacherService = teacherService;
         }
 
         // Teacher endpoints
         [HttpPost]
-        [Authorize(Roles = "teacher,admin")]
+        [Authorize(Roles = "lecturer,admin")]
         public async Task<ActionResult<ApiResponse<ScheduleChangeRequestResDto>>> CreateRequest([FromBody] ScheduleChangeRequestReqDto reqDto)
         {
             // Lấy teacherId từ token (giả sử có claim "TeacherId" hoặc từ HeaderClaimsMiddleware)
-            var teacherId = GetCurrentTeacherId();
-            if (teacherId == 0) return Unauthorized();
+            var teacherId = await GetCurrentTeacherId();
+            if (teacherId == -1) return Unauthorized();
             var result = await _requestService.CreateRequestAsync(teacherId, reqDto);
             return StatusCode(result.StatusCode, result);
         }
 
         [HttpGet("my-requests")]
-        [Authorize(Roles = "teacher,admin")]
+        [Authorize(Roles = "lecturer,admin")]
         public async Task<ActionResult<ApiResponse<List<ScheduleChangeRequestResDto>>>> GetMyRequests()
         {
-            var teacherId = GetCurrentTeacherId();
-            if (teacherId == 0) return Unauthorized();
-            var result = await _requestService.GetMyRequestsAsync(teacherId);
-            return StatusCode(result.StatusCode, result);
+            var teacherId = await GetCurrentTeacherId();
+            if (teacherId == -1) return Unauthorized();
+             var result = await _requestService.GetMyRequestsAsync(teacherId);
+             return StatusCode(result.StatusCode, result);
         }
 
         // Admin endpoints (có thể thêm role check)
@@ -65,22 +69,20 @@ namespace CourseScheduleService.API.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        private int GetCurrentTeacherId()
+        private async Task<int> GetCurrentTeacherId()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            Console.WriteLine("+============================");
-            Console.WriteLine("+============================");
-            Console.WriteLine("+============================");
-            Console.WriteLine("+============================");
-            Console.WriteLine("+============================");
-            Console.WriteLine("+============================");
-            Console.WriteLine("+============================");
-            Console.WriteLine("+============================");
-            Console.WriteLine("+============================");
-            Console.WriteLine($"[ScheduleChangeRequest] GetCurrentTeacherId - Claim NameIdentifier: {userId}");
-            return int.TryParse(userId, out int id) ? id : 0;
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdClaim, out int userId))
+                return -1;
+
+            var teacher = await _teacherService.GetTeacherByUserId(userId);
+            return teacher.Data?.Id ?? -1;
         }
 
-        private int GetCurrentAdminId() => GetCurrentTeacherId(); // tạm thời
+        private int GetCurrentAdminId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(userIdClaim, out int id) ? id : -1;
+        }
     }
 }

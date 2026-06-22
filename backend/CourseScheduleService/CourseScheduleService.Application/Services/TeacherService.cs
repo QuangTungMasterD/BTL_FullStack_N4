@@ -206,6 +206,7 @@ namespace CourseScheduleService.Application.Services
       teacher.YoB = teacherReqDto.YoB;
       teacher.IsActive = teacherReqDto.IsActive;
       teacher.UpdatedAt = DateTime.Now;
+      teacher.UserId = teacherReqDto.UserId;
 
       _teacherRepository.UpdateAsync(teacher);
       await _teacherRepository.SaveChangeAsync();

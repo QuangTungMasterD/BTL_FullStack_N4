@@ -28,6 +28,7 @@ namespace CourseScheduleService.Application.Events
         public int RoomId { get; set; }
         public string RoomName { get; set; } = string.Empty;
         public int TeacherAssignmentId { get; set; }
-        public string TeacherName { get; set; } = string.Empty;
+        public int? TeacherId { get; set; }
+        public int? UserId { get; set; }
     }
 }

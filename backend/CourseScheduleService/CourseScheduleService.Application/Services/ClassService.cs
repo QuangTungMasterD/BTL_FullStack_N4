@@ -128,7 +128,8 @@ namespace CourseScheduleService.Application.Services
                     RoomId = cs.RoomId,
                     RoomName = cs.Room?.RoomName ?? "Unknown",
                     TeacherAssignmentId = cs.TeacherAssignmentId,
-                    TeacherName = cs.TeacherAssignment?.Teacher?.FullName ?? "Unknown"
+                    TeacherId = cs.TeacherAssignment?.Teacher?.Id,
+                    UserId = cs.TeacherAssignment?.Teacher?.UserId
                 }).ToList()
             };
             await _eventBus.PublishAsync("class.opened", evt);

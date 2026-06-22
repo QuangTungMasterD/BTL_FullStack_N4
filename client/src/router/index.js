@@ -108,12 +108,12 @@ const routes = [
         component: LecturerManagement,
         meta: { roles: ["ADMIN"] },
       },
-      {
-        path: "admin-courses",
-        name: "AdminCourseManagement",
-        component: AdminCourseManagement,
-        meta: { roles: ["ADMIN"] },
-      },
+      // {
+      //   path: "admin-courses",
+      //   name: "AdminCourseManagement",
+      //   component: AdminCourseManagement,
+      //   meta: { roles: ["ADMIN"] },
+      // },
       {
         path: "admin-attendance",
         name: "AdminAttendanceManagement",
@@ -218,7 +218,7 @@ const routes = [
       {
         path: "teachers",
         name: "Teachers",
-        component: LecturerManagement, // SỬA: dùng LecturerManagement thay vì TeachersManager
+        component: TeachersManager, // SỬA: dùng LecturerManagement thay vì TeachersManager
         meta: { roles: ["ADMIN"] },
       },
       {

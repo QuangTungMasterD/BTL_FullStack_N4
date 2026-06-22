@@ -302,36 +302,36 @@ const semesterOptions = ref(['Fall 2024', 'Spring 2024', 'Fall 2023'])
 const gradeFilterOptions = ['Tất cả', 'Xuất sắc', 'Giỏi', 'Khá', 'Trung bình', 'Yếu']
 
 // Mock data
-const mockOverallStats = {
-  averageGPA: 3.42,
-  passRate: 94.5,
-  excellentRate: 18.3,
-  totalGrades: 2847
-}
+// const mockOverallStats = {
+//   averageGPA: 3.42,
+//   passRate: 94.5,
+//   excellentRate: 18.3,
+//   totalGrades: 2847
+// }
 
-const mockGradeDistribution = [
-  { label: 'A (8.5-10)', count: 245, percentage: 28, color: '#10b981' },
-  { label: 'B (7.0-8.4)', count: 412, percentage: 32, color: '#3b82f6' },
-  { label: 'C (5.5-6.9)', count: 356, percentage: 25, color: '#f59e0b' },
-  { label: 'D (4.0-5.4)', count: 156, percentage: 11, color: '#ef4444' },
-  { label: 'F (<4.0)', count: 45, percentage: 4, color: '#8b5cf6' },
-]
+// const mockGradeDistribution = [
+//   { label: 'A (8.5-10)', count: 245, percentage: 28, color: '#10b981' },
+//   { label: 'B (7.0-8.4)', count: 412, percentage: 32, color: '#3b82f6' },
+//   { label: 'C (5.5-6.9)', count: 356, percentage: 25, color: '#f59e0b' },
+//   { label: 'D (4.0-5.4)', count: 156, percentage: 11, color: '#ef4444' },
+//   { label: 'F (<4.0)', count: 45, percentage: 4, color: '#8b5cf6' },
+// ]
 
-const mockFacultyGradeStats = [
-  { name: 'Python', gpa: 3.65, color: '#3b82f6', rank: 'Xuất sắc' },
-  { name: 'Java', gpa: 3.32, color: '#10b981', rank: 'Giỏi' },
-  { name: 'Tiếng Anh giao tiếp', gpa: 3.48, color: '#f59e0b', rank: 'Giỏi' },
-  { name: 'Toán cao cấp', gpa: 2.85, color: '#ef4444', rank: 'Khá' },
-  { name: 'Kỹ năng mềm', gpa: 3.12, color: '#8b5cf6', rank: 'Khá' },
-]
+// const mockFacultyGradeStats = [
+//   { name: 'Python', gpa: 3.65, color: '#3b82f6', rank: 'Xuất sắc' },
+//   { name: 'Java', gpa: 3.32, color: '#10b981', rank: 'Giỏi' },
+//   { name: 'Tiếng Anh giao tiếp', gpa: 3.48, color: '#f59e0b', rank: 'Giỏi' },
+//   { name: 'Toán cao cấp', gpa: 2.85, color: '#ef4444', rank: 'Khá' },
+//   { name: 'Kỹ năng mềm', gpa: 3.12, color: '#8b5cf6', rank: 'Khá' },
+// ]
 
-const mockStudentGrades = [
-  { id: 1, studentId: 'HV001', fullName: 'Nguyễn Văn A', faculty: 'Python', gpa: 3.65, totalCredits: 98, rank: 'Xuất sắc' },
-  { id: 2, studentId: 'HV002', fullName: 'Trần Thị B', faculty: 'Java', gpa: 3.52, totalCredits: 95, rank: 'Giỏi' },
-  { id: 3, studentId: 'HV003', fullName: 'Lê Văn C', faculty: 'English', gpa: 3.28, totalCredits: 92, rank: 'Giỏi' },
-  { id: 4, studentId: 'HV004', fullName: 'Phạm Thị D', faculty: 'Math', gpa: 3.45, totalCredits: 88, rank: 'Giỏi' },
-  { id: 5, studentId: 'HV005', fullName: 'Hoàng Văn E', faculty: 'Python', gpa: 2.85, totalCredits: 85, rank: 'Khá' },
-]
+// const mockStudentGrades = [
+//   { id: 1, studentId: 'HV001', fullName: 'Nguyễn Văn A', faculty: 'Python', gpa: 3.65, totalCredits: 98, rank: 'Xuất sắc' },
+//   { id: 2, studentId: 'HV002', fullName: 'Trần Thị B', faculty: 'Java', gpa: 3.52, totalCredits: 95, rank: 'Giỏi' },
+//   { id: 3, studentId: 'HV003', fullName: 'Lê Văn C', faculty: 'English', gpa: 3.28, totalCredits: 92, rank: 'Giỏi' },
+//   { id: 4, studentId: 'HV004', fullName: 'Phạm Thị D', faculty: 'Math', gpa: 3.45, totalCredits: 88, rank: 'Giỏi' },
+//   { id: 5, studentId: 'HV005', fullName: 'Hoàng Văn E', faculty: 'Python', gpa: 2.85, totalCredits: 85, rank: 'Khá' },
+// ]
 
 // Data
 const overallStats = ref({})

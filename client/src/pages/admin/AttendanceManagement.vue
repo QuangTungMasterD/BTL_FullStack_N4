@@ -219,29 +219,29 @@ const facultyOptions = [
 const semesterOptions = ref(['Fall 2024', 'Spring 2024', 'Fall 2023'])
 
 // Mock data
-const mockOverallStats = {
-  totalStudents: 1248,
-  presentRate: 87,
-  absentRate: 8,
-  lateRate: 5
-}
+// const mockOverallStats = {
+//   totalStudents: 1248,
+//   presentRate: 87,
+//   absentRate: 8,
+//   lateRate: 5
+// }
 
-const mockFacultyStats = [
-  { name: 'Python', present: 89, late: 4, absent: 7 },
-  { name: 'Java', present: 85, late: 6, absent: 9 },
-  { name: 'Tiếng Anh giao tiếp', present: 88, late: 3, absent: 9 },
-  { name: 'Toán cao cấp', present: 92, late: 3, absent: 5 },
-  { name: 'Kỹ năng mềm', present: 78, late: 8, absent: 14 },
-]
+// const mockFacultyStats = [
+//   { name: 'Python', present: 89, late: 4, absent: 7 },
+//   { name: 'Java', present: 85, late: 6, absent: 9 },
+//   { name: 'Tiếng Anh giao tiếp', present: 88, late: 3, absent: 9 },
+//   { name: 'Toán cao cấp', present: 92, late: 3, absent: 5 },
+//   { name: 'Kỹ năng mềm', present: 78, late: 8, absent: 14 },
+// ]
 
-const mockCourseStats = [
-  { id: 1, code: 'PY101', name: 'Lập trình Python cơ bản', faculty: 'Python', present: 85, late: 5, absent: 10, attendance: 85 },
-  { id: 2, code: 'PY201', name: 'Lập trình Python nâng cao', faculty: 'Python', present: 82, late: 6, absent: 12, attendance: 82 },
-  { id: 3, code: 'JA101', name: 'Lập trình Java cơ bản', faculty: 'Java', present: 94, late: 3, absent: 3, attendance: 94 },
-  { id: 4, code: 'EN101', name: 'Tiếng Anh giao tiếp', faculty: 'English', present: 76, late: 8, absent: 16, attendance: 76 },
-  { id: 5, code: 'MA101', name: 'Toán cao cấp', faculty: 'Math', present: 88, late: 4, absent: 8, attendance: 88 },
-  { id: 6, code: 'SK101', name: 'Kỹ năng mềm', faculty: 'SoftSkills', present: 70, late: 10, absent: 20, attendance: 70 },
-]
+// const mockCourseStats = [
+//   { id: 1, code: 'PY101', name: 'Lập trình Python cơ bản', faculty: 'Python', present: 85, late: 5, absent: 10, attendance: 85 },
+//   { id: 2, code: 'PY201', name: 'Lập trình Python nâng cao', faculty: 'Python', present: 82, late: 6, absent: 12, attendance: 82 },
+//   { id: 3, code: 'JA101', name: 'Lập trình Java cơ bản', faculty: 'Java', present: 94, late: 3, absent: 3, attendance: 94 },
+//   { id: 4, code: 'EN101', name: 'Tiếng Anh giao tiếp', faculty: 'English', present: 76, late: 8, absent: 16, attendance: 76 },
+//   { id: 5, code: 'MA101', name: 'Toán cao cấp', faculty: 'Math', present: 88, late: 4, absent: 8, attendance: 88 },
+//   { id: 6, code: 'SK101', name: 'Kỹ năng mềm', faculty: 'SoftSkills', present: 70, late: 10, absent: 20, attendance: 70 },
+// ]
 
 // Data
 const overallStats = ref({})

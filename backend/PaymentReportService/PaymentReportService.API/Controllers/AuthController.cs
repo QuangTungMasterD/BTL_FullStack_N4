@@ -23,7 +23,7 @@ public class AuthController : ControllerBase
     /// Demo accounts: admin/Password123, giaovien01/Password123, hocvien01/Password123
     /// </summary>
     [HttpPost("login")]
-    [AllowAnonymous]
+    // [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
@@ -40,8 +40,9 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Tạo tài khoản mới. Chỉ Admin mới được thực hiện.
     /// </summary>
-    [HttpPost("register")]
-    [Authorize(Roles = "Admin")]
+    
+    [AllowAnonymous]
+    [HttpPost("register/student")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
@@ -55,11 +56,26 @@ public class AuthController : ControllerBase
         return CreatedAtAction(nameof(GetAllUsers), ApiResponse<UserResponse>.Ok(user!, message));
     }
 
+    // [HttpPost("register")]
+    // [Authorize(Roles = "Admin")]
+    // public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    // {
+    //     if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+    //         return BadRequest(ApiResponse<string>.Fail("Username và Password không được để trống"));
+
+    //     var (success, message, user) = await _authService.RegisterAsync(request);
+
+    //     if (!success)
+    //         return BadRequest(ApiResponse<string>.Fail(message));
+
+    //     return CreatedAtAction(nameof(GetAllUsers), ApiResponse<UserResponse>.Ok(user!, message));
+    // }
+
     /// <summary>
     /// Lấy danh sách tất cả tài khoản. Chỉ Admin.
     /// </summary>
     [HttpGet("users")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> GetAllUsers()
     {
         var users = await _authService.GetAllUsersAsync();

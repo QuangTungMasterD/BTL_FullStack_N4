@@ -18,7 +18,7 @@ public class User
     /// <summary>
     /// Vai trò: "Admin" | "GiaoVien" | "HocVien"
     /// </summary>
-    public string Role { get; set; } = "Student";
+    public string Role { get; set; } = "STUDENT";
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

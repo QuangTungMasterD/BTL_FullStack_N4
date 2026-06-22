@@ -86,7 +86,7 @@ public class PaymentDbContext : DbContext
                 PasswordHash = passwordHash,
                 FullName = "Quản trị viên",
                 Email = "admin@trungtam.edu.vn",
-                Role = "Admin",
+                Role = "ADMIN",
                 CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                 IsActive = true
             },
@@ -97,7 +97,7 @@ public class PaymentDbContext : DbContext
                 PasswordHash = passwordHash,
                 FullName = "Nguyễn Văn A",
                 Email = "giaovien01@trungtam.edu.vn",
-                Role = "GiaoVien",
+                Role = "LECTURER",
                 CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                 IsActive = true
             },
@@ -108,7 +108,7 @@ public class PaymentDbContext : DbContext
                 PasswordHash = passwordHash,
                 FullName = "Trần Thị B",
                 Email = "hocvien01@trungtam.edu.vn",
-                Role = "HocVien",
+                Role = "STUDENT",
                 CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                 IsActive = true
             }

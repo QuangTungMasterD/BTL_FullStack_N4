@@ -6,6 +6,18 @@ using PaymentReportService.API.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -37,7 +49,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseCors("FrontendPolicy");
+
+// app.UseAuthorization();
 
 app.MapControllers();
 

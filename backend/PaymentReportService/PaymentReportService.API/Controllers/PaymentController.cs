@@ -59,7 +59,7 @@ public class PaymentController : ControllerBase
     /// Lấy phiếu thu theo khóa học
     /// </summary>
     [HttpGet("invoices/course/{courseId:int}")]
-    [Authorize(Roles = "Admin,GiaoVien")]
+    [Authorize(Roles = "ADMIN,LECTURER")]
     public async Task<IActionResult> GetInvoicesByCourse(int courseId)
     {
         var invoices = await _paymentService.GetInvoicesByCourseAsync(courseId);
@@ -70,7 +70,7 @@ public class PaymentController : ControllerBase
     /// Lọc phiếu thu theo ngày, khóa học, trạng thái
     /// </summary>
     [HttpGet("invoices/filter")]
-    [Authorize(Roles = "Admin,Lecturer")]
+    [Authorize(Roles = "ADMIN,LECTURER")]
     public async Task<IActionResult> GetFilteredInvoices(
         [FromQuery] DateTime? fromDate,
         [FromQuery] DateTime? toDate,
@@ -93,7 +93,7 @@ public class PaymentController : ControllerBase
     /// Tạo phiếu thu học phí mới. Chỉ Admin.
     /// </summary>
     [HttpPost("invoices")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> CreateInvoice([FromBody] CreateInvoiceRequest request)
     {
         // Lấy userId của người tạo từ JWT
@@ -117,7 +117,7 @@ public class PaymentController : ControllerBase
     /// Ghi nhận thanh toán thêm cho phiếu đã có. Chỉ Admin.
     /// </summary>
     [HttpPatch("invoices/{id:int}/pay")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> AddPayment(int id, [FromBody] UpdatePaymentRequest request)
     {
         var (success, message, invoice) = await _paymentService.AddPaymentAsync(id, request);
@@ -134,7 +134,7 @@ public class PaymentController : ControllerBase
     /// Lấy tất cả công nợ. Admin và GiaoVien.
     /// </summary>
     [HttpGet("debts")]
-    [Authorize(Roles = "Admin,Lecturer")]
+    [Authorize(Roles = "ADMIN,LECTURER")]
     public async Task<IActionResult> GetAllDebts()
     {
         var debts = await _paymentService.GetAllDebtsAsync();
@@ -155,7 +155,7 @@ public class PaymentController : ControllerBase
     /// Lấy danh sách công nợ quá hạn. Admin.
     /// </summary>
     [HttpGet("debts/overdue")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> GetOverdueDebts()
     {
         var debts = await _paymentService.GetOverdueDebtsAsync();

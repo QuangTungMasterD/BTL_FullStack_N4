@@ -64,9 +64,9 @@ public class AuthService : IAuthService
             return (false, $"Tên đăng nhập '{request.Username}' đã tồn tại", null);
 
         // Validate role
-        var validRoles = new[] { "Admin", "GiaoVien", "HocVien" };
+        var validRoles = new[] { "ADMIN", "LECTURER", "STUDENT" };
         if (!validRoles.Contains(request.Role))
-            return (false, "Vai trò không hợp lệ. Chỉ chấp nhận: Admin, GiaoVien, HocVien", null);
+            return (false, "Vai trò không hợp lệ. Chỉ chấp nhận: ADMIN, LECTURER, STUDENT", null);
 
         // Hash password
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);

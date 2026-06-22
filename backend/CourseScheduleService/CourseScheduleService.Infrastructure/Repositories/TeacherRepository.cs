@@ -92,10 +92,10 @@ namespace CourseScheduleService.Infrastructure.Repositories
 
     public async Task<List<Teacher>> GetAvailableTeachersBySpecializationAsync(int specializationId, DateTime startDate, DateTime endDate)
     {
-        var query = _dbSet
-            .Where(t => t.IsActive && !t.IsDeleted &&
-                        t.TeacherSpecializations.Any(ts => ts.SpecializationId == specializationId && !ts.IsDeleted));
-        return await query.ToListAsync();
+      var query = _dbSet
+          .Where(t => t.IsActive && !t.IsDeleted &&
+                      t.TeacherSpecializations.Any(ts => ts.SpecializationId == specializationId && !ts.IsDeleted));
+      return await query.ToListAsync();
     }
 
     public async Task<Teacher?> GetTeacherByUserIdAsync(int userId)

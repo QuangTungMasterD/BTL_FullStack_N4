@@ -4,6 +4,7 @@ import { useAuthStore } from "@/stores/authStore";
 // Layout components
 import AuthLayout from "@/layouts/AuthLayout.vue";
 import MainLayout from "@/layouts/MainLayout.vue";
+import PublicLayout from '@/layouts/PublicLayout.vue';
 
 // Auth pages
 import LoginView from "@/pages/LoginView.vue";
@@ -59,7 +60,22 @@ import SpecializationsManager from "@/pages/specializations/SpecializationsManag
 import ScheduleChangeRequestManager from "@/pages/admin/ScheduleChangeRequests.vue";
 // ---------------------------------------------------------------
 
+import HomePage from '@/pages/Home.vue';
+import AboutPage from '@/pages/AboutView.vue';
+import ContactPage from '@/pages/ContactView.vue';
+import CoursesPage from '@/pages/CoursesView.vue';
+
 const routes = [
+  {
+    path: '/',
+    component: PublicLayout,
+    children: [
+      { path: '', component: HomePage },
+      { path: 'about', component: AboutPage },
+      { path: 'contact', component: ContactPage },
+      { path: 'courses', component: CoursesPage },
+    ],
+  },
   {
     path: "/login",
     component: AuthLayout,

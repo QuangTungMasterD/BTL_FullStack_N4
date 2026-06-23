@@ -10,10 +10,21 @@
           <p class="hero-subtitle">Quản lý thông tin, phân công giảng dạy và tài khoản giảng viên</p>
         </div>
       </div>
-      <v-btn color="primary" class="hero-btn" @click="openAddDialog">
-        <v-icon icon="mdi-plus" class="mr-2" />
-        Thêm giảng viên
-      </v-btn>
+      <div class="hero-actions">
+        <v-btn
+            color="primary"
+            class="hero-btn"
+            @click="openAddDialog">
+            Thêm giảng viên
+        </v-btn>
+
+        <v-btn
+            color="success"
+            class="hero-btn"
+            @click="showCreateDialog = true">
+            Tạo TK giảng viên
+        </v-btn>
+      </div>
     </div>
 
     <div class="stats-grid-modern">
@@ -112,21 +123,21 @@
           hover
           class="modern-table"
         >
-          <template v-slot:item.title="{ item }">
+          <template v-slot:[`item.title`]="{ item }">
             <div class="title-badge" :class="getTitleClass(item.title)">
               {{ item.title }}
             </div>
           </template>
-          <template v-slot:item.status="{ item }">
+          <template v-slot:[`item.status`]="{ item }">
             <div class="status-badge" :class="item.status === 'Active' ? 'active' : 'inactive'">
               <span class="status-dot"></span>
               {{ item.status === 'Active' ? 'Đang công tác' : 'Đã nghỉ' }}
             </div>
           </template>
-          <template v-slot:item.courses="{ item }">
+          <template v-slot:[`item.courses`]="{ item }">
             <span class="course-count">{{ item.courses }} khóa</span>
           </template>
-          <template v-slot:item.actions="{ item }">
+          <template v-slot:[`item.actions`]="{ item }">
             <div class="action-group">
               <v-btn icon size="small" variant="text" class="action-btn view" @click="viewLecturer(item)">
                 <v-icon icon="mdi-eye" size="18" />
@@ -142,7 +153,7 @@
         </v-data-table>
       </div>
     </div>
-
+   
     <!-- Add/Edit Lecturer Dialog -->
     <v-dialog v-model="dialogVisible" max-width="560px" transition="dialog-transition">
       <v-card class="modern-dialog">
@@ -221,7 +232,7 @@ const isEditing = ref(false)
 const formValid = ref(true)
 const loading = ref(false)
 const saving = ref(false)
-const selectedLecturer = ref(null)
+const selectedLecturer = ref(null) 
 
 const facultyOptions = [
   { title: 'Tất cả khoa', value: 'all' },
@@ -398,7 +409,14 @@ onMounted(() => { loadLecturers() })
   padding: 0 4px;
 }
 
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .hero-header {
+  width: 100%;
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   border-radius: 28px;
   padding: 28px 32px;
@@ -408,6 +426,10 @@ onMounted(() => { loadLecturers() })
   align-items: center;
   flex-wrap: wrap;
   gap: 20px;
+  box-sizing: border-box;
+  min-height: 100px;
+  visibility: visible;
+  opacity: 1;
 }
 
 .hero-content {
@@ -425,6 +447,7 @@ onMounted(() => { loadLecturers() })
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(8px);
+  flex-shrink: 0;
 }
 
 .hero-title {
@@ -477,6 +500,7 @@ onMounted(() => { loadLecturers() })
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .stat-icon-wrapper.total { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #3b82f6; }
@@ -532,6 +556,7 @@ onMounted(() => { loadLecturers() })
   top: 50%;
   transform: translateY(-50%);
   color: #94a3b8;
+  pointer-events: none;
 }
 
 .search-input-modern {
@@ -542,6 +567,7 @@ onMounted(() => { loadLecturers() })
   font-size: 14px;
   transition: all 0.2s ease;
   background: white;
+  font-family: inherit;
 }
 
 .search-input-modern:focus {
@@ -619,6 +645,7 @@ onMounted(() => { loadLecturers() })
   height: 6px;
   border-radius: 50%;
   background: currentColor;
+  flex-shrink: 0;
 }
 
 .course-count {
@@ -665,6 +692,7 @@ onMounted(() => { loadLecturers() })
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .dialog-title {
@@ -719,6 +747,7 @@ onMounted(() => { loadLecturers() })
   color: white;
   font-size: 32px;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .view-header-info h3 {
@@ -810,6 +839,7 @@ onMounted(() => { loadLecturers() })
 .teaching-course .course-students {
   font-size: 12px;
   color: #64748b;
+  white-space: nowrap;
 }
 
 .empty-text {
@@ -823,12 +853,39 @@ onMounted(() => { loadLecturers() })
 }
 
 @media (max-width: 768px) {
-  .hero-header { flex-direction: column; align-items: flex-start; }
+  .hero-header { 
+    flex-direction: column; 
+    align-items: flex-start;
+    padding: 20px 16px;
+  }
+  
+  .hero-content {
+    width: 100%;
+  }
+  
+  .hero-actions {
+    width: 100%;
+  }
+  
   .toolbar-left { flex-direction: column; width: 100%; }
   .search-wrapper { width: 100%; }
   .filter-group { width: 100%; flex-direction: column; }
   .filter-select-modern { width: 100%; }
   .form-grid { grid-template-columns: 1fr; }
   .info-grid { grid-template-columns: 1fr; }
+  
+  .stats-grid-modern {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid-modern {
+    grid-template-columns: 1fr;
+  }
+  
+  .hero-title {
+    font-size: 20px;
+  }
 }
 </style>

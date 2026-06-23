@@ -16,13 +16,17 @@ public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepo;
     private readonly JwtHelper _jwtHelper;
+    private readonly EmailService _emailService;
 
-    public AuthService(IUserRepository userRepo, JwtHelper jwtHelper)
-    {
-        _userRepo = userRepo;
-        _jwtHelper = jwtHelper;
-    }
-
+    public AuthService(
+    IUserRepository userRepo,
+    JwtHelper jwtHelper,
+    EmailService emailService)
+{
+    _userRepo = userRepo;
+    _jwtHelper = jwtHelper;
+    _emailService = emailService;
+}
     /// <summary>
     /// Đăng nhập: kiểm tra username/password, trả về JWT token
     /// </summary>
@@ -57,32 +61,73 @@ public class AuthService : IAuthService
     /// <summary>
     /// Đăng ký tài khoản mới (chỉ Admin được tạo)
     /// </summary>
+    private string GenerateRandomPassword()
+{
+    return $"Edu@{Random.Shared.Next(100000, 999999)}";
+}
     public async Task<(bool Success, string Message, UserResponse? User)> RegisterAsync(RegisterRequest request)
     {
+        if (request == null)
+            return (false, "Dữ liệu yêu cầu không hợp lệ", null);
+
+        if (string.IsNullOrWhiteSpace(request.Username))
+            return (false, "Tên đăng nhập không được để trống", null);
+
+        if (string.IsNullOrWhiteSpace(request.FullName))
+            return (false, "Họ tên không được để trống", null);
+
+        if (string.IsNullOrWhiteSpace(request.Email))
+            return (false, "Email không được để trống", null);
+
         // Kiểm tra username trùng
         if (await _userRepo.UsernameExistsAsync(request.Username))
             return (false, $"Tên đăng nhập '{request.Username}' đã tồn tại", null);
 
         // Validate role
-        var validRoles = new[] { "ADMIN", "LECTURER", "STUDENT" };
-        if (!validRoles.Contains(request.Role))
-            return (false, "Vai trò không hợp lệ. Chỉ chấp nhận: ADMIN, LECTURER, STUDENT", null);
+        var validRoles = new[]
+                {
+                    "STUDENT",
+                    "LECTURER",
+                    "ADMIN"
+                };
+
+        var role = request.Role?.ToUpperInvariant();
+        if (string.IsNullOrWhiteSpace(role) || !validRoles.Contains(role))
+            {
+                return (
+                    false,
+                    "Vai trò không hợp lệ. Chỉ chấp nhận: STUDENT, LECTURER, ADMIN",
+                    null
+                );
+            }
 
         // Hash password
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+        string generatedPassword =
+    GenerateRandomPassword();
+
+var passwordHash =
+    BCrypt.Net.BCrypt.HashPassword(
+        generatedPassword);
 
         var user = new User
         {
             Username = request.Username,
             PasswordHash = passwordHash,
-            FullName = request.FullName,
+            FullName = request.FullName.Trim(),
             Email = request.Email,
-            Role = request.Role,
+                // use validated/normalized role (uppercase) to avoid possible null assignment
+                Role = role,
             CreatedAt = DateTime.UtcNow,
             IsActive = true
         };
 
         var created = await _userRepo.CreateAsync(user);
+        await _emailService.SendAccountEmailAsync(
+                created.Email,
+                created.FullName,
+                created.Username,
+                generatedPassword
+            );
 
         var userResponse = new UserResponse
         {

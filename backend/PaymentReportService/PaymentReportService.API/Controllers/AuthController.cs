@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
     // [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+        if (request == null || string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
             return BadRequest(ApiResponse<string>.Fail("Username và Password không được để trống"));
 
         var (success, message, response) = await _authService.LoginAsync(request);
@@ -42,11 +42,18 @@ public class AuthController : ControllerBase
     /// </summary>
     
     [AllowAnonymous]
-    [HttpPost("register/student")]
+    [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+        // Optional: remove debug logs in production. Keep validation and registration flow.
+
+        if (request == null || string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
             return BadRequest(ApiResponse<string>.Fail("Username và Password không được để trống"));
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
 
         var (success, message, user) = await _authService.RegisterAsync(request);
 

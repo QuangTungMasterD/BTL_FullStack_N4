@@ -176,7 +176,7 @@ const menuItems = computed(() => {
     return [
       { title: 'Dashboard', path: '/student-dashboard', icon: 'mdi-view-dashboard' },
       { title: 'Thông tin cá nhân', path: '/profile', icon: 'mdi-account' },
-      { title: 'Lịch học', path: 'student/schedule', icon: 'mdi-account' },
+      { title: 'Lịch học', path: '/student/schedule', icon: 'mdi-account' },
       { title: 'Điểm danh', path: '/student-attendance', icon: 'mdi-calendar-check' },
       { title: 'Điểm số', path: '/student-grades', icon: 'mdi-chart-line' },
       { title: 'Đăng ký khóa học', path: '/enrollments', icon: 'mdi-book-open-variant' },

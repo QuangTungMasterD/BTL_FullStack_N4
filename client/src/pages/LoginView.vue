@@ -105,7 +105,7 @@
 
             <form @submit.prevent="handleLogin">
               <div class="input-group">
-                <label>Email</label>
+                <label>Tên người dùng</label>
                 <div class="input-wrapper">
                   <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
                     <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2"/>
@@ -114,6 +114,7 @@
                   <input 
                     v-model="loginForm.username" 
                     label="Tên đăng nhập"
+                    placeholder="abc123"
                     required
                   >
                 </div>
@@ -249,8 +250,7 @@
                       v-model="registerForm.role"
                       label="Vai trò"
                       :items="[
-                        'Student',
-                        'Teacher'
+                        'Student'
                       ]"
                     />
                     
@@ -279,7 +279,7 @@
           </div>
 
           <div class="auth-footer">
-            <p>© 2024 EduTrack. All rights reserved.</p>
+            <p>© 2026 EduTrack. All rights reserved.</p>
           </div>
         </div>
       </div>
@@ -317,7 +317,7 @@ const registerForm = ref({
   email: '',
   password: '',
   confirmPassword: '',
-  role: 'HocVien'
+  role: 'STUDENT'
 })
 
 const showRegisterPassword = ref(false)
@@ -335,39 +335,42 @@ const quickLogin = (username, password) => {
 
 // LOGIN WITH REAL API
 const handleLogin = async () => {
-
   loginError.value = ''
   loading.value = true
 
   try {
 
-    const response = await api.post('/auth/login', {
+    const response = await api.post('/api/auth/login', {
       username: loginForm.value.username,
       password: loginForm.value.password
     })
 
-    console.log('Login response:', response.data)
+          console.log("API RESPONSE:", response)
 
-    const loginData = response.data.data
+      // response chính là object chứa token
+      const loginData = response.data
+      console.log("response =", response)
+      console.log("response.data =", response.data)
 
-    authStore.setToken(
-      loginData.token,
-      {
-        username: loginData.username,
-        fullName: loginData.fullName,
-        role: loginData.role
-      }
-    )
+      authStore.setToken(
+        loginData.token,
+        {
+          username: loginData.username,
+          fullName: loginData.fullName,
+          role: loginData.role.toUpperCase(),
+          email: loginData.email
+        }
+      )
 
-    if (rememberMe.value) {
-      localStorage.setItem('rememberMe', 'true')
-    }
+    console.log('STORE USER:', authStore.user)
 
-    if (loginData.role === 'Admin') {
+    if (loginData.role.toUpperCase() === 'ADMIN') {
       router.push('/')
     }
-    else if (loginData.role === 'GiaoVien') {
-      router.push('/teacher-dashboard')
+    else if (
+      loginData.role.toUpperCase() === 'LECTURER'
+    ) {
+      router.push('/lecturer-dashboard')
     }
     else {
       router.push('/student-dashboard')
@@ -376,26 +379,19 @@ const handleLogin = async () => {
   }
   catch (err) {
 
-    console.error('Login error:', err)
+    console.error('❌ Login error:', err)
 
-    if (err.response) {
-      loginError.value =
-        err.response.data?.message ||
-        'Đăng nhập thất bại'
-    }
-    else {
-      loginError.value =
-        'Không thể kết nối tới server'
-    }
+    loginError.value =
+      err.response?.data?.message ||
+      'Đăng nhập thất bại'
+
   }
   finally {
     loading.value = false
   }
 }
-
 // REGISTER WITH REAL API
 const handleRegister = async () => {
-
   registerError.value = ''
 
   if (!registerForm.value.username.trim()) {
@@ -413,34 +409,24 @@ const handleRegister = async () => {
     return
   }
 
-  if (
-    registerForm.value.password !==
-    registerForm.value.confirmPassword
-  ) {
-    registerError.value =
-      'Mật khẩu xác nhận không khớp'
+  if (registerForm.value.password !== registerForm.value.confirmPassword) {
+    registerError.value = 'Mật khẩu xác nhận không khớp'
     return
   }
 
   registerLoading.value = true
 
   try {
-
-    await api.post('/auth/register', {
+    await api.post('/api/auth/register/student', {
       username: registerForm.value.username,
       password: registerForm.value.password,
       fullName: registerForm.value.fullName,
       email: registerForm.value.email,
-      role: registerForm.value.role
     })
 
     activeTab.value = 'login'
-
-    loginForm.value.username =
-      registerForm.value.username
-
-    loginForm.value.password =
-      registerForm.value.password
+    loginForm.value.username = registerForm.value.username
+    loginForm.value.password = registerForm.value.password
 
     registerForm.value = {
       username: '',
@@ -448,17 +434,13 @@ const handleRegister = async () => {
       email: '',
       password: '',
       confirmPassword: '',
-      role: 'HocVien'
+      role: 'STUDENT'
     }
 
   }
   catch (err) {
-
     console.error(err)
-
-    registerError.value =
-      err.response?.data?.message ||
-      'Đăng ký thất bại'
+    registerError.value = err.response?.data?.message || 'Đăng ký thất bại'
   }
   finally {
     registerLoading.value = false

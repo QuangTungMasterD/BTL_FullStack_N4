@@ -1,34 +1,32 @@
-import axios from 'axios'
-import { useAuthStore } from '@/stores/authStore'
-
-// Đổi thành địa chỉ gateway của bạn
-const API_BASE_URL = import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:5000'
+import axios from 'axios';
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: 'http://localhost:5000', // ✅ CHỈ LOCALHOST:5000, BỎ /api
   headers: {
     'Content-Type': 'application/json',
   },
-})
+  timeout: 60000,
+});
 
-api.interceptors.request.use((config) => {
-  const authStore = useAuthStore()
-  if (authStore.token) {
-    config.headers.Authorization = `Bearer ${authStore.token}`
-  }
-  return config
-})
-
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      const authStore = useAuthStore()
-      authStore.logout()
-      window.location.href = '/login'
+// Request interceptor - gắn token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
-    return Promise.reject(error)
-  }
-)
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-export default api
+// Response interceptor
+api.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    console.error('API Error:', error);
+    return Promise.reject(error);
+  }
+);
+
+export default api;

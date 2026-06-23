@@ -16,8 +16,9 @@ public class RegisterRequest
     public string Email { get; set; } = string.Empty;
 
     /// <summary>Vai trò: "Admin" | "GiaoVien" | "HocVien"</summary>
-    public string Role { get; set; } = "STUDENT";
+    public string Role { get; set; } = "STUDENT, LECTURER";
 }
+
 
 // ===================== RESPONSE =====================
 

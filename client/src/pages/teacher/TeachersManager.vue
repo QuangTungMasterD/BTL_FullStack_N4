@@ -21,8 +21,77 @@
           <span class="material-symbols-outlined">add</span>
           Thêm giáo viên
         </Button>
+        <v-btn
+            color="success"
+            class="hero-btn"
+            @click="showCreateDialog = true">
+            Tạo TK giảng viên
+        </v-btn>
       </div>
     </div>
+
+     
+    <v-dialog
+      v-model="showCreateDialog"
+      max-width="600"
+    >
+      <v-card>
+
+        <v-card-title class="text-h6">
+          Tạo tài khoản giảng viên
+        </v-card-title>
+
+        <v-card-text>
+
+          <v-text-field
+            v-model="lecturer.username"
+            label="Tên đăng nhập"
+            prepend-inner-icon="mdi-account"
+          />
+
+          <v-text-field
+            v-model="lecturer.fullName"
+            label="Họ tên"
+            prepend-inner-icon="mdi-account-box"
+          />
+
+          <v-text-field
+            v-model="lecturer.email"
+            label="Email"
+            prepend-inner-icon="mdi-email"
+          />
+
+          <v-text-field
+            v-model="lecturer.password"
+            label="Mật khẩu"
+            type="password"
+            prepend-inner-icon="mdi-lock"
+          />
+
+        </v-card-text>
+
+        <v-card-actions>
+
+          <v-spacer />
+
+          <v-btn
+            variant="text"
+            @click="showCreateDialog = false"
+          >
+            Hủy
+          </v-btn>
+
+          <v-btn
+            color="success"
+            @click="createLecturer"
+          >
+            Tạo tài khoản
+          </v-btn>
+
+        </v-card-actions>
+
+      </v-card>
+    </v-dialog>
 
     <!-- Filters -->
     <TeacherFilters @filter-change="handleFilterChange" :specializations="specializationOptions" />
@@ -158,6 +227,18 @@ import Link from '@/components/ui/Link.vue';
 import ImportExportButtons from '@/components/business/ImportExportButtons.vue';
 import SpecializationSelector from '@/components/business/SpecializationSelector.vue';
 import SkeletonCard from '@/components/skeleton/SkeletonCard.vue';
+import api from '@/utils/api' 
+
+console.log("TeachersManager Loaded") 
+
+const showCreateDialog = ref(false)
+
+const lecturer = ref({
+  username: '',
+  fullName: '',
+  email: '',
+  password: ''
+})
 
 const teacherStore = useTeacherStore();
 const specializationStore = useSpecializationStore();
@@ -207,6 +288,25 @@ const currentParams = ref({
 const loadTeachers = async () => {
   await teacherStore.fetchPaged(currentParams.value);
 };
+
+const createLecturer = async () => {
+
+  try {
+    console.log(lecturer.value)
+
+    await api.post('/api/auth/register', {
+      username: lecturer.value.username,
+      password: lecturer.value.password,
+      fullName: lecturer.value.fullName,
+      email: lecturer.value.email,
+      role: 'LECTURER'
+    })
+
+    alert("Thành công")
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 const handleFilterChange = (params) => {
   currentParams.value = { pageSize: 12, ...params, page: 1 };
@@ -305,3 +405,10 @@ onMounted(() => {
   loadTeachers();
 });
 </script>
+<style scoped>
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+</style>

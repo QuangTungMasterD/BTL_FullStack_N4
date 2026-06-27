@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
-import teacherSpecializationService from '@/services/teacherSpecializationService';
+import CourseTeacherService from '@/services/CourseTeacherService';
 
 export const useTeacherSpecializationStore = defineStore('teacherSpecialization', {
   state: () => ({
-    teacherSpecs: [],
+    teacherCourses: [],
     loading: false,
     error: null,
     errorStatusCode: null,
@@ -23,8 +23,8 @@ export const useTeacherSpecializationStore = defineStore('teacherSpecialization'
       this.loading = true;
       this.clearErrors();
       try {
-        const data = await teacherSpecializationService.getAllTeacherSpecializations();
-        this.teacherSpecs = data;
+        const data = await CourseTeacherService.getAllTeacherSpecializations();
+        this.teacherCourses = data;
       } catch (err) {
         this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;
@@ -39,8 +39,8 @@ export const useTeacherSpecializationStore = defineStore('teacherSpecialization'
       this.loading = true;
       this.clearErrors();
       try {
-        const newItem = await teacherSpecializationService.createTeacherSpecialization(data);
-        this.teacherSpecs.push(newItem);
+        const newItem = await CourseTeacherService.createCourseTeacher(data);
+        this.teacherCourses.push(newItem);
         return newItem;
       } catch (err) {
         this.error = err.response?.data?.message || err.message;
@@ -57,8 +57,8 @@ export const useTeacherSpecializationStore = defineStore('teacherSpecialization'
       this.loading = true;
       this.clearErrors();
       try {
-        await teacherSpecializationService.deleteTeacherSpecialization(id);
-        this.teacherSpecs = this.teacherSpecs.filter(item => item.id !== id);
+        await CourseTeacherService.deleteCourseTeacher(id);
+        this.teacherCourses = this.teacherCourses.filter(item => item.id !== id);
       } catch (err) {
         this.error = err.response?.data?.message || err.message;
         this.errorStatusCode = err.statusCode;

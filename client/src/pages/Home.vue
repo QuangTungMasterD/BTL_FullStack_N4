@@ -111,7 +111,8 @@
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="course in featuredCourses" :key="course.id" class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
             <div class="h-40 bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center">
-              <span class="material-symbols-outlined text-6xl text-primary/40">menu_book</span>
+              <img v-if="course.imageUrl" :src="course.imageUrl" alt="Course thumbnail" class="w-full h-full object-cover" />
+              <span v-else class="material-symbols-outlined text-6xl text-primary/40">menu_book</span>
             </div>
             <div class="p-5">
               <h3 class="text-lg font-bold text-gray-900">{{ course.courseName }}</h3>

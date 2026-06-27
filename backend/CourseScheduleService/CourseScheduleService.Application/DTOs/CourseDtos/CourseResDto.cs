@@ -14,6 +14,7 @@ namespace CourseScheduleService.Application.DTOs.CourseDtos
         public Decimal TuitionFee { get; set; }
         public CourseLevel Level { get; set; }
         public int Lesson { get; set; }
+        public string? ImageUrl { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;

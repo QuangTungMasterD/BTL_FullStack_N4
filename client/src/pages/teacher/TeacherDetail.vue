@@ -4,13 +4,13 @@
     <div class="flex justify-between items-center mb-6">
       <div class="text-left">
         <div class="flex items-center gap-3">
-          <Link to="/teachers" variant="muted" icon-left="arrow_back">
-            Quay lại
-          </Link>
           <h1 class="font-headline-lg text-headline-lg">Chi tiết giáo viên</h1>
         </div>
       </div>
       <div class="flex gap-3">
+        <Link to="/teachers" variant="muted" icon-left="arrow_back">
+          Quay lại
+        </Link>
         <Button variant="outline" @click="openEditModal">
           <span class="material-symbols-outlined">edit</span>
           Sửa thông tin
@@ -26,13 +26,13 @@
     <SkeletonDetail v-if="teacherStore.loading" />
 
     <div v-else class="space-y-6">
-      <!-- Thông tin giáo viên (giữ nguyên) -->
+      <!-- Thông tin giáo viên -->
       <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
         <div class="flex items-center gap-4 mb-6">
           <Avatar :name="teacher?.fullName" size="lg" />
           <div>
             <h2 class="font-headline-md text-headline-md">{{ teacher?.fullName }}</h2>
-            <p class="text-label-md text-on-surface-variant">ID: {{ teacher?.id }}</p>
+            <!-- <p class="text-label-md text-on-surface-variant">ID: {{ teacher?.id }}</p> -->
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -68,7 +68,7 @@
           </div>
           <div class="md:col-span-2">
             <p class="text-label-md text-on-surface-variant">Khóa học có thể dạy</p>
-            <div class="flex flex-wrap gap-2 mt-1 justify-center">
+            <div class="flex flex-wrap gap-2 mt-1 items-center justify-center">
               <Badge
                 v-for="courseId in teacher?.courseIds" 
                 :key="courseId"
@@ -127,7 +127,7 @@
       </div>
     </div>
 
-    <!-- Modal Edit (giữ nguyên) -->
+    <!-- Modal Edit -->
     <Modal v-model="showEditModal" title="Sửa giáo viên">
       <form @submit.prevent="handleUpdate" class="space-y-4">
         <Input
@@ -169,11 +169,12 @@
           :options="statusOptions"
         />
 
-        <Select
-          v-model="formData.courseIds"
-          label="Khóa học có thể dạy"
+        <!-- Sử dụng MultiSelectTags thay vì Select multiple -->
+        <MultiSelectTags
+          v-model="editForm.courseIds"
           :options="courseOptionsForForm"
-          multiple
+          label="Khóa học có thể dạy"
+          placeholder="Tìm khóa học..."
           :error="validationErrors?.CourseIds?.[0]"
         />
 
@@ -211,6 +212,7 @@ import Badge from '@/components/ui/Badge.vue';
 import Avatar from '@/components/ui/Avatar.vue';
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
+import MultiSelectTags from '@/components/ui/MultiSelectTags.vue';
 import { formatDate, formatDateTime, classStatusText } from '@/composables/useFormat';
 import SkeletonDetail from '@/components/skeleton/SkeletonDetail.vue';
 
@@ -221,12 +223,12 @@ const courseStore = useCourseStore();
 const { validationErrors } = storeToRefs(teacherStore);
 
 const teacher = ref(null);
-
 const classes = ref([]);
 const loadingClasses = ref(false);
 const showEditModal = ref(false);
 const showDeleteConfirm = ref(false);
 
+// Course options cho MultiSelectTags
 const courseOptionsForForm = computed(() =>
   courseStore.courses.map(c => ({ value: c.id, label: c.courseName }))
 );
@@ -244,7 +246,7 @@ const editForm = reactive({
   yoB: '',
   gender: null,
   isActive: true,
-  courseIds: [],
+  courseIds: [], // sẽ là mảng số
 });
 
 const genderOptions = [
@@ -262,14 +264,11 @@ const loadClasses = async () => {
   if (!teacherId) return;
   loadingClasses.value = true;
   try {
-    // Gọi API lấy các lớp của giáo viên (cần backend hỗ trợ endpoint /Teachers/{id}/classes)
-    // Giả sử teacherStore đã có action fetchTeacherClasses
     const data = await teacherStore.fetchTeacherClasses(teacherId);
-    // Enrich thêm tên khóa học (courseName) vì API trả về courseId
     const enriched = data.map(cls => ({
       ...cls,
       courseName: courseStore.courses.find(c => c.id === cls.courseId)?.courseName || 'N/A',
-      currentSlots: cls.currentSlots || 0, // Nếu có, nếu không thì để 0
+      currentSlots: cls.currentSlots || 0,
       maxStudent: cls.maxStudent,
     }));
     classes.value = enriched;
@@ -302,7 +301,10 @@ const openEditModal = () => {
   editForm.yoB = teacher.value.yoB ? teacher.value.yoB.split('T')[0] : '';
   editForm.gender = teacher.value.gender;
   editForm.isActive = teacher.value.isActive;
-  editForm.courseIds = teacher.value.courseIds ? [...teacher.value.courseIds] : [];
+  // Đảm bảo courseIds là mảng số
+  editForm.courseIds = Array.isArray(teacher.value.courseIds) 
+    ? [...teacher.value.courseIds] 
+    : [];
   showEditModal.value = true;
 };
 
@@ -311,6 +313,11 @@ const closeEditModal = () => {
 };
 
 const handleUpdate = async () => {
+  // Đảm bảo courseIds là mảng số
+  const courseIds = Array.isArray(editForm.courseIds)
+    ? editForm.courseIds.map(id => Number(id))
+    : [];
+
   const submitData = {
     fullName: editForm.fullName,
     email: editForm.email,
@@ -318,7 +325,7 @@ const handleUpdate = async () => {
     yoB: editForm.yoB || null,
     gender: editForm.gender,
     isActive: editForm.isActive === true || editForm.isActive === 'true',
-    courseIds: editForm.courseIds,
+    courseIds: courseIds,
   };
   try {
     await teacherStore.update(teacher.value.id, submitData);
@@ -351,9 +358,9 @@ const goToClassDetail = (classId) => {
   router.push(`/classes/${classId}`);
 };
 
-onMounted(() => {
-  courseStore.fetchAll();
-  loadTeacherDetail();
-  loadClasses();
+onMounted(async () => {
+  await courseStore.fetchAll();
+  await loadTeacherDetail();
+  await loadClasses();
 });
 </script>

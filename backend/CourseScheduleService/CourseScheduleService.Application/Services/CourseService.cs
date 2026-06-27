@@ -8,6 +8,8 @@ using CourseScheduleService.Application.DTOs.CourseDtos;
 using CourseScheduleService.Domain.Entities;
 using CourseScheduleService.Domain.Interfaces.Repositories;
 using CourseScheduleService.interfaces.services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 // using Microsoft.EntityFrameworkCore;
 
 namespace CourseScheduleService.Application.Services
@@ -16,11 +18,70 @@ namespace CourseScheduleService.Application.Services
   {
     private readonly ICourseRepository _courseRepository;
     private readonly IMapper _mapper;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
-    public CourseService(ICourseRepository courseRepository, IMapper mapper)
+    public CourseService(ICourseRepository courseRepository, IMapper mapper, IWebHostEnvironment webHostEnvironment)
     {
       this._courseRepository = courseRepository;
       this._mapper = mapper;
+      _webHostEnvironment = webHostEnvironment;
+    }
+
+    public async Task<ApiResponse<string>> UploadImageAsync(int courseId, IFormFile file)
+    {
+        try
+        {
+            var course = await _courseRepository.GetByIdAsync(courseId);
+            if (course == null)
+                return ApiResponse<string>.ErrorResponse($"Không tìm thấy khóa học {courseId}", statusCode: 404);
+
+            if (file == null || file.Length == 0)
+                return ApiResponse<string>.ErrorResponse("Chưa có file được tải lên", statusCode: 400);
+
+            if (file.Length > 2 * 1024 * 1024)
+                return ApiResponse<string>.ErrorResponse("File quá lớn (tối đa 2MB)", statusCode: 400);
+
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var extension = Path.GetExtension(file.FileName).ToLower();
+            if (!allowedExtensions.Contains(extension))
+                return ApiResponse<string>.ErrorResponse("Định dạng file không hợp lệ (chỉ cho phép jpg, jpeg, png, gif, webp)", statusCode: 400);
+
+            // Xác định thư mục gốc an toàn
+            string basePath = _webHostEnvironment?.WebRootPath;
+            if (string.IsNullOrEmpty(basePath))
+            {
+                basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                if (!Directory.Exists(basePath))
+                    Directory.CreateDirectory(basePath);
+            }
+
+            var uploadsFolder = Path.Combine(basePath, "images", "courses");
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+
+            var fileName = $"{Guid.NewGuid()}_{file.FileName}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var imageUrl = $"/images/courses/{fileName}";
+
+            course.ImageUrl = imageUrl;
+            _courseRepository.UpdateAsync(course);
+            await _courseRepository.SaveChangeAsync();
+
+            return ApiResponse<string>.SuccessResponse(imageUrl, "Upload ảnh thành công");
+        }
+        catch (Exception ex)
+        {
+            // Log lỗi chi tiết
+            Console.WriteLine($"[UploadImage] Error: {ex.Message}");
+            Console.WriteLine(ex.StackTrace);
+            return ApiResponse<string>.ErrorResponse($"Upload thất bại: {ex.Message}", statusCode: 500);
+        }
     }
 
     public async Task<ApiResponse<CourseResDto?>> CreateCourseAsync(CourseReqDto courseReq)
@@ -118,6 +179,7 @@ namespace CourseScheduleService.Application.Services
       course.Lesson = courseReq.Lesson;
       course.IsActive = courseReq.IsActive;
       course.UpdatedAt = DateTime.Now;
+      course.ImageUrl = courseReq.ImageUrl;
 
       this._courseRepository.UpdateAsync(course);
       await this._courseRepository.SaveChangeAsync();

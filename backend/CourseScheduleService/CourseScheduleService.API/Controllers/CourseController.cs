@@ -8,6 +8,7 @@ using CourseScheduleService.Application.DTOs.CourseDtos;
 using CourseScheduleService.interfaces.services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace CourseScheduleService.API.Controllers
 {
@@ -16,6 +17,14 @@ namespace CourseScheduleService.API.Controllers
   public class CourseController : ControllerBase
   {
     private readonly ICourseService _courseService;
+
+    [HttpPost("{id}/upload-image")]
+    [Authorize(Roles = "admin")]
+    public async Task<ActionResult<ApiResponse<string>>> UploadImage(int id, IFormFile file)
+    {
+        var result = await _courseService.UploadImageAsync(id, file);
+        return StatusCode(result.StatusCode, result);
+    }
 
     public CourseController(ICourseService courseService)
     {

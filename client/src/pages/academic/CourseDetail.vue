@@ -26,41 +26,57 @@
     <SkeletonDetail v-if="courseStore.loading" />
 
     <div v-else class="space-y-6">
-      <!-- Thông tin khóa học -->
+      <!-- Thông tin khóa học với ảnh -->
       <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
-        <h2 class="font-headline-md text-headline-md mb-4">Thông tin chung</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <p class="text-label-md text-on-surface-variant">Tên khóa học</p>
-            <p class="font-body-md text-title-md">{{ course?.courseName }}</p>
+        <div class="flex flex-col md:flex-row gap-6">
+          <!-- Ảnh khóa học -->
+          <div class="w-full md:w-48 h-48 rounded-lg overflow-hidden bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center flex-shrink-0">
+            <img 
+              v-if="course?.imageUrl" 
+              :src="course.imageUrl" 
+              alt="Course image" 
+              class="w-full h-full object-cover" 
+            />
+            <span v-else class="material-symbols-outlined text-6xl text-primary/40">menu_book</span>
           </div>
-          <div>
-            <p class="text-label-md text-on-surface-variant">Mã khóa học</p>
-            <p class="font-body-md">{{ course?.id }}</p>
-          </div>
-          <div>
-            <p class="text-label-md text-on-surface-variant">Học phí</p>
-            <p class="font-body-md text-primary font-bold">{{ formatVND(course?.tuitionFee) }}</p>
-          </div>
-          <div>
-            <p class="text-label-md text-on-surface-variant">số tiết</p>
-            <p class="font-body-md">{{ course?.lesson }} buổi</p>
-          </div>
-          <div>
-            <p class="text-label-md text-on-surface-variant">Trình độ</p>
-            <Badge :variant="courseLevelBadgeVariant(course?.level)">
-              {{ courseLevelText(course?.level) }}
-            </Badge>
-          </div>
-          <div>
-            <p class="text-label-md text-on-surface-variant">Trạng thái</p>
-            <Badge :variant="course?.isActive ? 'success' : 'default'">
-              {{ course?.isActive ? 'Đang mở' : 'Ngừng mở' }}
-            </Badge>
-          </div>
-          <div class="md:col-span-2">
-            <p class="text-label-md text-on-surface-variant">Mô tả</p>
-            <p class="font-body-md">{{ course?.desct || 'Chưa có mô tả' }}</p>
+          
+          <!-- Thông tin -->
+          <div class="flex-1">
+            <h2 class="font-headline-md text-headline-md mb-4">Thông tin chung</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <p class="text-label-md text-on-surface-variant">Tên khóa học</p>
+                <p class="font-body-md text-title-md">{{ course?.courseName }}</p>
+              </div>
+              <div>
+                <p class="text-label-md text-on-surface-variant">Mã khóa học</p>
+                <p class="font-body-md">{{ course?.id }}</p>
+              </div>
+              <div>
+                <p class="text-label-md text-on-surface-variant">Học phí</p>
+                <p class="font-body-md text-primary font-bold">{{ formatVND(course?.tuitionFee) }}</p>
+              </div>
+              <div>
+                <p class="text-label-md text-on-surface-variant">số tiết</p>
+                <p class="font-body-md">{{ course?.lesson }} buổi</p>
+              </div>
+              <div>
+                <p class="text-label-md text-on-surface-variant">Trình độ</p>
+                <Badge :variant="courseLevelBadgeVariant(course?.level)">
+                  {{ courseLevelText(course?.level) }}
+                </Badge>
+              </div>
+              <div>
+                <p class="text-label-md text-on-surface-variant">Trạng thái</p>
+                <Badge :variant="course?.isActive ? 'success' : 'default'">
+                  {{ course?.isActive ? 'Đang mở' : 'Ngừng mở' }}
+                </Badge>
+              </div>
+              <div class="md:col-span-2">
+                <p class="text-label-md text-on-surface-variant">Mô tả</p>
+                <p class="font-body-md">{{ course?.desct || 'Chưa có mô tả' }}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -69,10 +85,6 @@
       <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6">
         <div class="flex justify-between items-center mb-4">
           <h2 class="font-headline-md text-headline-md">Danh sách lớp học</h2>
-          <!-- <Button size="sm" variant="primary" @click="goToCreateClass">
-            <span class="material-symbols-outlined">add</span>
-            Tạo lớp mới
-          </Button> -->
         </div>
 
         <LoadingSpinner v-if="loadingClasses" />
@@ -174,9 +186,31 @@
           />
         </div>
 
+        <!-- Upload ảnh -->
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-gray-700">Ảnh khóa học</label>
+          <div class="mt-2 flex items-center gap-4">
+            <!-- Ảnh preview -->
+            <div v-if="editForm.imageUrl || imagePreview" class="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200">
+              <img :src="imagePreview || editForm.imageUrl" alt="Course image" class="w-full h-full object-cover" />
+              <button v-if="editForm.imageUrl || imagePreview" type="button" @click="removeImage" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                <span class="material-symbols-outlined text-sm">close</span>
+              </button>
+            </div>
+            <!-- Nút chọn ảnh -->
+            <label class="cursor-pointer px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg border border-gray-300">
+              <span class="material-symbols-outlined text-sm mr-1">upload</span>
+              Chọn ảnh
+              <input type="file" accept="image/*" class="hidden" @change="handleImageUpload" />
+            </label>
+            <span v-if="uploadingImage" class="text-sm text-gray-500">Đang tải lên...</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">Hỗ trợ JPG, PNG, GIF, WebP. Tối đa 2MB.</p>
+        </div>
+
         <div class="flex justify-end gap-3 pt-4">
           <Button variant="outline" @click="closeEditModal">Hủy</Button>
-          <Button variant="primary" type="submit" :loading="courseStore.loading">
+          <Button variant="primary" type="submit" :loading="courseStore.loading || uploadingImage">
             Cập nhật
           </Button>
         </div>
@@ -210,12 +244,14 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import { formatVND, courseLevelText, courseLevelBadgeVariant, classStatusText } from '@/composables/useFormat';
 import { LEVEL_OPTIONS, STATUS_OPTIONS } from '@/constants';
 import SkeletonDetail from '@/components/skeleton/SkeletonDetail.vue';
+import { useToast } from '@/composables/useToast';
 
 const router = useRouter();
 const route = useRoute();
 const courseStore = useCourseStore();
 const classStore = useClassStore();
 const { validationErrors } = storeToRefs(courseStore);
+const toast = useToast();
 
 // State
 const course = ref(null);
@@ -223,6 +259,11 @@ const classes = ref([]);
 const loadingClasses = ref(false);
 const showEditModal = ref(false);
 const showDeleteConfirm = ref(false);
+
+// Image state
+const uploadingImage = ref(false);
+const imageFile = ref(null);
+const imagePreview = ref(null);
 
 // Edit form
 const editForm = reactive({
@@ -232,6 +273,7 @@ const editForm = reactive({
   lesson: 1,
   level: 1,
   isActive: true,
+  imageUrl: '',
 });
 
 // Class status helpers
@@ -240,7 +282,41 @@ const getClassStatusVariant = (status) => {
   return map[status] || 'default';
 };
 
-// Load data
+// ===================== IMAGE HANDLERS =====================
+const handleImageUpload = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Kiểm tra kích thước (2MB)
+  if (file.size > 2 * 1024 * 1024) {
+    toast.error('File quá lớn, tối đa 2MB');
+    event.target.value = '';
+    return;
+  }
+
+  // Kiểm tra định dạng
+  const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  if (!allowed.includes(file.type)) {
+    toast.error('Chỉ hỗ trợ JPG, PNG, GIF, WebP');
+    event.target.value = '';
+    return;
+  }
+
+  imageFile.value = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    imagePreview.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+const removeImage = () => {
+  editForm.imageUrl = '';
+  imageFile.value = null;
+  imagePreview.value = null;
+};
+
+// ===================== DATA LOADING =====================
 const loadCourseDetail = async () => {
   const id = route.params.id;
   if (!id) {
@@ -250,7 +326,6 @@ const loadCourseDetail = async () => {
   
   try {
     course.value = await courseStore.fetchById(id);
-    // Lấy tên chuyên môn sau khi có course
   } catch (err) {
     console.error('Failed to load course:', err);
     router.push('/admin-courses');
@@ -271,7 +346,7 @@ const loadClasses = async () => {
   }
 };
 
-// Edit modal
+// ===================== EDIT MODAL =====================
 const openEditModal = () => {
   editForm.courseName = course.value.courseName;
   editForm.desct = course.value.desct || '';
@@ -279,6 +354,9 @@ const openEditModal = () => {
   editForm.lesson = course.value.lesson;
   editForm.level = course.value.level;
   editForm.isActive = course.value.isActive;
+  editForm.imageUrl = course.value.imageUrl || '';
+  imageFile.value = null;
+  imagePreview.value = null;
   showEditModal.value = true;
 };
 
@@ -286,8 +364,25 @@ const closeEditModal = () => {
   showEditModal.value = false;
 };
 
-// Update course
+// ===================== UPDATE COURSE =====================
 const handleUpdate = async () => {
+  let finalImageUrl = editForm.imageUrl;
+
+  // Nếu có ảnh mới, upload trước
+  if (imageFile.value) {
+    uploadingImage.value = true;
+    try {
+      const uploadResult = await courseStore.uploadImage(course.value.id, imageFile.value);
+      finalImageUrl = uploadResult;
+    } catch (err) {
+      toast.error(err.message || 'Upload ảnh thất bại');
+      uploadingImage.value = false;
+      return;
+    } finally {
+      uploadingImage.value = false;
+    }
+  }
+
   const submitData = {
     courseName: editForm.courseName,
     desct: editForm.desct,
@@ -295,24 +390,22 @@ const handleUpdate = async () => {
     lesson: Number(editForm.lesson),
     level: Number(editForm.level),
     isActive: editForm.isActive === true || editForm.isActive === 'true',
+    imageUrl: finalImageUrl,
   };
   
   try {
     await courseStore.update(course.value.id, submitData);
+    toast.success('Cập nhật thành công!');
     closeEditModal();
     loadCourseDetail();
     loadClasses();
   } catch (err) {
+    toast.error(err.message || 'Cập nhật thất bại');
     console.error('Update failed:', err);
   }
 };
 
-// Navigation
-const goToClassDetail = (classId) => {
-  router.push(`/classes/${classId}`);
-};
-
-// Delete
+// ===================== DELETE =====================
 const confirmDelete = () => {
   showDeleteConfirm.value = true;
 };
@@ -323,6 +416,12 @@ const handleDeleteCourse = async () => {
   router.push('/admin-courses');
 };
 
+// ===================== NAVIGATION =====================
+const goToClassDetail = (classId) => {
+  router.push(`/classes/${classId}`);
+};
+
+// ===================== LIFECYCLE =====================
 onMounted(() => {
   loadCourseDetail();
   loadClasses();

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CourseScheduleService.Application.Common;
 using CourseScheduleService.Application.DTOs.CourseDtos;
+using Microsoft.AspNetCore.Http;
 
 namespace CourseScheduleService.interfaces.services
 {
@@ -18,5 +19,6 @@ namespace CourseScheduleService.interfaces.services
         Task<ApiResponse<bool>> HardDeleteCourseAsync(int id);
         Task<ApiResponse<CourseResDto?>> RestoreCourseAsync(int id);
         Task<ApiResponse<PagedResponse<CourseResDto>>> GetPagedCoursesAsync(CourseFilterRequest req);
+        Task<ApiResponse<string>> UploadImageAsync(int courseId, IFormFile file);
     }
 }

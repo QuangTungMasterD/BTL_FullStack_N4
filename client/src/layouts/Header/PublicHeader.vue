@@ -52,6 +52,19 @@
                   </div>
                 </div>
                 <div class="dropdown-divider"></div>
+
+                <!-- ====== MENU ITEMS THEO ROLE ====== -->
+                <div
+                  v-for="item in menuItems"
+                  :key="item.path"
+                  class="dropdown-item"
+                  @click="navigateTo(item.path)"
+                >
+                  <span class="material-symbols-outlined">{{ item.icon }}</span>
+                  {{ item.label }}
+                </div>
+
+                <div class="dropdown-divider"></div>
                 <div class="dropdown-item" @click="goToProfile">
                   <span class="material-symbols-outlined">account_circle</span>
                   Thông tin cá nhân
@@ -113,12 +126,53 @@ const userInitial = computed(() => {
   return 'U'
 })
 
+// ====== MENU ITEMS THEO ROLE ======
+const menuItems = computed(() => {
+  const role = userRole.value
+  if (role === 'ADMIN') {
+    return [
+      { icon: 'dashboard', label: 'Dashboard', path: '/admins' },
+      { icon: 'group', label: 'Quản lý sinh viên', path: '/students' },
+      { icon: 'school', label: 'Quản lý giảng viên', path: '/teachers' },
+      { icon: 'book', label: 'Quản lý khóa học', path: '/admin-courses' },
+      { icon: 'class', label: 'Quản lý lớp học', path: '/classes' },
+      { icon: 'meeting_room', label: 'Quản lý phòng học', path: '/rooms' },
+      { icon: 'calendar_check', label: 'Quản lý điểm danh', path: '/admin-attendance' },
+      { icon: 'grading', label: 'Quản lý điểm số', path: '/admin-grades' },
+      { icon: 'analytics', label: 'Báo cáo', path: '/reports' },
+      { icon: 'event_busy', label: 'Yêu cầu lịch', path: '/admin/schedule-requests' },
+    ]
+  } else if (role === 'LECTURER') {
+    return [
+      { icon: 'dashboard', label: 'Dashboard', path: '/lecturer-dashboard' },
+      { icon: 'group', label: 'Học viên của tôi', path: '/my-students' },
+      { icon: 'calendar_check', label: 'Điểm danh', path: '/lecturer-attendance' },
+      { icon: 'grading', label: 'Điểm số', path: '/lecturer-grades' },
+      { icon: 'schedule', label: 'Lịch dạy', path: '/teachers/schedule' },
+    ]
+  } else if (role === 'STUDENT') {
+    return [
+      { icon: 'dashboard', label: 'Dashboard', path: '/student-dashboard' },
+      { icon: 'calendar_check', label: 'Điểm danh', path: '/student-attendance' },
+      { icon: 'grading', label: 'Điểm số', path: '/student-grades' },
+      { icon: 'book', label: 'Đăng ký khóa học', path: '/enrollments' },
+      { icon: 'schedule', label: 'Lịch học', path: '/student/schedule' },
+    ]
+  }
+  return []
+})
+
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
 }
 
 const toggleUserMenu = () => {
   showUserMenu.value = !showUserMenu.value
+}
+
+const navigateTo = (path) => {
+  showUserMenu.value = false
+  router.push(path)
 }
 
 const goToProfile = () => {
@@ -204,7 +258,9 @@ onUnmounted(() => {
   right: 0;
   top: 100%;
   margin-top: 8px;
-  width: 260px;
+  width: 280px;
+  max-height: 80vh;
+  overflow-y: auto;
   background: white;
   border-radius: 16px;
   box-shadow: 0 12px 28px rgba(0,0,0,0.12);
@@ -262,5 +318,17 @@ onUnmounted(() => {
 }
 .dropdown-item .material-symbols-outlined {
   font-size: 20px;
+}
+
+/* Responsive: thu nhỏ dropdown trên mobile */
+@media (max-width: 480px) {
+  .user-dropdown {
+    position: fixed;
+    top: 64px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-height: 70vh;
+  }
 }
 </style>

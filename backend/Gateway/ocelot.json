@@ -15,11 +15,25 @@
       "UpstreamHttpMethod": ["GET"]
     },
     {
+      "DownstreamPathTemplate": "/images/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/images/{everything}",
+      "UpstreamHttpMethod": ["GET"]
+    },
+    {
       "DownstreamPathTemplate": "/api/v1/courses/{id}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
       "UpstreamPathTemplate": "/api/v1/courses/{id}",
       "UpstreamHttpMethod": ["GET", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/courses/{id}/upload-image",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "course_schedule_service", "Port": 8080 }],
+      "UpstreamPathTemplate": "/api/v1/courses/{id}/upload-image",
+      "UpstreamHttpMethod": ["POST"]
     },
     {
       "DownstreamPathTemplate": "/api/v1/courses/{id}/permanent",

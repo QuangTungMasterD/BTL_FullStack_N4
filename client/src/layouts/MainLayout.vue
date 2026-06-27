@@ -128,6 +128,7 @@ const menuItems = computed(() => {
       { title: 'Quản lý giảng viên', path: '/teachers', icon: 'mdi-school' },
       { title: 'Quản lý khóa học', path: '/admin-courses', icon: 'mdi-book-open-variant' },
       { title: 'Quản lý lớp học', path: '/classes', icon: 'mdi-book-open-variant' },
+      { title: 'Quản lý phòng học', path: '/rooms', icon: 'mdi-door' },
       { title: 'Quản lý điểm danh', path: '/admin-attendance', icon: 'mdi-calendar-check' },
       { title: 'Quản lý điểm số', path: '/admin-grades', icon: 'mdi-chart-line' },
       { title: 'Yêu cầu lịch', path: '/admin/schedule-requests', icon: 'mdi-account' },

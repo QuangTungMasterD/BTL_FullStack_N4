@@ -195,6 +195,13 @@ const courseService = {
     };
     return map[str] || null;
   },
+  uploadImage(id, file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/v1/courses/${id}/upload-image`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
 };
 
 export default courseService;

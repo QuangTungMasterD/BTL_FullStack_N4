@@ -42,9 +42,24 @@
       </div>
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div v-for="course in courses" :key="course.id" class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
-          <div class="h-40 bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center">
-            <span class="material-symbols-outlined text-6xl text-primary/40">menu_book</span>
+          <!-- Phần ảnh -->
+          <div class="h-40 bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center relative overflow-hidden">
+            <img 
+              v-if="course.imageUrl" 
+              :src="course.imageUrl" 
+              alt="Course thumbnail" 
+              loading="lazy"
+              class="w-full h-full object-cover transition-opacity" 
+              @error="(e) => { e.target.style.display = 'none'; e.target.parentElement.querySelector('.fallback-icon').style.display = 'flex'; }"
+            />
+            <span 
+              class="material-symbols-outlined text-6xl text-primary/40 fallback-icon"
+              :class="{ 'flex': !course.imageUrl, 'hidden': course.imageUrl }"
+            >
+              menu_book
+            </span>
           </div>
+          <!-- Nội dung -->
           <div class="p-5">
             <h3 class="text-lg font-bold text-gray-900">{{ course.courseName }}</h3>
             <p class="mt-1 text-sm text-gray-500 line-clamp-2">{{ course.desct || 'Mô tả đang cập nhật' }}</p>

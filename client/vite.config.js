@@ -18,5 +18,11 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     strictPort: false,
+    proxy: {
+      '/images': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
   },
 })

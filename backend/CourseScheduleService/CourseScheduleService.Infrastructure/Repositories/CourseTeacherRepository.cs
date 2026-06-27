@@ -30,10 +30,13 @@ namespace CourseScheduleService.Infrastructure.Repositories
 
         public async Task<IEnumerable<CourseTeacher>> GetByCourseIdAsync(int courseId)
         {
-            return await _dbSet.Where(ts =>
-                ts.CourseId == courseId &&
-                !ts.IsDeleted
-            ).ToListAsync();
+            return await _dbSet
+                .Include(ct => ct.Teacher)
+                .ThenInclude(t => t.TeacherAssignments)
+                .Where(ts =>
+                    ts.CourseId == courseId &&
+                    !ts.IsDeleted
+                ).ToListAsync();
         }
     }
 }

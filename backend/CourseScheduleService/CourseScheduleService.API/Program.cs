@@ -26,6 +26,7 @@ builder.Services.AddDbContext<CourseScheduleDbContext>(
     }
 );
 
+builder.Services.AddSingleton<IWebHostEnvironment>(builder.Environment);
 
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -96,6 +97,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.UseStaticFiles();
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<HeaderClaimsMiddleware>();

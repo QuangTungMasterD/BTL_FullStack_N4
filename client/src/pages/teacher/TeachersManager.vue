@@ -111,13 +111,12 @@
           />
         </div>
 
-        <!-- Chuyên ngành (có thể chọn nhiều) 
-        Cần component multiselect, tạm thời dùng select multiple -->
-        <Select
+        <!-- Sử dụng MultiSelectTags cho khóa học có thể dạy -->
+        <MultiSelectTags
           v-model="formData.courseIds"
-          label="Khóa học có thể dạy"
           :options="courseOptionsForForm"
-          multiple
+          label="Khóa học có thể dạy"
+          placeholder="Tìm khóa học..."
           :error="validationErrors?.CourseIds?.[0]"
         />
 
@@ -157,6 +156,8 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import Link from '@/components/ui/Link.vue';
 import ImportExportButtons from '@/components/business/ImportExportButtons.vue';
 import SkeletonCard from '@/components/skeleton/SkeletonCard.vue';
+// Import component MultiSelectTags
+import MultiSelectTags from '@/components/ui/MultiSelectTags.vue';
 
 const teacherStore = useTeacherStore();
 const courseStore = useCourseStore();
@@ -169,6 +170,7 @@ const editingId = ref(null);
 const showDeleteConfirm = ref(false);
 const selectedTeacher = ref(null);
 
+// Course options cho MultiSelectTags
 const courseOptionsForForm = computed(() =>
   courseStore.courses.map(c => ({ value: c.id, label: c.courseName }))
 );
@@ -181,7 +183,7 @@ const formData = reactive({
   yoB: '',
   gender: true,
   isActive: true,
-  courseIds: [],
+  courseIds: [], // mảng ID khóa học
 });
 
 // Options
@@ -251,7 +253,8 @@ const openEditModal = async (id) => {
     formData.yoB = teacher.yoB ? teacher.yoB.split('T')[0] : '';
     formData.gender = teacher.gender;
     formData.isActive = teacher.isActive;
-    formData.courseIds = teacher.courseIds || []; // mảng ID
+    // Đảm bảo courseIds là mảng
+    formData.courseIds = Array.isArray(teacher.courseIds) ? teacher.courseIds : [];
     showModal.value = true;
   } catch (err) {
     console.error('Failed to load teacher:', err);
@@ -274,6 +277,7 @@ const closeModal = () => {
 };
 
 const handleSubmit = async () => {
+  // Đảm bảo courseIds là mảng số
   const submitData = {
     fullName: formData.fullName,
     email: formData.email,
@@ -281,9 +285,11 @@ const handleSubmit = async () => {
     yoB: formData.yoB || null,
     gender: formData.gender === true || formData.gender === 'true',
     isActive: formData.isActive === true || formData.isActive === 'true',
-    courseIds: formData.courseIds, // gửi mảng
+    courseIds: Array.isArray(formData.courseIds) 
+      ? formData.courseIds.map(id => Number(id)) 
+      : [],
   };
-  console.log(submitData)
+  
   try {
     if (isEditing.value) {
       await teacherStore.update(editingId.value, submitData);
@@ -297,10 +303,10 @@ const handleSubmit = async () => {
   }
 };
 
-onMounted(() => {
-  Promise.all([
+onMounted(async () => {
+  await Promise.all([
     courseStore.fetchAll(),
-    loadTeachers() // nếu loadTeachers là async function
+    loadTeachers()
   ]);
 });
 </script>

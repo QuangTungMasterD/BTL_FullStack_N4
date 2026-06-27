@@ -235,5 +235,29 @@ export const useCourseStore = defineStore('course', {
         this.isImporting = false;
       }
     },
+
+    async uploadImage(id, file) {
+      this.loading = true;
+      this.clearErrors();
+      try {
+        const result = await courseService.uploadImage(id, file);
+        console.log(result)
+        // Cập nhật lại course hiện tại nếu đang xem
+        if (this.currentCourse?.id === id) {
+          this.currentCourse.imageUrl = result;
+        }
+        // Có thể refresh lại danh sách hoặc cập nhật trong mảng courses
+        const index = this.courses.findIndex(c => c.id === id);
+        if (index !== -1) {
+          this.courses[index].imageUrl = result;
+        }
+        return result;
+      } catch (err) {
+        this.error = err.response?.data?.message || err.message;
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    }
   },
 });

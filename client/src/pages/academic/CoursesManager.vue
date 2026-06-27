@@ -125,9 +125,31 @@
           />
         </div>
 
+        <!-- Upload ảnh -->
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-gray-700">Ảnh khóa học</label>
+          <div class="mt-2 flex items-center gap-4">
+            <!-- Ảnh preview (nếu có) -->
+            <div v-if="formData.imageUrl || imagePreview" class="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200">
+              <img :src="imagePreview || formData.imageUrl" alt="Course image" class="w-full h-full object-cover" />
+              <button v-if="formData.imageUrl || imagePreview" type="button" @click="removeImage" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                <span class="material-symbols-outlined text-sm">close</span>
+              </button>
+            </div>
+            <!-- Nút chọn ảnh -->
+            <label class="cursor-pointer px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg border border-gray-300">
+              <span class="material-symbols-outlined text-sm mr-1">upload</span>
+              Chọn ảnh
+              <input type="file" accept="image/*" class="hidden" @change="handleImageUpload" />
+            </label>
+            <span v-if="uploadingImage" class="text-sm text-gray-500">Đang tải lên...</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">Hỗ trợ JPG, PNG, GIF, WebP. Tối đa 2MB.</p>
+        </div>
+
         <div class="flex justify-end gap-3 pt-4">
           <Button variant="outline" @click="closeModal">Hủy</Button>
-          <Button variant="primary" type="submit" :loading="courseStore.loading">
+          <Button variant="primary" type="submit" :loading="courseStore.loading || uploadingImage">
             {{ isEditing ? 'Cập nhật' : 'Tạo mới' }}
           </Button>
         </div>
@@ -145,14 +167,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed, watch } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useCourseStore } from '@/stores';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Select from '@/components/ui/Select.vue';
 import Modal from '@/components/ui/Modal.vue';
-import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
 import Pagination from '@/components/ui/Pagination.vue';
 import CourseCard from '@/components/business/CourseCard.vue';
@@ -162,10 +183,12 @@ import Link from '@/components/ui/Link.vue';
 import { LEVEL_OPTIONS, STATUS_OPTIONS } from '@/constants';
 import ImportExportButtons from '@/components/business/ImportExportButtons.vue';
 import SkeletonCard from '@/components/skeleton/SkeletonCard.vue';
-import StatCardModern from '@/components/ui/StatCardModern.vue'
+import StatCardModern from '@/components/ui/StatCardModern.vue';
+import { useToast } from '@/composables/useToast';
 
 const courseStore = useCourseStore();
 const { pagedData, loading, validationErrors } = storeToRefs(courseStore);
+const toast = useToast();
 
 // Modal state
 const showModal = ref(false);
@@ -173,6 +196,11 @@ const isEditing = ref(false);
 const editingId = ref(null);
 const showDeleteConfirm = ref(false);
 const selectedCourse = ref(null);
+
+// Image state
+const uploadingImage = ref(false);
+const imageFile = ref(null);
+const imagePreview = ref(null);
 
 // Form data
 const formData = reactive({
@@ -182,6 +210,7 @@ const formData = reactive({
   lesson: 1,
   level: 1,
   isActive: true,
+  imageUrl: '',
 });
 
 // Options
@@ -194,18 +223,105 @@ const currentParams = ref({
   pageSize: 12,
 });
 
-// Methods
+// ===================== IMAGE HANDLERS =====================
+const handleImageUpload = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Kiểm tra kích thước (2MB)
+  if (file.size > 2 * 1024 * 1024) {
+    toast.error('File quá lớn, tối đa 2MB');
+    event.target.value = '';
+    return;
+  }
+
+  // Kiểm tra định dạng
+  const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  if (!allowed.includes(file.type)) {
+    toast.error('Chỉ hỗ trợ JPG, PNG, GIF, WebP');
+    event.target.value = '';
+    return;
+  }
+
+  imageFile.value = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    imagePreview.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+const removeImage = () => {
+  formData.imageUrl = '';
+  imageFile.value = null;
+  imagePreview.value = null;
+};
+
+// ===================== FORM HANDLERS =====================
+const resetForm = () => {
+  formData.courseName = '';
+  formData.desct = '';
+  formData.tuitionFee = 0;
+  formData.lesson = 1;
+  formData.level = 1;
+  formData.isActive = true;
+  formData.imageUrl = '';
+  imageFile.value = null;
+  imagePreview.value = null;
+};
+
+const openCreateForm = () => {
+  isEditing.value = false;
+  editingId.value = null;
+  resetForm();
+  showModal.value = true;
+};
+
+const openEditModal = async (id) => {
+  isEditing.value = true;
+  editingId.value = id;
+  try {
+    const course = await courseStore.fetchById(id);
+    formData.courseName = course.courseName;
+    formData.desct = course.desct;
+    formData.tuitionFee = course.tuitionFee;
+    formData.lesson = course.lesson;
+    formData.level = course.level;
+    formData.isActive = course.isActive;
+    formData.imageUrl = course.imageUrl || '';
+    imageFile.value = null;
+    imagePreview.value = null;
+    showModal.value = true;
+  } catch (err) {
+    console.error('Failed to load course:', err);
+  }
+};
+
+const closeModal = () => {
+  showModal.value = false;
+  resetForm();
+};
+
+// ===================== CRUD OPERATIONS =====================
 const loadCourses = async () => {
   await courseStore.fetchPaged(currentParams.value);
 };
 
 const handleFilterChange = (params) => {
   currentParams.value = { pageSize: 12, ...params, page: 1 };
-  
   loadCourses();
 };
 
-// Delete handlers
+const handlePageChange = async (page) => {
+  currentParams.value.page = page;
+  await loadCourses();
+};
+
+const resetAndRefresh = async () => {
+  currentParams.value = { page: 1, pageSize: 12 };
+  await loadCourses();
+};
+
 const confirmDelete = (course) => {
   selectedCourse.value = course;
   showDeleteConfirm.value = true;
@@ -219,56 +335,52 @@ const handleDeleteCourse = async () => {
   }
 };
 
-const handlePageChange = async (page) => {
-  currentParams.value.page = page;
-  await loadCourses();
-};
-
-const resetAndRefresh = async () => {
-  currentParams.value = { page: 1, pageSize: 12 };
-  await loadCourses();
-};
-
-const openCreateForm = () => {
-  isEditing.value = false;
-  editingId.value = null;
-  resetForm();
-  showModal.value = true;
-};
-
-const openEditModal = async (id) => {
-  console.log(id)
-  isEditing.value = true;
-  editingId.value = id;
-  try {
-    const course = await courseStore.fetchById(id);
-    formData.courseName = course.courseName;
-    formData.desct = course.desct;
-    formData.tuitionFee = course.tuitionFee;
-    formData.lesson = course.lesson;
-    formData.level = course.level;
-    formData.isActive = course.isActive;
-    showModal.value = true;
-  } catch (err) {
-    console.error('Failed to load course:', err);
-  }
-};
-
-const resetForm = () => {
-  formData.courseName = '';
-  formData.desct = '';
-  formData.tuitionFee = 0;
-  formData.lesson = 1;
-  formData.level = 1;
-  formData.isActive = true;
-};
-
-const closeModal = () => {
-  showModal.value = false;
-  resetForm();
-};
-
+// ===================== SUBMIT =====================
 const handleSubmit = async () => {
+  // Nếu có ảnh mới, upload trước
+  let finalImageUrl = formData.imageUrl;
+  
+  if (imageFile.value) {
+    uploadingImage.value = true;
+    try {
+      if (!isEditing.value) {
+        // Tạo mới: tạo course trước (chưa có ảnh)
+        const submitData = {
+          courseName: formData.courseName,
+          desct: formData.desct,
+          tuitionFee: Number(formData.tuitionFee),
+          lesson: Number(formData.lesson),
+          level: Number(formData.level),
+          isActive: formData.isActive === true || formData.isActive === 'true',
+          imageUrl: null,
+        };
+        const newCourse = await courseStore.create(submitData);
+        // Upload ảnh với ID mới
+        const uploadResult = await courseStore.uploadImage(newCourse.id, imageFile.value);
+        finalImageUrl = uploadResult;
+        // Cập nhật lại course với imageUrl
+        await courseStore.update(newCourse.id, { ...submitData, imageUrl: finalImageUrl });
+        closeModal();
+        await loadCourses();
+        uploadingImage.value = false;
+        toast.success('Tạo khóa học thành công!');
+        return;
+      } else {
+        // Sửa: upload ảnh trước
+        const uploadResult = await courseStore.uploadImage(editingId.value, imageFile.value);
+        console.log(uploadingImage)
+        finalImageUrl = uploadResult;
+      }
+    } catch (err) {
+      toast.error(err.message || 'Upload ảnh thất bại');
+      uploadingImage.value = false;
+      return;
+    } finally {
+      uploadingImage.value = false;
+    }
+  }
+
+  // Submit dữ liệu (tạo hoặc update)
   const submitData = {
     courseName: formData.courseName,
     desct: formData.desct,
@@ -276,21 +388,26 @@ const handleSubmit = async () => {
     lesson: Number(formData.lesson),
     level: Number(formData.level),
     isActive: formData.isActive === true || formData.isActive === 'true',
+    imageUrl: finalImageUrl,
   };
+
   try {
     if (isEditing.value) {
-      await courseStore.update(editingId.value, { ...submitData });
+      await courseStore.update(editingId.value, submitData);
+      toast.success('Cập nhật thành công!');
     } else {
-      await courseStore.create({ ...submitData });
+      // Trường hợp không có ảnh (tạo mới)
+      await courseStore.create(submitData);
+      toast.success('Tạo khóa học thành công!');
     }
     closeModal();
     await loadCourses();
   } catch (err) {
-    // Error already handled in store
-    console.error('Submit failed:', err);
+    toast.error(err.message || 'Lưu thất bại');
   }
 };
 
+// ===================== LIFECYCLE =====================
 onMounted(() => {
   loadCourses();
 });

@@ -25,18 +25,10 @@ namespace CourseScheduleService.Infrastructure.Repositories
       return await query.FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<Course>> GetCoursesBySpecializationAsync(int idSpecialization)
-    {
-      var query = _dbSet.Where(c => c.SpecializationId == idSpecialization);
-
-      return await query.ToArrayAsync();
-    }
-
     public async Task<(IEnumerable<Course> Data, int TotalRecords)> GetPagedCoursesAsync(
         int page, 
         int pageSize, 
-        string? search, 
-        int? specializationId,
+        string? search,
         CourseLevel? level, 
         bool? isActive, 
         decimal? minFee, 
@@ -48,9 +40,6 @@ namespace CourseScheduleService.Infrastructure.Repositories
 
       if (!string.IsNullOrWhiteSpace(search))
         query = query.Where(c => c.CourseName.Contains(search));
-
-      if (specializationId.HasValue)
-        query = query.Where(c => c.SpecializationId == specializationId);
 
       if (level.HasValue)
         query = query.Where(c => c.Level == level);

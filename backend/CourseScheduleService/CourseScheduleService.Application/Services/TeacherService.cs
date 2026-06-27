@@ -15,18 +15,18 @@ namespace CourseScheduleService.Application.Services
   public class TeacherService : ITeacherService
   {
     private readonly ITeacherRepository _teacherRepository;
-    private readonly ITeacherSpecializationRepository _teacherSpecializationRepository;
+    private readonly ICourseTeacherRepository _courseTeacherRepository;
     private readonly IClassRepository _classRepository;
     private readonly IMapper _mapper;
 
     public TeacherService(ITeacherRepository teacherRepository, 
-    ITeacherSpecializationRepository teacherSpecializationRepository, 
+    ICourseTeacherRepository courseTeacherRepository, 
     IMapper mapper,
     IClassRepository classRepository)
     {
       _teacherRepository = teacherRepository;
       _mapper = mapper;
-      _teacherSpecializationRepository = teacherSpecializationRepository;
+      _courseTeacherRepository = courseTeacherRepository;
       _classRepository = classRepository;
     }
 
@@ -57,15 +57,15 @@ namespace CourseScheduleService.Application.Services
       await _teacherRepository.AddAsync(newTeacher);
       await _teacherRepository.SaveChangeAsync();
 
-      foreach (var specializationId in teacherReqDto.SpecializationIds)
+      foreach (var courseId in teacherReqDto.CourseIds)
       {
-        await _teacherSpecializationRepository.AddAsync(new TeacherSpecialization
-        {
-          TeacherId = newTeacher.Id,
-          SpecializationId = specializationId
-        });
+          await _courseTeacherRepository.AddAsync(new CourseTeacher
+          {
+              TeacherId = newTeacher.Id,
+              CourseId = courseId
+          });
       }
-      await _teacherSpecializationRepository.SaveChangeAsync();
+      await _teacherRepository.SaveChangeAsync();
 
       TeacherResDto teacherRes = _mapper.Map<TeacherResDto>(newTeacher);
 
@@ -183,22 +183,23 @@ namespace CourseScheduleService.Application.Services
         );
       }
 
-      var existingSpecializations = await _teacherSpecializationRepository.GetByTeacherIdAsync(id);
-      foreach (var existing in existingSpecializations)
+      var existingCourseTeachers = await _courseTeacherRepository.GetByTeacherIdAsync(id);
+      foreach (var existing in existingCourseTeachers)
       {
-          _teacherSpecializationRepository.DeleteAsync(existing);
+          _courseTeacherRepository.DeleteAsync(existing);
       }
-      await _teacherSpecializationRepository.SaveChangeAsync();
+      await _courseTeacherRepository.SaveChangeAsync();
 
-      foreach (var specializationId in teacherReqDto.SpecializationIds)
+      // 👇 Thêm liên kết mới từ DTO
+      foreach (var courseId in teacherReqDto.CourseIds)
       {
-          await _teacherSpecializationRepository.AddAsync(new TeacherSpecialization
+          await _courseTeacherRepository.AddAsync(new CourseTeacher
           {
               TeacherId = id,
-              SpecializationId = specializationId
+              CourseId = courseId
           });
       }
-      await _teacherSpecializationRepository.SaveChangeAsync();
+      await _courseTeacherRepository.SaveChangeAsync();
 
       teacher.FullName = teacherReqDto.FullName;
       teacher.Email = teacherReqDto.Email;

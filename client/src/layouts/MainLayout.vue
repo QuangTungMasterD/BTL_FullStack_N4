@@ -52,36 +52,7 @@
     <!-- Main Content Area -->
     <div class="main-container">
       <!-- Topbar -->
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="mobile-menu-btn" @click="toggleSidebar">
-            <v-icon icon="mdi-menu" size="24" />
-          </button>
-          <div class="search-box">
-            <v-icon icon="mdi-magnify" size="18" />
-            <input type="text" placeholder="Tìm kiếm khóa học, sinh viên...">
-          </div>
-        </div>
-        <div class="topbar-right">
-          <!-- Notification Panel Component -->
-          <NotificationPanel />
-          
-          <!-- Role Badge -->
-          <div class="role-badge" :class="userRole?.toLowerCase()">
-            <span>{{ userRole }}</span>
-          </div>
-          
-          <div class="user-menu" @click="toggleUserMenu">
-            <div class="user-avatar">
-              <span>{{ userInitial }}</span>
-            </div>
-            <div class="user-info" v-show="!isSidebarCollapsed">
-              <span class="user-name">{{ user?.fullName || 'Người dùng' }}</span>
-              <!-- <span class="user-role">{{ userRole }}</span> -->
-            </div>
-          </div>
-        </div>
-      </header>
+      <PublicHeader />
 
       <!-- Page Content -->
       <main class="page-content">
@@ -127,6 +98,7 @@ import { useAuthStore } from '@/stores/authStore'
 import NotificationPanel from '@/components/NotificationPanel.vue'
 import ToastContainer from '@/components/ui/ToastContainer.vue';
 import GlobalErrorWatcher from '@/components/ui/GlobalErrorWatcher.vue'
+import PublicHeader from '@/layouts/Header/PublicHeader.vue';
 
 const router = useRouter()
 const route = useRoute()
@@ -151,7 +123,7 @@ const menuItems = computed(() => {
   
   if (role === 'ADMIN') {
     return [
-      { title: 'Dashboard', path: '/', icon: 'mdi-view-dashboard' },
+      { title: 'Dashboard', path: '/admins', icon: 'mdi-view-dashboard' },
       { title: 'Quản lý sinh viên', path: '/students', icon: 'mdi-account-group' },
       { title: 'Quản lý giảng viên', path: '/teachers', icon: 'mdi-school' },
       { title: 'Quản lý chuyên ngành', path: '/specializations', icon: 'mdi-book-open-variant' },

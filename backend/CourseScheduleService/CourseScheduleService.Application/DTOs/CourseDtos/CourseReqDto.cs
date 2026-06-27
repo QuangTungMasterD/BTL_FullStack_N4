@@ -29,7 +29,5 @@ namespace CourseScheduleService.Application.DTOs.CourseDtos
         [Range(1, 200, ErrorMessage = "số tiết học phải từ 1 đến 200")]
         public int Lesson { get; set; }
         public bool IsActive { get; set; } = true;
-
-        public int? SpecializationId { get; set; }
     }
 }

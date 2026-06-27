@@ -31,8 +31,8 @@ namespace CourseScheduleService.Domain.Entities
         [Column("is_active", TypeName = "bit")]
         public bool IsActive { get; set; } = true;
 
-        public virtual ICollection<TeacherSpecialization> TeacherSpecializations { get; set; } 
-            = new List<TeacherSpecialization>();
+        public virtual ICollection<CourseTeacher> CourseTeachers { get; set; }
+            = new List<CourseTeacher>();
 
         public virtual ICollection<TeacherAssignment> TeacherAssignments { get; set; } 
             = new List<TeacherAssignment>();

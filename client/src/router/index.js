@@ -107,7 +107,7 @@ const routes = [
     children: [
       // ============ ADMIN ROUTES (giữ nguyên từ HEAD) ============
       {
-        path: "",
+        path: "admins",
         name: "AdminDashboard",
         component: AdminDashboard,
         meta: { roles: ["ADMIN"] },

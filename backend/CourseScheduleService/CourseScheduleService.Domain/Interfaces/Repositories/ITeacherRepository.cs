@@ -19,7 +19,7 @@ namespace CourseScheduleService.Domain.Interfaces.Repositories
     );
     Task<Teacher?> GetDetailTeacherByIdAsync(int id);
 
-    Task<List<Teacher>> GetAvailableTeachersBySpecializationAsync(int specializationId, DateTime startDate, DateTime endDate);
+    Task<List<Teacher>> GetAvailableTeachersByCourseTeacherAsync(int courseId, DateTime startDate, DateTime endDate);
     Task<Teacher?> GetTeacherByUserIdAsync(int userId);
   }
 }

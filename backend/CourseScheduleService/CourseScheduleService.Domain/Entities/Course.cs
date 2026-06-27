@@ -28,11 +28,7 @@ namespace CourseScheduleService.Domain.Entities
         [Column("is_active", TypeName = "bit")]
         public bool IsActive { get; set; } = true;
 
-        [Column("specialization_id")]
-        [ForeignKey("Specialization")]
-        public int? SpecializationId { get; set; }
-
-        public virtual Specialization Specialization { get; set; } = null!;
+        public virtual ICollection<CourseTeacher> CourseTeachers { get; set; } = new List<CourseTeacher>();
         public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
     }
 }

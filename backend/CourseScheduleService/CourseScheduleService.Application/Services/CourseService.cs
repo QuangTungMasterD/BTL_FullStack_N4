@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CourseScheduleService.Application.Common;
 using CourseScheduleService.Application.DTOs.CourseDtos;
-using CourseScheduleService.Application.DTOs.SpecializationDtos;
 using CourseScheduleService.Domain.Entities;
 using CourseScheduleService.Domain.Interfaces.Repositories;
 using CourseScheduleService.interfaces.services;
@@ -16,14 +15,12 @@ namespace CourseScheduleService.Application.Services
   public class CourseService : ICourseService
   {
     private readonly ICourseRepository _courseRepository;
-    private readonly ISpecializationRepository _specializationRepository;
     private readonly IMapper _mapper;
 
-    public CourseService(ICourseRepository courseRepository, ISpecializationRepository specializationRepository, IMapper mapper)
+    public CourseService(ICourseRepository courseRepository, IMapper mapper)
     {
       this._courseRepository = courseRepository;
       this._mapper = mapper;
-      _specializationRepository = specializationRepository;
     }
 
     public async Task<ApiResponse<CourseResDto?>> CreateCourseAsync(CourseReqDto courseReq)
@@ -113,19 +110,6 @@ namespace CourseScheduleService.Application.Services
         );
       }
 
-      Specialization? spec = null;
-      if (courseReq.SpecializationId != null)
-      {
-        
-        spec = await this._specializationRepository.GetByIdAsync((int)courseReq.SpecializationId);
-        if (spec == null)
-        {
-          return ApiResponse<CourseResDto?>.ErrorResponse(
-            $"Chuyên ngành ID {courseReq.SpecializationId} không tồn tại",
-            new Dictionary<String, String[]> { { "SpecializationId", new string[] { "Chuyên ngành không tồn tại" } } }
-          );
-        }
-      }
 
       course.CourseName = courseReq.CourseName;
       course.Desct = courseReq.Desct;
@@ -133,27 +117,14 @@ namespace CourseScheduleService.Application.Services
       course.Level = courseReq.Level;
       course.Lesson = courseReq.Lesson;
       course.IsActive = courseReq.IsActive;
-      course.SpecializationId = courseReq.SpecializationId;
       course.UpdatedAt = DateTime.Now;
 
       this._courseRepository.UpdateAsync(course);
       await this._courseRepository.SaveChangeAsync();
 
       var courseRes = this._mapper.Map<CourseResDto>(course);
-      if (courseReq.SpecializationId != null)
-      {
-        courseRes.SpecializationId = spec.Id;
-      }
 
       return ApiResponse<CourseResDto?>.SuccessResponse(courseRes, "Cập nhật khóa học thành công");
-    }
-
-    public async Task<ApiResponse<IEnumerable<CourseResDto>>> GetCoursesBySpecializationAsync(int idSpecialization)
-    {
-      var courses = _courseRepository.GetCoursesBySpecializationAsync(idSpecialization);
-
-      var courseRes = _mapper.Map<IEnumerable<CourseResDto>>(courses);
-      return ApiResponse<IEnumerable<CourseResDto>>.SuccessResponse(courseRes);
     }
 
     public async Task<ApiResponse<bool>> HardDeleteCourseAsync(int id)
@@ -174,7 +145,7 @@ namespace CourseScheduleService.Application.Services
     {
       var (data, totalRecords) = await _courseRepository.GetPagedCoursesAsync(
           req.Page, req.PageSize, req.Search,
-          req.SpecializationId, req.Level, req.IsActive,
+          req.Level, req.IsActive,
           req.MinFee, req.MaxFee, req.SortBy, req.SortDesc, req.IsDeleted
       );
 

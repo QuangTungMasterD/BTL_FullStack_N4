@@ -21,9 +21,8 @@ public partial class CourseScheduleDbContext : DbContext
     public DbSet<ClassSession> ClassSessions { get; set; }
     public DbSet<Room> Rooms { get; set; }
     public DbSet<Teacher> Teachers { get; set; }
-    public DbSet<Specialization> Specializations { get; set; }
     public DbSet<TeacherAssignment> TeacherAssignments { get; set; }
-    public DbSet<TeacherSpecialization> TeacherSpecializations { get; set; }
+    public DbSet<CourseTeacher> CourseTeachers { get; set; }
     public DbSet<ScheduleChangeRequest> ScheduleChangeRequests { get; set; }
 
 //     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

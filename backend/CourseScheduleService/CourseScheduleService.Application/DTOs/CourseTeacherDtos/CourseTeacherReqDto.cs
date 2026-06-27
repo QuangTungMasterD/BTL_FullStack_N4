@@ -4,14 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CourseScheduleService.Application.DTOs.TeacherSpecializationDtos
+namespace CourseScheduleService.Application.DTOs.CourseTeacherDtos
 {
-    public class TeacherSpecializationReqDto
+    public class CourseTeacherReqDto
     {
         [Required(ErrorMessage = "Giáo viên không được để trống")]
         public int TeacherId { get; set; }
         
-        [Required(ErrorMessage = "Chuyên ngành không được để trống")]
-        public int SpecializationId { get; set; }
+        [Required(ErrorMessage = "Khóa học không được để trống")]
+        public int CourseId { get; set; }
     }
 }

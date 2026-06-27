@@ -23,6 +23,7 @@ namespace CourseScheduleService.Application.Services
     private readonly IRoomRepository _roomRepository;
     private readonly IClassSessionRepository _classSessionRepository;
     private readonly ITeacherAssignmentRepository _teacherAssignmentRepository;
+    private readonly ICourseTeacherRepository _courseTeacherRepository;
 
     public ClassService(
         IClassRepository classRepository,
@@ -32,7 +33,8 @@ namespace CourseScheduleService.Application.Services
         ITeacherRepository teacherRepository,
         IRoomRepository roomRepository,
         IClassSessionRepository classSessionRepository,
-        ITeacherAssignmentRepository teacherAssignmentRepository)
+        ITeacherAssignmentRepository teacherAssignmentRepository,
+        ICourseTeacherRepository courseTeacherRepository)
     {
         _classRepository = classRepository;
         _courseRepository = courseRepository;
@@ -42,6 +44,7 @@ namespace CourseScheduleService.Application.Services
         _roomRepository = roomRepository;
         _classSessionRepository = classSessionRepository;
         _teacherAssignmentRepository = teacherAssignmentRepository;
+        _courseTeacherRepository = courseTeacherRepository;
     }
 
     public async Task<ApiResponse<ClassResDto?>> CreateClassAsync(ClassReqDto classReqDto)
@@ -314,17 +317,15 @@ namespace CourseScheduleService.Application.Services
         if (course == null)
             throw new Exception($"Không tìm thấy khóa học ID {newClass.CourseId}");
 
-        if (course.SpecializationId == null)
-            throw new Exception("Khóa học chưa có chuyên ngành, không thể tự động phân công giáo viên");
-
         var startDateTime = newClass.StartDate.ToDateTime(TimeOnly.MinValue);
         var endDateTime = newClass.EndDate.ToDateTime(TimeOnly.MaxValue);
 
-        var availableTeachers = await _teacherRepository.GetAvailableTeachersBySpecializationAsync(
-            course.SpecializationId.Value, startDateTime, endDateTime);
+        var courseTeachers = await _courseTeacherRepository.GetByCourseIdAsync(newClass.CourseId);
 
-        if (availableTeachers == null || availableTeachers.Count == 0)
-            throw new Exception($"Không có giáo viên nào phù hợp với chuyên ngành ID {course.SpecializationId} và rảnh trong thời gian lớp học");
+        if (!courseTeachers.Any())
+            throw new Exception($"Khóa học chưa có giáo viên nào, không thể tự động phân công");
+
+        var availableTeachers = courseTeachers.Select(ct => ct.Teacher).ToList();
 
         var orderedTeachers = availableTeachers.OrderBy(t => t.TeacherAssignments?.Count ?? 0).ToList();
 

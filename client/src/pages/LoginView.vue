@@ -80,6 +80,13 @@
       <!-- Right Auth Section - Centered -->
       <div class="auth-section">
         <div class="auth-card">
+          <router-link
+            to="/"
+            class="absolute w-[60px] h-[60px] top-4 left-4 p-2 rounded-full hover:bg-gray-200 bg-gray-100 transition-colors z-10 flex items-center justify-center"
+            title="Quay lại trang chủ"
+          >
+            <span class="material-symbols-outlined text-gray-800 hover:text-primary">arrow_back</span>
+          </router-link>
           <!-- Tab switching -->
           <div class="auth-tabs">
             <button 

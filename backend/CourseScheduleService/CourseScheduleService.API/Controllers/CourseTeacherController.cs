@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CourseScheduleService.Application.Common;
-using CourseScheduleService.Application.DTOs.TeacherSpecializationDtos;
+using CourseScheduleService.Application.DTOs.CourseTeacherDtos;
 using CourseScheduleService.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,18 +11,18 @@ using Microsoft.AspNetCore.Mvc;
 namespace CourseScheduleService.API.Controllers
 {
     [ApiController]
-    [Route("api/v1/teacherspecializations")]
-    public class TeacherSpecializationController : ControllerBase
+    [Route("api/v1/courseteachers")]
+    public class CourseTeacherController : ControllerBase
     {
-        private readonly ITeacherSpecializationService _tsService;
+        private readonly ICourseTeacherService _tsService;
 
-        public TeacherSpecializationController(ITeacherSpecializationService tsService)
+        public CourseTeacherController(ICourseTeacherService tsService)
         {
             _tsService = tsService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<IEnumerable<TeacherSpecializationResDto>>>> GetAll()
+        public async Task<ActionResult<ApiResponse<IEnumerable<CourseTeacherResDto>>>> GetAll()
         {
             var result = await _tsService.GetAllAsync();
             return StatusCode(result.StatusCode, result);
@@ -30,8 +30,8 @@ namespace CourseScheduleService.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<ApiResponse<TeacherSpecializationResDto?>>> Create(
-            [FromBody] TeacherSpecializationReqDto reqDto)
+        public async Task<ActionResult<ApiResponse<CourseTeacherResDto?>>> Create(
+            [FromBody] CourseTeacherReqDto reqDto)
         {
             var result = await _tsService.CreateAsync(reqDto);
             return StatusCode(result.StatusCode, result);

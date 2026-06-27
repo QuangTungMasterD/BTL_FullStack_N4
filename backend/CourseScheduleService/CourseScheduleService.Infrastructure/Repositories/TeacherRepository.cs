@@ -18,8 +18,8 @@ namespace CourseScheduleService.Infrastructure.Repositories
     public async Task<Teacher?> GetDetailTeacherByIdAsync(int id)
     {
       return await _dbSet
-                .Include(t => t.TeacherSpecializations)
-                .ThenInclude(ts => ts.Specialization)
+                .Include(t => t.CourseTeachers)
+                .ThenInclude(ts => ts.Course)
                 .FirstOrDefaultAsync(x =>
                   EF.Property<int>(x, "Id") == id &&
                   !EF.Property<bool>(x, "IsDeleted"));
@@ -47,8 +47,8 @@ namespace CourseScheduleService.Infrastructure.Repositories
         string? sortBy, bool sortDesc, bool? IsDeleted = false)
     {
       var query = _dbSet
-                .Include(t => t.TeacherSpecializations)
-                .ThenInclude(ts => ts.Specialization)
+                .Include(t => t.CourseTeachers)
+                .ThenInclude(ts => ts.Course)
                 .Where(t => t.IsDeleted == IsDeleted);
 
       if (!string.IsNullOrWhiteSpace(search))
@@ -90,19 +90,19 @@ namespace CourseScheduleService.Infrastructure.Repositories
             EF.Property<int>(x, "Id") == Id);
     }
 
-    public async Task<List<Teacher>> GetAvailableTeachersBySpecializationAsync(int specializationId, DateTime startDate, DateTime endDate)
+    public async Task<List<Teacher>> GetAvailableTeachersByCourseTeacherAsync(int courseId, DateTime startDate, DateTime endDate)
     {
       var query = _dbSet
           .Where(t => t.IsActive && !t.IsDeleted &&
-                      t.TeacherSpecializations.Any(ts => ts.SpecializationId == specializationId && !ts.IsDeleted));
+                      t.CourseTeachers.Any(ts => ts.CourseId == courseId && !ts.IsDeleted));
       return await query.ToListAsync();
     }
 
     public async Task<Teacher?> GetTeacherByUserIdAsync(int userId)
     {
       return await _dbSet
-                .Include(t => t.TeacherSpecializations)
-                .ThenInclude(ts => ts.Specialization)
+                .Include(t => t.CourseTeachers)
+                .ThenInclude(ts => ts.Course)
                 .FirstOrDefaultAsync(x =>
                   EF.Property<int>(x, "UserId") == userId &&
                   !EF.Property<bool>(x, "IsDeleted"));

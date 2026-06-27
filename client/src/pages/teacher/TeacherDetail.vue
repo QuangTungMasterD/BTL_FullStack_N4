@@ -67,12 +67,18 @@
             <p class="font-body-md">{{ formatDateTime(teacher?.updatedAt) }}</p>
           </div>
           <div class="md:col-span-2">
-            <p class="text-label-md text-on-surface-variant">Chuyên ngành</p>
+            <p class="text-label-md text-on-surface-variant">Khóa học có thể dạy</p>
             <div class="flex flex-wrap gap-2 mt-1 justify-center">
-              <Badge v-for="spec in teacherSpecializations" :key="spec.id" variant="info">
-                {{ spec.specializationName }}
+              <Badge
+                v-for="courseId in teacher?.courseIds" 
+                :key="courseId"
+                variant="info"
+              >
+                {{ getCourseName(courseId) }}
               </Badge>
-              <span v-if="teacherSpecializations.length === 0" class="text-on-surface-variant">Chưa có chuyên ngành</span>
+              <span v-if="!teacher?.courseIds?.length" class="text-on-surface-variant">
+                Chưa có khóa học
+              </span>
             </div>
           </div>
         </div>
@@ -163,12 +169,12 @@
           :options="statusOptions"
         />
 
-        <SpecializationSelector
-          v-model="editForm.specializationIds"
-          :options="specializationOptions"
-          label="Chuyên ngành"
-          :modelValue="editForm.specializationIds"
-          :error="validationErrors?.SpecializationIds?.[0]"
+        <Select
+          v-model="formData.courseIds"
+          label="Khóa học có thể dạy"
+          :options="courseOptionsForForm"
+          multiple
+          :error="validationErrors?.CourseIds?.[0]"
         />
 
         <div class="flex justify-end gap-3 pt-4">
@@ -195,7 +201,7 @@
 import { ref, reactive, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useTeacherStore, useSpecializationStore, useCourseStore } from '@/stores';
+import { useTeacherStore, useCourseStore } from '@/stores';
 import Link from '@/components/ui/Link.vue';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
@@ -206,28 +212,29 @@ import Avatar from '@/components/ui/Avatar.vue';
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import { formatDate, formatDateTime, classStatusText } from '@/composables/useFormat';
-import SpecializationSelector from '@/components/business/SpecializationSelector.vue';
 import SkeletonDetail from '@/components/skeleton/SkeletonDetail.vue';
 
 const router = useRouter();
 const route = useRoute();
 const teacherStore = useTeacherStore();
-const specializationStore = useSpecializationStore();
 const courseStore = useCourseStore();
 const { validationErrors } = storeToRefs(teacherStore);
 
 const teacher = ref(null);
-const teacherSpecializations = computed(() => {
-  if (!teacher.value?.specializationIds) return [];
-  return teacher.value.specializationIds
-    .map(id => specializationStore.specializations.find(s => s.id === id))
-    .filter(Boolean);
-});
 
 const classes = ref([]);
 const loadingClasses = ref(false);
 const showEditModal = ref(false);
 const showDeleteConfirm = ref(false);
+
+const courseOptionsForForm = computed(() =>
+  courseStore.courses.map(c => ({ value: c.id, label: c.courseName }))
+);
+
+const getCourseName = (id) => {
+  const course = courseStore.courses.find(c => c.id === id);
+  return course?.courseName || id;
+};
 
 // Edit form
 const editForm = reactive({
@@ -237,7 +244,7 @@ const editForm = reactive({
   yoB: '',
   gender: null,
   isActive: true,
-  specializationIds: [],
+  courseIds: [],
 });
 
 const genderOptions = [
@@ -249,12 +256,6 @@ const statusOptions = [
   { value: true, label: 'Đang hoạt động' },
   { value: false, label: 'Ngừng hoạt động' },
 ];
-const specializationOptions = computed(() =>
-  specializationStore.specializations.map(spec => ({
-    value: spec.id,
-    label: spec.specializationName
-  }))
-);
 
 const loadClasses = async () => {
   const teacherId = route.params.id;
@@ -301,7 +302,7 @@ const openEditModal = () => {
   editForm.yoB = teacher.value.yoB ? teacher.value.yoB.split('T')[0] : '';
   editForm.gender = teacher.value.gender;
   editForm.isActive = teacher.value.isActive;
-  editForm.specializationIds = teacher.value.specializationIds ? [...teacher.value.specializationIds] : [];
+  editForm.courseIds = teacher.value.courseIds ? [...teacher.value.courseIds] : [];
   showEditModal.value = true;
 };
 
@@ -317,7 +318,7 @@ const handleUpdate = async () => {
     yoB: editForm.yoB || null,
     gender: editForm.gender,
     isActive: editForm.isActive === true || editForm.isActive === 'true',
-    specializationIds: editForm.specializationIds,
+    courseIds: editForm.courseIds,
   };
   try {
     await teacherStore.update(teacher.value.id, submitData);
@@ -351,10 +352,7 @@ const goToClassDetail = (classId) => {
 };
 
 onMounted(() => {
-  Promise.all([
-    specializationStore.fetchAll(),
-    courseStore.fetchAll()
-  ]);
+  courseStore.fetchAll();
   loadTeacherDetail();
   loadClasses();
 });

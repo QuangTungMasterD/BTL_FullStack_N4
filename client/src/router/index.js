@@ -55,7 +55,7 @@ import StudentSchedule from "@/pages/student/StudentSchedule.vue";
 import RoomsManager from "@/pages/rooms/RoomsManager.vue";
 import RoomsTrash from "@/pages/rooms/RoomsTrash.vue";
 
-import SpecializationsManager from "@/pages/specializations/SpecializationsManager.vue";
+// import SpecializationsManager from "@/pages/specializations/SpecializationsManager.vue";
 
 import ScheduleChangeRequestManager from "@/pages/admin/ScheduleChangeRequests.vue";
 // ---------------------------------------------------------------
@@ -291,12 +291,12 @@ const routes = [
         component: RoomsTrash,
         meta: { roles: ["ADMIN"] },
       },
-      {
-        path: "specializations",
-        name: "SpecializationsManager",
-        component: SpecializationsManager,
-        meta: { roles: ["ADMIN"] },
-      },
+      // {
+      //   path: "specializations",
+      //   name: "SpecializationsManager",
+      //   component: SpecializationsManager,
+      //   meta: { roles: ["ADMIN"] },
+      // },
       {
         path: "admin/schedule-requests",
         name: "ScheduleChangeRequests",

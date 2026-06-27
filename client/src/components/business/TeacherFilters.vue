@@ -26,11 +26,11 @@
         @update:model-value="onFilterChange"
       />
 
-      <!-- Chuyên ngành -->
+      <!-- khóa học -->
       <Select
-        v-model="filters.specializationId"
-        label="Chuyên ngành"
-        :options="specializationOptions"
+        v-model="filters.courseId"
+        label="Khóa học"
+        :options="courseOptions"
         @update:model-value="onFilterChange"
       />
 
@@ -70,13 +70,9 @@ import { reactive, computed } from 'vue';
 import Input from '@/components/ui/Input.vue';
 import Select from '@/components/ui/Select.vue';
 import Button from '@/components/ui/Button.vue';
+import { useCourseStore } from '@/stores';
 
-const props = defineProps({
-  specializations: {
-    type: Array,
-    default: () => []
-  }
-});
+const courseStore = useCourseStore();
 
 const emit = defineEmits(['filter-change']);
 
@@ -92,19 +88,16 @@ const statusOptions = [
   { value: false, label: 'Ngừng hoạt động' },
 ];
 
-const specializationOptions = computed(() => [
-  { value: '', label: 'Tất cả chuyên ngành' },
-  ...props.specializations.map(spec => ({
-    value: spec.value,
-    label: spec.label
-  }))
+const courseOptions = computed(() => [
+  { value: '', label: 'Tất cả khóa học' },
+  ...courseStore.courses.map(c => ({ value: c.id, label: c.courseName }))
 ]);
 
 const filters = reactive({
   search: '',
   gender: '',
   isActive: '',
-  specializationId: '',
+  courseId: '',
   yoBFrom: null,
   yoBTo: null,
 });
@@ -113,7 +106,7 @@ const hasActiveFilters = computed(() => {
   return filters.search || 
          filters.gender !== '' || 
          filters.isActive !== '' || 
-         filters.specializationId !== '' ||
+         filters.courseId !== '' ||
          filters.yoBFrom !== null || 
          filters.yoBTo !== null;
 });
@@ -123,7 +116,7 @@ const activeFiltersCount = computed(() => {
   if (filters.search) count++;
   if (filters.gender !== '') count++;
   if (filters.isActive !== '') count++;
-  if (filters.specializationId !== '') count++;
+  if (filters.courseId !== '') count++;
   if (filters.yoBFrom !== null) count++;
   if (filters.yoBTo !== null) count++;
   return count;
@@ -136,7 +129,7 @@ const applyFilters = () => {
   if (filters.search) queryParams.search = filters.search;
   if (filters.gender !== '') queryParams.gender = filters.gender;
   if (filters.isActive !== '') queryParams.isActive = filters.isActive;
-  if (filters.specializationId !== '') queryParams.specializationId = filters.specializationId;
+  if (filters.courseId !== '') queryParams.courseId = filters.courseId;
   if (filters.yoBFrom) queryParams.yoBFrom = Number(filters.yoBFrom);
   if (filters.yoBTo) queryParams.yoBTo = Number(filters.yoBTo);
   
@@ -152,7 +145,7 @@ const resetFilters = () => {
   filters.search = '';
   filters.gender = '';
   filters.isActive = '';
-  filters.specializationId = '';
+  filters.courseId = '';
   filters.yoBFrom = null;
   filters.yoBTo = null;
   applyFilters();

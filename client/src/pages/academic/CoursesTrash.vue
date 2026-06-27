@@ -44,13 +44,6 @@
           @update:model-value="onFilterChange"
         />
 
-        <!-- Chuyên môn -->
-        <Select
-          v-model="filters.specializationId"
-          label="Chuyên môn"
-          :options="specializationOptions"
-          @update:model-value="onFilterChange"
-        />
       </div>
 
       <div class="flex justify-between items-center mt-4 pt-4 border-t border-outline-variant">
@@ -131,7 +124,7 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useCourseStore, useSpecializationStore } from '@/stores';
+import { useCourseStore } from '@/stores';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Select from '@/components/ui/Select.vue';
@@ -145,14 +138,12 @@ import SkeletonCard from '@/components/skeleton/SkeletonCard.vue';
 
 const router = useRouter();
 const courseStore = useCourseStore();
-const specializationStore = useSpecializationStore();
 const { pagedData, loading, validationErrors } = storeToRefs(courseStore);
 
 // Filter state
 const filters = reactive({
   search: '',
   level: '',
-  specializationId: '',
 });
 
 // Options
@@ -164,14 +155,6 @@ const levelOptions = [
   { value: 4, label: 'Cao cấp' },
   { value: 5, label: 'Chuyên gia' },
 ];
-
-const specializationOptions = computed(() => [
-  { value: '', label: 'Tất cả chuyên môn' },
-  ...specializationStore.specializations.map(item => ({
-    value: item.id,
-    label: item.specializationName
-  }))
-]);
 
 // Modal state
 const showRestoreConfirm = ref(false);
@@ -189,15 +172,13 @@ const currentParams = ref({
 // Filter computed
 const hasActiveFilters = computed(() => {
   return filters.search || 
-         filters.level !== '' || 
-         filters.specializationId !== '';
+         filters.level !== '';
 });
 
 const activeFiltersCount = computed(() => {
   let count = 0;
   if (filters.search) count++;
   if (filters.level !== '') count++;
-  if (filters.specializationId !== '') count++;
   return count;
 });
 
@@ -209,7 +190,6 @@ const loadCourses = async () => {
     ...currentParams.value,
     search: filters.search || undefined,
     level: filters.level !== '' ? Number(filters.level) : undefined,
-    specializationId: filters.specializationId !== '' ? Number(filters.specializationId) : undefined,
   };
   await courseStore.fetchPaged(params);
 };
@@ -225,7 +205,6 @@ const onFilterChange = async () => {
 const resetFilters = async () => {
   filters.search = '';
   filters.level = '';
-  filters.specializationId = '';
   currentParams.value.page = 1;
   await loadCourses();
 };
@@ -283,7 +262,6 @@ const handleEmptyTrash = async () => {
 };
 
 onMounted(() => {
-  specializationStore.fetchAll();
   loadCourses();
 });
 </script>

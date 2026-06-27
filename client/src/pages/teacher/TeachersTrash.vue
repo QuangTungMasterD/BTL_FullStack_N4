@@ -40,14 +40,12 @@
           :options="genderOptions"
           @update:model-value="onFilterChange"
         />
-
         <Select
-          v-model="filters.specializationId"
-          label="Chuyên ngành"
-          :options="specializationOptions"
+          v-model="filters.courseId"
+          label="Khóa học"
+          :options="courseOptions"
           @update:model-value="onFilterChange"
         />
-        <!-- Có thể thêm filter năm sinh -->
       </div>
       <div class="flex justify-between items-center mt-4 pt-4 border-t border-outline-variant">
         <Button variant="outline" size="sm" @click="resetFilters">
@@ -127,12 +125,11 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useTeacherStore, useSpecializationStore } from '@/stores';
+import { useTeacherStore, useCourseStore } from '@/stores'; // ← dùng useCourseStore
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Select from '@/components/ui/Select.vue';
 import Link from '@/components/ui/Link.vue';
-import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 import EmptyState from '@/components/ui/EmptyState.vue';
 import Pagination from '@/components/ui/Pagination.vue';
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
@@ -141,13 +138,13 @@ import SkeletonCard from '@/components/skeleton/SkeletonCard.vue';
 
 const router = useRouter();
 const teacherStore = useTeacherStore();
-const specializationStore = useSpecializationStore();
+const courseStore = useCourseStore();
 const { pagedData, loading } = storeToRefs(teacherStore);
 
 const filters = reactive({
   search: '',
   gender: '',
-  specializationId: '',
+  courseId: '', // ← đổi thành courseId
 });
 
 const genderOptions = [
@@ -162,16 +159,22 @@ const currentParams = ref({
   isDeleted: true,
 });
 
-const specializationOptions = computed(() => [
-  { value: '', label: 'Tất cả chuyên ngành' },
-  ...specializationStore.specializations.map(spec => ({
-    value: spec.id,
-    label: spec.specializationName
+const courseOptions = computed(() => [
+  { value: '', label: 'Tất cả khóa học' },
+  ...courseStore.courses.map(course => ({
+    value: course.id,
+    label: course.courseName
   }))
 ]);
 
-const hasActiveFilters = computed(() => filters.search || filters.gender !== '');
-const activeFiltersCount = computed(() => (filters.search ? 1 : 0) + (filters.gender !== '' ? 1 : 0));
+const hasActiveFilters = computed(() => filters.search || filters.gender !== '' || filters.courseId !== '');
+const activeFiltersCount = computed(() => {
+  let count = 0;
+  if (filters.search) count++;
+  if (filters.gender !== '') count++;
+  if (filters.courseId !== '') count++;
+  return count;
+});
 
 let debounceTimer = null;
 
@@ -180,6 +183,7 @@ const loadTeachers = async () => {
     ...currentParams.value,
     search: filters.search || undefined,
     gender: filters.gender !== '' ? filters.gender : undefined,
+    courseId: filters.courseId !== '' ? Number(filters.courseId) : undefined, // ← thêm courseId
   };
   await teacherStore.fetchPaged(params);
 };
@@ -195,6 +199,7 @@ const onFilterChange = () => {
 const resetFilters = () => {
   filters.search = '';
   filters.gender = '';
+  filters.courseId = '';
   currentParams.value.page = 1;
   loadTeachers();
 };
@@ -254,8 +259,8 @@ const handleEmptyTrash = async () => {
   await loadTeachers();
 };
 
-onMounted(() => {
-  loadTeachers();
-  specializationStore.fetchAll();
+onMounted(async () => {
+  await courseStore.fetchAll(); // ← load danh sách khóa học
+  await loadTeachers();
 });
 </script>

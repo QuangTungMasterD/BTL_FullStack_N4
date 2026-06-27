@@ -62,9 +62,7 @@ const teacherService = {
       "Giới tính":
         teacher.gender === true ? "Nam" : teacher.gender === false ? "Nữ" : "",
       "Trạng thái": teacher.isActive ? "Đang hoạt động" : "Ngừng hoạt động",
-      "Chuyên ngành IDs": Array.isArray(teacher.specializationIds)
-        ? teacher.specializationIds.join(", ")
-        : "",
+      'Khóa học IDs': Array.isArray(teacher.courseIds) ? teacher.courseIds.join(', ') : '',
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
@@ -119,6 +117,7 @@ const teacherService = {
         const email = row["Email"] || row["email"] || "";
         const phone = row["Số điện thoại"] || row["phone"] || "";
         let yoB = row["Năm sinh"] || row["yoB"];
+        const courseIds = this._parseCourseIds(row['Khóa học IDs']);
         // Xử lý năm sinh (có thể là số hoặc chuỗi)
         if (yoB) {
           if (typeof yoB === "number") {
@@ -155,6 +154,7 @@ const teacherService = {
           yoB: yoB || null,
           gender: gender,
           isActive: isActive,
+          CourseIds: courseIds,
         };
 
         const result = await this.createTeacher(teacherData);

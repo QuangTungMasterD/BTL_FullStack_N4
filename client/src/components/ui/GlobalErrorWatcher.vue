@@ -10,11 +10,10 @@ import {
   useTeacherStore,
   useClassStore,
   useRoomStore,
-  useSpecializationStore,
   useScheduleChangeRequestStore,
   useClassSessionStore,
   useTeacherAssignmentStore,
-  useTeacherSpecializationStore,
+  useCourseTeacherStore,
 } from '@/stores';
 
 const toast = useToast();
@@ -24,11 +23,10 @@ const courseStore = useCourseStore();
 const teacherStore = useTeacherStore();
 const classStore = useClassStore();
 const roomStore = useRoomStore();
-const specializationStore = useSpecializationStore();
 const scheduleRequestStore = useScheduleChangeRequestStore();
 const classSessionStore = useClassSessionStore();
 const teacherAssignmentStore = useTeacherAssignmentStore();
-const teacherSpecializationStore = useTeacherSpecializationStore();
+const courseTeacherStore = useCourseTeacherStore();
 
 // Gom thành mảng để dễ xử lý
 const stores = [
@@ -36,11 +34,10 @@ const stores = [
   teacherStore,
   classStore,
   roomStore,
-  specializationStore,
   scheduleRequestStore,
   classSessionStore,
   teacherAssignmentStore,
-  teacherSpecializationStore,
+  courseTeacherStore,
 ];
 
 // Theo dõi lỗi của từng store

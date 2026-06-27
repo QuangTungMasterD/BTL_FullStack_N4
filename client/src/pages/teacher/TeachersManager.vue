@@ -25,7 +25,7 @@
     </div>
 
     <!-- Filters -->
-    <TeacherFilters @filter-change="handleFilterChange" :specializations="specializationOptions" />
+    <TeacherFilters @filter-change="handleFilterChange" />
 
     <!-- Loading -->
     <div v-if="teacherStore.loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -109,16 +109,16 @@
             label="Trạng thái"
             :options="statusOptions"
           />
-          <!-- Có thể thêm multiselect cho specialization nếu cần -->
         </div>
 
         <!-- Chuyên ngành (có thể chọn nhiều) 
         Cần component multiselect, tạm thời dùng select multiple -->
-        <SpecializationSelector
-          v-model="formData.specializationIds"
-          :options="specializationOptions"
-          label="Chuyên ngành"
-          :error="validationErrors?.SpecializationIds?.[0]"
+        <Select
+          v-model="formData.courseIds"
+          label="Khóa học có thể dạy"
+          :options="courseOptionsForForm"
+          multiple
+          :error="validationErrors?.CourseIds?.[0]"
         />
 
         <div class="flex justify-end gap-3 pt-4">
@@ -143,7 +143,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useTeacherStore, useSpecializationStore } from '@/stores';
+import { useTeacherStore, useCourseStore } from '@/stores';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Select from '@/components/ui/Select.vue';
@@ -156,11 +156,10 @@ import TeacherFilters from '@/components/business/TeacherFilters.vue';
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import Link from '@/components/ui/Link.vue';
 import ImportExportButtons from '@/components/business/ImportExportButtons.vue';
-import SpecializationSelector from '@/components/business/SpecializationSelector.vue';
 import SkeletonCard from '@/components/skeleton/SkeletonCard.vue';
 
 const teacherStore = useTeacherStore();
-const specializationStore = useSpecializationStore();
+const courseStore = useCourseStore();
 const { pagedData, loading, validationErrors } = storeToRefs(teacherStore);
 
 // Modal state
@@ -170,6 +169,10 @@ const editingId = ref(null);
 const showDeleteConfirm = ref(false);
 const selectedTeacher = ref(null);
 
+const courseOptionsForForm = computed(() =>
+  courseStore.courses.map(c => ({ value: c.id, label: c.courseName }))
+);
+
 // Form data
 const formData = reactive({
   fullName: '',
@@ -178,7 +181,7 @@ const formData = reactive({
   yoB: '',
   gender: true,
   isActive: true,
-  specializationIds: [],
+  courseIds: [],
 });
 
 // Options
@@ -190,12 +193,6 @@ const statusOptions = [
   { value: true, label: 'Đang hoạt động' },
   { value: false, label: 'Ngừng hoạt động' },
 ];
-const specializationOptions = computed(() =>
-  specializationStore.specializations.map(spec => ({
-    value: spec.id,
-    label: spec.specializationName
-  }))
-);
 
 // Current query params
 const currentParams = ref({
@@ -254,7 +251,7 @@ const openEditModal = async (id) => {
     formData.yoB = teacher.yoB ? teacher.yoB.split('T')[0] : '';
     formData.gender = teacher.gender;
     formData.isActive = teacher.isActive;
-    formData.specializationIds = teacher.specializationIds || []; // mảng ID
+    formData.courseIds = teacher.courseIds || []; // mảng ID
     showModal.value = true;
   } catch (err) {
     console.error('Failed to load teacher:', err);
@@ -268,7 +265,7 @@ const resetForm = () => {
   formData.yoB = '';
   formData.gender = true;
   formData.isActive = true;
-  formData.specializationIds = [];
+  formData.courseIds = [];
 };
 
 const closeModal = () => {
@@ -284,7 +281,7 @@ const handleSubmit = async () => {
     yoB: formData.yoB || null,
     gender: formData.gender === true || formData.gender === 'true',
     isActive: formData.isActive === true || formData.isActive === 'true',
-    specializationIds: formData.specializationIds, // gửi mảng
+    courseIds: formData.courseIds, // gửi mảng
   };
   console.log(submitData)
   try {
@@ -301,7 +298,9 @@ const handleSubmit = async () => {
 };
 
 onMounted(() => {
-  specializationStore.fetchAll();
-  loadTeachers();
+  Promise.all([
+    courseStore.fetchAll(),
+    loadTeachers() // nếu loadTeachers là async function
+  ]);
 });
 </script>

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import CourseTeacherService from '@/services/CourseTeacherService';
 
-export const useTeacherSpecializationStore = defineStore('teacherSpecialization', {
+export const useCourseTeacherStore = defineStore('teacherSpecialization', {
   state: () => ({
     teacherCourses: [],
     loading: false,
@@ -23,7 +23,7 @@ export const useTeacherSpecializationStore = defineStore('teacherSpecialization'
       this.loading = true;
       this.clearErrors();
       try {
-        const data = await CourseTeacherService.getAllTeacherSpecializations();
+        const data = await CourseTeacherService.getAllCourseTeachers();
         this.teacherCourses = data;
       } catch (err) {
         this.error = err.response?.data?.message || err.message;

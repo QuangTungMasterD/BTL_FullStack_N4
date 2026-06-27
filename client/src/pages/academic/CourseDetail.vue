@@ -58,10 +58,6 @@
               {{ course?.isActive ? 'Đang mở' : 'Ngừng mở' }}
             </Badge>
           </div>
-          <div>
-            <p class="text-label-md text-on-surface-variant">Chuyên môn</p>
-            <p class="font-body-md">{{ specializationName || 'Chưa có' }}</p>
-          </div>
           <div class="md:col-span-2">
             <p class="text-label-md text-on-surface-variant">Mô tả</p>
             <p class="font-body-md">{{ course?.desct || 'Chưa có mô tả' }}</p>
@@ -178,13 +174,6 @@
           />
         </div>
 
-        <Select
-          v-model="editForm.specializationId"
-          label="Chuyên ngành"
-          :options="specializationOptions"
-          :error="validationErrors?.specializationId?.[0]"
-        />
-
         <div class="flex justify-end gap-3 pt-4">
           <Button variant="outline" @click="closeEditModal">Hủy</Button>
           <Button variant="primary" type="submit" :loading="courseStore.loading">
@@ -209,7 +198,7 @@
 import { ref, reactive, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useCourseStore, useSpecializationStore, useClassStore } from '@/stores';
+import { useCourseStore, useClassStore } from '@/stores';
 import Link from '@/components/ui/Link.vue';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
@@ -225,7 +214,6 @@ import SkeletonDetail from '@/components/skeleton/SkeletonDetail.vue';
 const router = useRouter();
 const route = useRoute();
 const courseStore = useCourseStore();
-const specializationStore = useSpecializationStore();
 const classStore = useClassStore();
 const { validationErrors } = storeToRefs(courseStore);
 
@@ -235,7 +223,6 @@ const classes = ref([]);
 const loadingClasses = ref(false);
 const showEditModal = ref(false);
 const showDeleteConfirm = ref(false);
-const specializationName = ref('');
 
 // Edit form
 const editForm = reactive({
@@ -245,23 +232,7 @@ const editForm = reactive({
   lesson: 1,
   level: 1,
   isActive: true,
-  specializationId: null,
 });
-
-const specializationOptions = computed(() => [
-  { value: null, label: '-- Chọn chuyên ngành --' },
-  ...specializationStore.specializations.map(item => ({
-    value: item.id,
-    label: item.specializationName
-  }))
-]);
-
-// Lấy tên chuyên môn từ ID
-const getSpecializationName = (id) => {
-  if (!id) return 'Chưa có';
-  const spec = specializationStore.specializations.find(s => s.id === id);
-  return spec?.specializationName || 'Chưa có';
-};
 
 // Class status helpers
 const getClassStatusVariant = (status) => {
@@ -280,7 +251,6 @@ const loadCourseDetail = async () => {
   try {
     course.value = await courseStore.fetchById(id);
     // Lấy tên chuyên môn sau khi có course
-    specializationName.value = getSpecializationName(course.value.specializationId);
   } catch (err) {
     console.error('Failed to load course:', err);
     router.push('/admin-courses');
@@ -309,7 +279,6 @@ const openEditModal = () => {
   editForm.lesson = course.value.lesson;
   editForm.level = course.value.level;
   editForm.isActive = course.value.isActive;
-  editForm.specializationId = course.value.specializationId || null;
   showEditModal.value = true;
 };
 
@@ -326,7 +295,6 @@ const handleUpdate = async () => {
     lesson: Number(editForm.lesson),
     level: Number(editForm.level),
     isActive: editForm.isActive === true || editForm.isActive === 'true',
-    specializationId: editForm.specializationId ? Number(editForm.specializationId) : null,
   };
   
   try {
@@ -356,7 +324,6 @@ const handleDeleteCourse = async () => {
 };
 
 onMounted(() => {
-  specializationStore.fetchAll();
   loadCourseDetail();
   loadClasses();
 });

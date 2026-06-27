@@ -29,7 +29,6 @@ const menuItems = [
   { label: 'Teacher', icon: 'payments', path: '/teachers' },
   { label: 'Classes', icon: 'group', path: '/classes' },
   { label: 'Rooms', icon: 'local_library', path: '/rooms' },
-  { label: 'Specialization', icon: 'analytics', path: '/specializations' },
   { label: 'teacherschedule', icon: 'analytics', path: '/teachers/schedule' },
   { label: 'schedule req', icon: 'analytics', path: '/admin/schedule-requests' },
 ]

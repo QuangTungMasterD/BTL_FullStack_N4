@@ -25,6 +25,9 @@ namespace CourseScheduleService.Domain.Entities
         [Column("lesson")]
         public int Lesson { get; set; }
 
+        [Column("image_url")]
+        public string? ImageUrl { get; set; }
+
         [Column("is_active", TypeName = "bit")]
         public bool IsActive { get; set; } = true;
 

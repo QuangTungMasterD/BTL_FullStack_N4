@@ -125,14 +125,6 @@
           />
         </div>
 
-        <Select
-          v-model="formData.specializationId"
-          label="Chuyên ngành"
-          :options="specializationOptions"
-          required
-          :error="validationErrors?.SpecializationId?.[0]"
-        />
-
         <div class="flex justify-end gap-3 pt-4">
           <Button variant="outline" @click="closeModal">Hủy</Button>
           <Button variant="primary" type="submit" :loading="courseStore.loading">
@@ -155,7 +147,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useCourseStore, useSpecializationStore } from '@/stores';
+import { useCourseStore } from '@/stores';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Select from '@/components/ui/Select.vue';
@@ -173,7 +165,6 @@ import SkeletonCard from '@/components/skeleton/SkeletonCard.vue';
 import StatCardModern from '@/components/ui/StatCardModern.vue'
 
 const courseStore = useCourseStore();
-const specializationStore = useSpecializationStore()
 const { pagedData, loading, validationErrors } = storeToRefs(courseStore);
 
 // Modal state
@@ -191,19 +182,11 @@ const formData = reactive({
   lesson: 1,
   level: 1,
   isActive: true,
-  specializationId: null,
 });
 
 // Options
 const levelOptions = LEVEL_OPTIONS;
 const statusOptions = STATUS_OPTIONS;
-
-const specializationOptions = computed(() =>
-  specializationStore.specializations.map(item => ({
-    value: item.id,
-    label: item.specializationName
-  }))
-);
 
 // Current query params
 const currentParams = ref({
@@ -265,7 +248,6 @@ const openEditModal = async (id) => {
     formData.lesson = course.lesson;
     formData.level = course.level;
     formData.isActive = course.isActive;
-    formData.specializationId = course.specializationId;
     showModal.value = true;
   } catch (err) {
     console.error('Failed to load course:', err);
@@ -294,7 +276,6 @@ const handleSubmit = async () => {
     lesson: Number(formData.lesson),
     level: Number(formData.level),
     isActive: formData.isActive === true || formData.isActive === 'true',
-    specializationId: formData.specializationId,
   };
   try {
     if (isEditing.value) {
@@ -311,7 +292,6 @@ const handleSubmit = async () => {
 };
 
 onMounted(() => {
-  specializationStore.fetchAll();
   loadCourses();
 });
 </script>
